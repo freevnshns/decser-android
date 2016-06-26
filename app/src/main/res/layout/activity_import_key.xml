@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.comslav.homeconnect.ImportKeyActivity">
+
+
+    <EditText
+        android:id="@+id/etPeerName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:hint="@string/peerName"
+        android:inputType="textPersonName"
+        android:layout_above="@+id/etHostname"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/etHostname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:hint="@string/hostname"
+        android:layout_above="@+id/bKeyImporter"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/etPeerName"
+        android:layout_alignEnd="@+id/etPeerName" />
+
+    <Button
+        android:id="@+id/bKeyChooser"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/keyChooserHelpText"
+        android:layout_above="@+id/etPeerName"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/bKeyImporter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/importHelperText"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

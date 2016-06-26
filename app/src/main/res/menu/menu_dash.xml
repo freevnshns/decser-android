@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.comslav.homeconnect.DashboardActivity">
+    <item
+        android:id="@+id/install_services"
+        android:orderInCategory="100"
+        android:title="@string/install_services" />
+    <item
+        android:id="@+id/serverMediaDownload"
+        android:orderInCategory="200"
+        android:title="@string/serverMediaDownload" />
+</menu>

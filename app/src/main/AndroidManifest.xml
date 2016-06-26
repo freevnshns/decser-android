@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.comslav.homeconnect">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".SplashScreen"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".DashboardActivity"
+            android:label="@string/title_activity_dash" />
+        <activity
+            android:name=".ImportKeyActivity"
+            android:label="@string/title_activity_import_key" />
+        <activity
+            android:name=".ExportActivity"
+            android:label="@string/title_activity_export" />
+        <activity
+            android:name=".DownloadMediaActivity"
+            android:label="@string/title_activity_download_media" />
+        <activity
+            android:name=".InstallServicesActivity"
+            android:label="@string/title_activity_install_services" />
+        <activity
+            android:name=".DeleteKeyActivity"
+            android:label="@string/title_activity_delete_key" />
+        <activity
+            android:name=".PeerConnectActivity"
+            android:label="@string/title_activity_peer_connect" />
+        <activity android:name=".ListFileActivity" />
+
+        <service
+            android:name=".helpers.SSHConnection"
+            android:exported="false"></service>
+    </application>
+
+</manifest>
