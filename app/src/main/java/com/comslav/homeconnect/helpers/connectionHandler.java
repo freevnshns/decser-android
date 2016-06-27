@@ -38,7 +38,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
     }
 
-    public Session Connect() throws JSchException {
+    public Session connect() throws JSchException {
         session.connect();
         return session;
     }
@@ -46,7 +46,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
     @Override
     protected Session doInBackground(Void[] params) {
         try {
-            return Connect();
+            return connect();
         } catch (JSchException e) {
             String logMessage = e.toString();
             loggingHandler loggingHandlerInstance = new loggingHandler();

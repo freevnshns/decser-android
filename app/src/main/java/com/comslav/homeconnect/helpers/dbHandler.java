@@ -135,41 +135,57 @@ public class dbHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<String> getNames() {
-        ArrayList<String> hosts = new ArrayList<>();
+    public String[] getContactNameList() {
+        ArrayList<String> tempContactsList = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE 1;";
-        Cursor c = db.rawQuery(query, null);
-        c.moveToFirst();
-        int index = 0;
-        while (!c.isAfterLast()) {
-            if (c.getString(c.getColumnIndex(COLUMN_NAME)) != null) {
-                hosts.add(index, c.getString(c.getColumnIndex(COLUMN_NAME)));
-                index++;
+        try {
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+            int index = 0;
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_NAME)) != null) {
+                    tempContactsList.add(index, c.getString(c.getColumnIndex(COLUMN_NAME)));
+                    index++;
+                }
+                c.moveToNext();
             }
-            c.moveToNext();
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        c.close();
-        db.close();
-        return hosts;
+        String[] contactsArray = new String[tempContactsList.size()];
+        for (int i = 0; i < tempContactsList.size(); i++) {
+            contactsArray[i] = tempContactsList.get(i);
+        }
+        return contactsArray;
     }
 
-    public ArrayList<String> getHostname() {
-        ArrayList<String> hostPaths = new ArrayList<>();
+    public String[] getHostnameArray() {
+        ArrayList<String> tempHostnameList = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE 1;";
-        Cursor c = db.rawQuery(query, null);
-        c.moveToFirst();
-        int index = 0;
-        while (!c.isAfterLast()) {
-            if (c.getString(c.getColumnIndex(COLUMN_NAME)) != null) {
-                hostPaths.add(index, c.getString(c.getColumnIndex(COLUMN_HOST_NAME)));
-                index++;
+        try {
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+            int index = 0;
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_NAME)) != null) {
+                    tempHostnameList.add(index, c.getString(c.getColumnIndex(COLUMN_HOST_NAME)));
+                    index++;
+                }
+                c.moveToNext();
             }
-            c.moveToNext();
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        c.close();
-        db.close();
-        return hostPaths;
+        String[] hostnameArray = new String[tempHostnameList.size()];
+        for (int i = 0; i < tempHostnameList.size(); i++) {
+            hostnameArray[i] = tempHostnameList.get(i);
+        }
+        return hostnameArray;
     }
 }
