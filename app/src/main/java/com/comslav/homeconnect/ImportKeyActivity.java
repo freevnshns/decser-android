@@ -88,7 +88,7 @@ public class ImportKeyActivity extends Activity {
                                 out.close();
                                 final dbHandler dbInstance;
                                 dbInstance = new dbHandler(context, null);
-                                dbInstance.addHost(etPeerName.getText().toString(), etHostname.getText().toString());
+                                dbInstance.addContact(etPeerName.getText().toString(), etHostname.getText().toString());
                                 Toast.makeText(context, "Successfully Imported", Toast.LENGTH_SHORT).show();
                                 importKeyPath = null;
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -110,7 +110,7 @@ public class ImportKeyActivity extends Activity {
 
     private boolean selfKeyExists() {
         dbHandler dbHandlerInstance = new dbHandler(this, null);
-        for (String hostNames : dbHandlerInstance.fetchNames()) {
+        for (String hostNames : dbHandlerInstance.getNames()) {
             if (hostNames.equals("Me") || hostNames.equals("me"))
                 return true;
         }

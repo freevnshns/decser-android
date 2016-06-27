@@ -80,18 +80,13 @@ public class DownloadMediaActivity extends Activity {
                 if (filesInDirectory != null) {
                     File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/comslav/media/" + filename + "/");
                     if (!dir.exists()) {
-                        if (dir.mkdirs()) {
-                            //Directory Creation Success
-                        } else {
-                            //Directory Creation Failure
-                        }
+                        System.out.print(dir.mkdirs());
                     }
                     int i = 0;
                     String fName;
                     while (i < filesInDirectory.size()) {
                         fName = ((ChannelSftp.LsEntry) filesInDirectory.get(i)).getFilename();
-                        if (fName.startsWith(".")) {
-                        } else {
+                        if (!fName.startsWith(".")) {
                             String dirCheck = ((ChannelSftp.LsEntry) filesInDirectory.get(i)).getAttrs().toString();
                             if (dirCheck.startsWith("d")) {
                                 recursiveDownload(filename + "/" + fName);
@@ -104,9 +99,7 @@ public class DownloadMediaActivity extends Activity {
                         }
                         i++;
                     }
-                } else {
                 }
-
             }
         });
     }
@@ -127,10 +120,9 @@ public class DownloadMediaActivity extends Activity {
             String filename;
             while (i < fileList.size()) {
                 filename = ((ChannelSftp.LsEntry) fileList.get(i)).getFilename();
-                if (filename.startsWith(".")) {
-
-                } else
+                if (!filename.startsWith(".")) {
                     arrayList.add(filename);
+                }
                 i++;
             }
             ArrayAdapter<String> mediaFileListAdapter = new ArrayAdapter<>(this, R.layout.activity_download_media, R.id.tvDownloadLabel, arrayList);

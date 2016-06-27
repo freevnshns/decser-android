@@ -32,14 +32,14 @@ public class MainActivity extends Activity {
         final Button connectButton = (Button) findViewById(R.id.bconnect);
         final dbHandler dbInstance;
         dbInstance = new dbHandler(this, null);
-        final ArrayList<String> peerNames = dbInstance.fetchNames();
+        final ArrayList<String> peerNames = dbInstance.getNames();
         final Spinner spinner = (Spinner) findViewById(R.id.spinnerHostSelector);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item, peerNames);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ArrayList<String> hostNames = dbInstance.fetchHostNames();
+                ArrayList<String> hostNames = dbInstance.getHostname();
                 connectButton.setTag(R.id.SELECTED_HOSTNAME_SPINNER, hostNames.get(position));
                 if ("Me".equals(parent.getItemAtPosition(position))) {
                     connectButton.setTag(R.id.SELECTED_NAME_SPINNER, "user");

@@ -86,15 +86,6 @@ public class DashboardActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-
-        if (id == R.id.install_services) {
-            Intent intent = new Intent(this, InstallServicesActivity.class);
-            InstallServicesActivity.session = session;
-            startActivity(intent);
-            finish();
-            return true;
-        }
         if (id == R.id.serverMediaDownload) {
             Intent intent = new Intent(this, DownloadMediaActivity.class);
             DownloadMediaActivity.session = session;

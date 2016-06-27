@@ -10,7 +10,7 @@ import com.jcraft.jsch.UserInfo;
 
 import java.util.Properties;
 
-public class connectionHandler extends AsyncTask {
+public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
     public static String hostName;
     public static String userName;
@@ -43,6 +43,18 @@ public class connectionHandler extends AsyncTask {
         return session;
     }
 
+    @Override
+    protected Session doInBackground(Void[] params) {
+        try {
+            return Connect();
+        } catch (JSchException e) {
+            String logMessage = e.toString();
+            loggingHandler loggingHandlerInstance = new loggingHandler();
+            loggingHandlerInstance.addLog(logMessage);
+            return null;
+        }
+    }
+
     public static class MyUserInfo implements UserInfo {
         @Override
         public String getPassphrase() {
@@ -73,21 +85,5 @@ public class connectionHandler extends AsyncTask {
         public void showMessage(String s) {
 
         }
-    }
-
-    @Override
-    protected Session doInBackground(Object[] params) {
-        try {
-            return Connect();
-        } catch (JSchException e) {
-            String logMessage = e.toString();
-            loggingHandler loggingHandlerInstance = new loggingHandler();
-            loggingHandlerInstance.addLog(logMessage);
-            return null;
-        }
-    }
-
-    @Override
-    protected void onPostExecute(Object o) {
     }
 }

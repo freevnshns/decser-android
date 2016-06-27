@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 12;
+    public static final int DATABASE_VERSION = 13;
     //    TABLE 1 DD STARTS HERE
     public static final String DATABASE_NAME = "homeConnect.db";
-    public static final String TABLE_HOSTS = "accessible_hosts";
+    public static final String TABLE_CONTACTS = "contacts";
 
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY AUTOINCREMENT";
+    public static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
 
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_NAME_TYPE = "TEXT";
@@ -29,7 +29,7 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String TABLE_AVAILABLE_SERVICES = "available_services";
 
     public static final String COLUMN_SERVICE_ID = "serviceId";
-    public static final String COLUMN_SERVICE_ID_TYPE = "INTEGER PRIMARY KEY AUTOINCREMENT";
+    public static final String COLUMN_SERVICE_ID_TYPE = "INTEGER PRIMARY KEY";
 
     public static final String COLUMN_SERVICE_NAME = "serviceName";
     public static final String COLUMN_SERVICE_NAME_TYPE = "TEXT UNIQUE";
@@ -47,7 +47,7 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_HOSTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "\n);";
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "\n);";
         String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_AVAILABLE_SERVICES + "\n(\n" + COLUMN_SERVICE_ID + " " + COLUMN_SERVICE_ID_TYPE + " , " + COLUMN_SERVICE_NAME + " " + COLUMN_SERVICE_NAME_TYPE + " , " + COLUMN_SERVICE_STATUS + " " + COLUMN_SERVICE_STATUS_TYPE + " , " + COLUMN_SERVICE_PORT + " " + COLUMN_SERVICE_PORT_TYPE + "\n);";
         try {
             db.execSQL(query);
@@ -61,15 +61,15 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HOSTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_AVAILABLE_SERVICES);
         onCreate(db);
     }
 
-    public boolean deleteKey(String hostname) {
+    public boolean deleteContact(String hostname) {
         SQLiteDatabase db = getWritableDatabase();
         try {
-            db.delete(TABLE_HOSTS, COLUMN_HOST_NAME + " == '" + hostname + "'", null);
+            db.delete(TABLE_CONTACTS, COLUMN_HOST_NAME + " == '" + hostname + "'", null);
             db.close();
             return true;
         } catch (SQLException e) {
@@ -80,13 +80,13 @@ public class dbHandler extends SQLiteOpenHelper {
         return false;
     }
 
-    public void addHost(String name, String hostname) {
+    public void addContact(String name, String hostname) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_HOST_NAME, hostname);
         try {
-            db.insert(TABLE_HOSTS, null, values);
+            db.insert(TABLE_CONTACTS, null, values);
         } catch (Exception e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -98,7 +98,7 @@ public class dbHandler extends SQLiteOpenHelper {
         for (services ser : services.values()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_SERVICE_NAME, ser.toString());
-            values.put(COLUMN_SERVICE_STATUS, 0);
+            values.put(COLUMN_SERVICE_STATUS, 1);
             values.put(COLUMN_SERVICE_PORT, ser.port);
             try {
                 db.insert(TABLE_AVAILABLE_SERVICES, null, values);
@@ -109,21 +109,12 @@ public class dbHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void enableService(String selectedService) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_SERVICE_STATUS, 1);
-        db.update(TABLE_AVAILABLE_SERVICES, values, COLUMN_SERVICE_NAME + " == '" + selectedService + "'", null);
-        db.close();
-    }
-
     public ArrayList<String> getServices(int status) {
         ArrayList<String> servicesList = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_AVAILABLE_SERVICES + " WHERE " + COLUMN_SERVICE_STATUS + "==" + status + ";";
         try {
             Cursor c = db.rawQuery(query, null);
-
             c.moveToFirst();
             int index = 0;
             while (!c.isAfterLast()) {
@@ -144,10 +135,10 @@ public class dbHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<String> fetchNames() {
+    public ArrayList<String> getNames() {
         ArrayList<String> hosts = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_HOSTS + " WHERE 1;";
+        String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE 1;";
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
         int index = 0;
@@ -163,10 +154,10 @@ public class dbHandler extends SQLiteOpenHelper {
         return hosts;
     }
 
-    public ArrayList<String> fetchHostNames() {
+    public ArrayList<String> getHostname() {
         ArrayList<String> hostPaths = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_HOSTS + " WHERE 1;";
+        String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE 1;";
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
         int index = 0;
@@ -180,6 +171,5 @@ public class dbHandler extends SQLiteOpenHelper {
         c.close();
         db.close();
         return hostPaths;
-
     }
 }
