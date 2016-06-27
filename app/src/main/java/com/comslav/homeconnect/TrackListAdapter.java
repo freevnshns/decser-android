@@ -1,12 +1,12 @@
 package com.comslav.homeconnect;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.comslav.homeconnect.helpers.connectionHandler;
 import com.jcraft.jsch.JSchException;
@@ -14,12 +14,10 @@ import com.jcraft.jsch.JSchException;
 import java.util.concurrent.ExecutionException;
 
 public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.ViewHolder> {
-    private Context mContext;
     private String[] mContactNameList;
     private String[] mContactHostnameList;
 
-    public TrackListAdapter(Context mContext, String[] mContactNameList, String[] mContactHostnameList) {
-        this.mContext = mContext;
+    public TrackListAdapter(String[] mContactNameList, String[] mContactHostnameList) {
         this.mContactNameList = mContactNameList;
         this.mContactHostnameList = mContactHostnameList;
     }
@@ -34,8 +32,12 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
                 try {
                     connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "limited-user");
                     DashboardActivity.session = connectionHandler.execute().get();
-                    Intent intent = new Intent(mContext, DashboardActivity.class);
-                    mContext.startActivity(intent);
+                    if (DashboardActivity.session != null) {
+                        Intent intent = new Intent(contact.getContext(), DashboardActivity.class);
+                        contact.getContext().startActivity(intent);
+                    } else {
+                        Toast.makeText(contact.getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (JSchException | ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }

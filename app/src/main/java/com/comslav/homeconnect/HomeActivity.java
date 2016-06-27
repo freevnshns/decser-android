@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -36,9 +37,20 @@ public class HomeActivity extends Activity {
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new TrackListAdapter(getApplicationContext(), dbInstance.getContactNameList(), dbInstance.getHostnameArray());
+        String[] ContactNames = dbInstance.getContactNameList();
+        String[] ContactHostnames = dbInstance.getHostnameArray();
+        mAdapter = new TrackListAdapter(ContactNames, ContactHostnames);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+        FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
+        floatingActionUploadButton.setImageResource(R.mipmap.ic_launcher);
+        floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ImportKeyActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -60,16 +72,6 @@ public class HomeActivity extends Activity {
         if (id == R.id.action_export_key) {
             Intent intent = new Intent(this, ExportActivity.class);
             startActivity(intent);
-        }
-        if (id == R.id.action_import) {
-            Intent intent = new Intent(this, ImportKeyActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        if (id == R.id.action_delete_key) {
-//            Intent intent = new Intent(this, DeleteKeyActivity.class);
-//            startActivity(intent);
-//            finish();
         }
 
 

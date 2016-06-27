@@ -1,5 +1,8 @@
 <resources>
 
     <color name="black_overlay">#66000000</color>
+    <color name="contact_name">#202020</color>
+    <color name="contact_hostname">#787878</color>
+
 
 </resources>
