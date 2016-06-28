@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.comslav.homeconnect.helpers.connectionHandler;
+import com.comslav.homeconnect.helpers.dbHandler;
 import com.jcraft.jsch.JSchException;
 
 import java.util.concurrent.ExecutionException;
@@ -27,20 +28,30 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_row_layout, parent, false);
         return new ViewHolder(view, new ViewHolder.ContactViewHolderClick() {
             @Override
-            public void connect(View contact) {
-                final String tempContactHostname = contact.getTag().toString();
+            public void connect(View v) {
+                final String tempContactHostname = v.getTag().toString();
                 try {
-                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "limited-user");
+                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user");
                     DashboardActivity.session = connectionHandler.execute().get();
                     if (DashboardActivity.session != null) {
-                        Intent intent = new Intent(contact.getContext(), DashboardActivity.class);
-                        contact.getContext().startActivity(intent);
+                        Intent intent = new Intent(v.getContext(), DashboardActivity.class);
+                        v.getContext().startActivity(intent);
                     } else {
-                        Toast.makeText(contact.getContext(), "Failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(v.getContext(), "Failed", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSchException | ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void removeContact(View v) {
+                final String tempContactHostname = v.getTag().toString();
+                dbHandler dbInstance = new dbHandler(v.getContext(), null);
+                if (dbInstance.deleteContact(tempContactHostname))
+                    Toast.makeText(v.getContext(), "1", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(v.getContext(), "0", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -57,7 +68,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         return mContactNameList.length;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public TextView tvContactName;
         public TextView tvContactHostname;
         public ContactViewHolderClick mListener;
@@ -68,6 +79,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
             this.tvContactHostname = (TextView) view.findViewById(R.id.tvContactHostname);
             mListener = listener;
             view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
         }
 
         @Override
@@ -75,8 +87,16 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
             mListener.connect(v);
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            mListener.removeContact(v);
+            return true;
+        }
+
         public interface ContactViewHolderClick {
-            void connect(View track);
+            void connect(View v);
+
+            void removeContact(View v);
         }
     }
 }
