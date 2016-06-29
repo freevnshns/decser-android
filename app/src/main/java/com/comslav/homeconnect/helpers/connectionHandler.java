@@ -1,8 +1,13 @@
 package com.comslav.homeconnect.helpers;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.widget.Toast;
 
+import com.comslav.homeconnect.DashboardActivity;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -16,9 +21,13 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
     public static String userName;
     public static String keyName;
     public static Session session;
+    private ProgressDialog progressDialog;
+    private Context mContext;
 
 
-    public connectionHandler(String hostname, String username) throws JSchException {
+    public connectionHandler(String hostname, String username, Context mContext) throws JSchException {
+        this.mContext = mContext;
+        this.progressDialog = new ProgressDialog(mContext);
         hostName = hostname;
         userName = username;
         JSch jsch = new JSch();
@@ -38,32 +47,52 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
     }
 
-    public Session connect() throws JSchException {
-        session.connect();
-        return session;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        this.progressDialog.setMessage("Connecting");
+        this.progressDialog.show();
+
+    }
+
+    @Override
+    protected void onPostExecute(Session session) {
+        super.onPostExecute(session);
+        if (this.progressDialog.isShowing()) {
+            this.progressDialog.dismiss();
+        }
+        if (session != null) {
+            DashboardActivity.session = session;
+            Intent intent = new Intent(mContext, DashboardActivity.class);
+            mContext.startActivity(intent);
+        } else {
+            Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected Session doInBackground(Void[] params) {
         try {
-            return connect();
+            session.connect();
+            return session;
         } catch (JSchException e) {
             String logMessage = e.toString();
             loggingHandler loggingHandlerInstance = new loggingHandler();
             loggingHandlerInstance.addLog(logMessage);
             return null;
         }
+
     }
 
     public static class MyUserInfo implements UserInfo {
         @Override
         public String getPassphrase() {
-            return "180793";
+            return "";
         }
 
         @Override
         public String getPassword() {
-            return "180793";
+            return "";
         }
 
         @Override
@@ -73,7 +102,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
         @Override
         public boolean promptPassphrase(String s) {
-            return true;
+            return false;
         }
 
         @Override

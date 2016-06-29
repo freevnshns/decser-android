@@ -2,7 +2,6 @@ package com.comslav.homeconnect;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -21,7 +20,7 @@ public class ListFileActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
-        path = "/storage/";
+        path = "/";
         if (getIntent().hasExtra("path")) {
             path = getIntent().getStringExtra("path");
         }
@@ -42,7 +41,7 @@ public class ListFileActivity extends ListActivity {
         }
         Collections.sort(values);
         // Put the data into the list
-        ArrayAdapter adapter = new ArrayAdapter(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_2, android.R.id.text1, values);
         setListAdapter(adapter);
     }

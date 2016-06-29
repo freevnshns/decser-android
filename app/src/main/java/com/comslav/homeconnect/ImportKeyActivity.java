@@ -29,6 +29,10 @@ public class ImportKeyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_key);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            String[] perms = {"android.permission.READ_EXTERNAL_STORAGE"};
+            requestPermissions(perms, 200);
+        }
         final Context context = getApplicationContext();
         final String sdcard = Environment.getExternalStorageDirectory().getPath();
         Button keyChooser = (Button) findViewById(R.id.bKeyChooser);
@@ -36,10 +40,6 @@ public class ImportKeyActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ListFileActivity.class);
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    String[] perms = {"android.permission.READ_EXTERNAL_STORAGE"};
-                    requestPermissions(perms, 200);
-                }
                 startActivity(intent);
                 finish();
             }
@@ -47,7 +47,7 @@ public class ImportKeyActivity extends Activity {
         final Button importKey = (Button) findViewById(R.id.bKeyImporter);
         final EditText etPeerName = (EditText) findViewById(R.id.etPeerName);
         if (!selfKeyExists())
-            etPeerName.setHint("Type \"Me\" for your personal key");
+            etPeerName.setHint("Enter \"Me\" for your personal key");
         final EditText etHostname = (EditText) findViewById(R.id.etHostname);
         importKey.setOnClickListener(new View.OnClickListener() {
             @Override

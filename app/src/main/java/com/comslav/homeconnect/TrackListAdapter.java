@@ -1,6 +1,6 @@
 package com.comslav.homeconnect;
 
-import android.content.Intent;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,15 +12,15 @@ import com.comslav.homeconnect.helpers.connectionHandler;
 import com.comslav.homeconnect.helpers.dbHandler;
 import com.jcraft.jsch.JSchException;
 
-import java.util.concurrent.ExecutionException;
-
 public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.ViewHolder> {
     private String[] mContactNameList;
     private String[] mContactHostnameList;
+    private Context mContext;
 
-    public TrackListAdapter(String[] mContactNameList, String[] mContactHostnameList) {
+    public TrackListAdapter(String[] mContactNameList, String[] mContactHostnameList, Context mContext) {
         this.mContactNameList = mContactNameList;
         this.mContactHostnameList = mContactHostnameList;
+        this.mContext = mContext;
     }
 
     @Override
@@ -31,15 +31,9 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
             public void connect(View v) {
                 final String tempContactHostname = v.getTag().toString();
                 try {
-                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user");
-                    DashboardActivity.session = connectionHandler.execute().get();
-                    if (DashboardActivity.session != null) {
-                        Intent intent = new Intent(v.getContext(), DashboardActivity.class);
-                        v.getContext().startActivity(intent);
-                    } else {
-                        Toast.makeText(v.getContext(), "Failed", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (JSchException | ExecutionException | InterruptedException e) {
+                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user", mContext);
+                    connectionHandler.execute();
+                } catch (JSchException e) {
                     e.printStackTrace();
                 }
             }

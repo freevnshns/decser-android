@@ -39,11 +39,11 @@ public class HomeActivity extends Activity {
         mRecyclerView.setHasFixedSize(true);
         String[] ContactNames = dbInstance.getContactNameList();
         String[] ContactHostnames = dbInstance.getHostnameArray();
-        mAdapter = new TrackListAdapter(ContactNames, ContactHostnames);
+        mAdapter = new TrackListAdapter(ContactNames, ContactHostnames, HomeActivity.this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
-        floatingActionUploadButton.setImageResource(R.mipmap.ic_launcher);
+        floatingActionUploadButton.setImageResource(R.drawable.ic_add_contact);
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
