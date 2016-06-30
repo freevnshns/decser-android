@@ -58,6 +58,7 @@ public class ListFileActivity extends ListActivity {
             Intent intent = new Intent(this, ListFileActivity.class);
             intent.putExtra("path", filename);
             startActivity(intent);
+            finish();
         } else {
 //            Code to implement import
             Intent intent = new Intent(this, ImportKeyActivity.class);
@@ -65,5 +66,13 @@ public class ListFileActivity extends ListActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, ImportKeyActivity.class);
+        ImportKeyActivity.importKeyPath = null;
+        startActivity(intent);
+        finish();
     }
 }

@@ -125,6 +125,13 @@ public class ImportKeyActivity extends Activity {
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -137,12 +144,5 @@ public class ImportKeyActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

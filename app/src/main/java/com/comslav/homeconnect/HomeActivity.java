@@ -37,9 +37,7 @@ public class HomeActivity extends Activity {
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-        String[] ContactNames = dbInstance.getContactNameList();
-        String[] ContactHostnames = dbInstance.getHostnameArray();
-        mAdapter = new TrackListAdapter(ContactNames, ContactHostnames, HomeActivity.this);
+        mAdapter = new TrackListAdapter(HomeActivity.this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
@@ -49,9 +47,9 @@ public class HomeActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ImportKeyActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
-
     }
 
     @Override
@@ -93,7 +91,6 @@ public class HomeActivity extends Activity {
             if (parent.getChildAdapterPosition(view) == 0) {
                 return;
             }
-
             outRect.top = mDivider.getIntrinsicHeight();
         }
 

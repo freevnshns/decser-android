@@ -1,6 +1,8 @@
 package com.comslav.homeconnect;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +19,18 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
     private String[] mContactHostnameList;
     private Context mContext;
 
-    public TrackListAdapter(String[] mContactNameList, String[] mContactHostnameList, Context mContext) {
-        this.mContactNameList = mContactNameList;
-        this.mContactHostnameList = mContactHostnameList;
+
+    public TrackListAdapter(Context mContext) {
         this.mContext = mContext;
+        dbHandler dbInstance = new dbHandler(mContext, null);
+        this.mContactNameList = dbInstance.getContactNameList();
+        this.mContactHostnameList = dbInstance.getHostnameArray();
+    }
+
+    private void updateAdapter() {
+        dbHandler dbInstance = new dbHandler(mContext, null);
+        this.mContactNameList = dbInstance.getContactNameList();
+        this.mContactHostnameList = dbInstance.getHostnameArray();
     }
 
     @Override
@@ -29,7 +39,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         return new ViewHolder(view, new ViewHolder.ContactViewHolderClick() {
             @Override
             public void connect(View v) {
-                final String tempContactHostname = v.getTag().toString();
+                final String tempContactHostname = v.getTag(R.string.TAG_CONTACT_HOSTNAME).toString();
                 try {
                     connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user", mContext);
                     connectionHandler.execute();
@@ -40,12 +50,31 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
 
             @Override
             public void removeContact(View v) {
-                final String tempContactHostname = v.getTag().toString();
-                dbHandler dbInstance = new dbHandler(v.getContext(), null);
-                if (dbInstance.deleteContact(tempContactHostname))
-                    Toast.makeText(v.getContext(), "1", Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(v.getContext(), "0", Toast.LENGTH_SHORT).show();
+                final String tempContactHostname = v.getTag(R.string.TAG_CONTACT_HOSTNAME).toString();
+                final int tempContactPosition = (int) v.getTag(R.string.TAG_CONTACT_POSITION);
+                final dbHandler dbInstance = new dbHandler(mContext, null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+                builder.setTitle("Delete Contact").setMessage("Are you sure you want to delete this contact ?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (dbInstance.deleteContact(tempContactHostname)) {
+                            updateAdapter();
+                            notifyItemRemoved(tempContactPosition);
+                            notifyItemRangeChanged(tempContactPosition, getItemCount());
+                        } else
+                            Toast.makeText(mContext, "0", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -54,7 +83,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.tvContactName.setText(mContactNameList[holder.getAdapterPosition()]);
         holder.tvContactHostname.setText(mContactHostnameList[holder.getAdapterPosition()]);
-        holder.itemView.setTag(mContactHostnameList[holder.getAdapterPosition()]);
+        holder.itemView.setTag(R.string.TAG_CONTACT_HOSTNAME, mContactHostnameList[holder.getAdapterPosition()]);
+        holder.itemView.setTag(R.string.TAG_CONTACT_POSITION, holder.getAdapterPosition());
     }
 
     @Override

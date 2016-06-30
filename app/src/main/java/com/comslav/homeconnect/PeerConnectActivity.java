@@ -1,13 +1,12 @@
 package com.comslav.homeconnect;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.webkit.WebView;
+import android.widget.ImageView;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.koushikdutta.ion.Ion;
 
 public class PeerConnectActivity extends Activity {
     public static Session session = null;
@@ -20,9 +19,14 @@ public class PeerConnectActivity extends Activity {
         } catch (JSchException e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String url = "https://127.0.0.1:9443";
-        intent.setData(Uri.parse(url));
-        startActivity(intent);
+        setContentView(R.layout.activity_peer_connect);
+        ImageView imageView = (ImageView) findViewById(R.id.ivDP);
+        Ion.with(this).load("https://127.0.0.1:9443/profilePicture_L").withBitmap().intoImageView(imageView);
+//        TODO Replace this with in-built api handling
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        String url = "https://127.0.0.1:9443";
+//        intent.setData(Uri.parse(url));
+//        startActivity(intent);
+
     }
 }

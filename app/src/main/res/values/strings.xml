@@ -31,4 +31,6 @@
     <string name="bDeleteKey">Delete</string>
     <string name="spinnerDeleteHelperText">Select person to remove</string>
     <string name="title_activity_peer_connect">Peer Connect</string>
+    <string name="TAG_CONTACT_POSITION">1</string>
+    <string name="TAG_CONTACT_HOSTNAME">2</string>
 </resources>
