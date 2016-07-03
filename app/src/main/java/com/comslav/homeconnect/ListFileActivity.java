@@ -11,7 +11,6 @@ import android.widget.ListView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class ListFileActivity extends ListActivity {
 
@@ -27,7 +26,7 @@ public class ListFileActivity extends ListActivity {
         }
         setTitle(path);
 
-        List values = new ArrayList();
+        ArrayList<String> values = new ArrayList<>();
         File dir = new File(path);
         if (!dir.canRead()) {
             setTitle(getTitle() + " (inaccessible)");
@@ -42,7 +41,7 @@ public class ListFileActivity extends ListActivity {
         }
         Collections.sort(values);
         // Put the data into the list
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_2, android.R.id.text1, values);
         setListAdapter(adapter);
     }
