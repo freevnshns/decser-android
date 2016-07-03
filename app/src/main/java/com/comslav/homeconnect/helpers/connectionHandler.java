@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.comslav.homeconnect.PeerConnectActivity;
+import com.comslav.homeconnect.DashboardActivity;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -62,8 +62,8 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
             this.progressDialog.dismiss();
         }
         if (session != null) {
-            PeerConnectActivity.session = session;
-            Intent intent = new Intent(mContext, PeerConnectActivity.class);
+            DashboardActivity.session = session;
+            Intent intent = new Intent(mContext, DashboardActivity.class);
             mContext.startActivity(intent);
         } else {
             Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();

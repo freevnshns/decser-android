@@ -15,13 +15,13 @@ public class PeerConnectActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            session.setPortForwardingL(9443, "127.0.0.1", 443);
+            session.setPortForwardingL(9443, "127.0.0.1", 1443);
         } catch (JSchException e) {
             e.printStackTrace();
         }
         setContentView(R.layout.activity_peer_connect);
         ImageView imageView = (ImageView) findViewById(R.id.ivDP);
-        Ion.with(this).load("https://127.0.0.1:9443/profilePicture_L").withBitmap().intoImageView(imageView);
+        Ion.with(this).load("https://127.0.0.1:9443/profilePicture_M").withBitmap().intoImageView(imageView);
 //        TODO Replace this with in-built api handling
 //        Intent intent = new Intent(Intent.ACTION_VIEW);
 //        String url = "https://127.0.0.1:9443";

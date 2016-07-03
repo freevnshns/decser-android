@@ -16,7 +16,8 @@
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".HomeActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/splashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,9 +36,6 @@
         <activity
             android:name=".DownloadMediaActivity"
             android:label="@string/title_activity_download_media" />
-        <activity
-            android:name=".DeleteKeyActivity"
-            android:label="@string/title_activity_delete_key" />
         <activity
             android:name=".PeerConnectActivity"
             android:label="@string/title_activity_peer_connect" />

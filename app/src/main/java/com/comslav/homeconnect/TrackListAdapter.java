@@ -39,7 +39,7 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
         return new ViewHolder(view, new ViewHolder.ContactViewHolderClick() {
             @Override
             public void connect(View v) {
-                final String tempContactHostname = v.getTag(R.string.TAG_CONTACT_HOSTNAME).toString();
+                final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
                 try {
                     connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user", mContext);
                     connectionHandler.execute();
@@ -50,8 +50,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
 
             @Override
             public void removeContact(View v) {
-                final String tempContactHostname = v.getTag(R.string.TAG_CONTACT_HOSTNAME).toString();
-                final int tempContactPosition = (int) v.getTag(R.string.TAG_CONTACT_POSITION);
+                final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
+                final int tempContactPosition = (int) v.getTag(R.id.TAG_CONTACT_POSITION);
                 final dbHandler dbInstance = new dbHandler(mContext, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
@@ -83,8 +83,8 @@ public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.View
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.tvContactName.setText(mContactNameList[holder.getAdapterPosition()]);
         holder.tvContactHostname.setText(mContactHostnameList[holder.getAdapterPosition()]);
-        holder.itemView.setTag(R.string.TAG_CONTACT_HOSTNAME, mContactHostnameList[holder.getAdapterPosition()]);
-        holder.itemView.setTag(R.string.TAG_CONTACT_POSITION, holder.getAdapterPosition());
+        holder.itemView.setTag(R.id.TAG_CONTACT_HOSTNAME, mContactHostnameList[holder.getAdapterPosition()]);
+        holder.itemView.setTag(R.id.TAG_CONTACT_POSITION, holder.getAdapterPosition());
     }
 
     @Override

@@ -16,8 +16,6 @@
     <string name="goBack">Back</string>
     <string name="share_guest_key">Share Guest Key</string>
     <string name="title_activity_export">Share Guest Key</string>
-
-    <string name="splashScreenMessage">ComSlav\nHomeConnect™</string>
     <string name="shareGuestKey">Share</string>
     <string name="title_activity_download_media">Download Media</string>
     <string name="tvDownloadLabel">Server Files</string>
@@ -31,6 +29,6 @@
     <string name="bDeleteKey">Delete</string>
     <string name="spinnerDeleteHelperText">Select person to remove</string>
     <string name="title_activity_peer_connect">Peer Connect</string>
-    <string name="TAG_CONTACT_POSITION">1</string>
-    <string name="TAG_CONTACT_HOSTNAME">2</string>
+    <string name="isPersonalKey">Personal Key</string>
+    <string name="contact_name_hint">Name</string>
 </resources>

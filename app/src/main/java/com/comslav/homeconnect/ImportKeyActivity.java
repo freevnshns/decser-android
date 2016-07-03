@@ -3,13 +3,13 @@ package com.comslav.homeconnect;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,10 +29,6 @@ public class ImportKeyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_key);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            String[] perms = {"android.permission.READ_EXTERNAL_STORAGE"};
-            requestPermissions(perms, 200);
-        }
         final Context context = getApplicationContext();
         final String sdcard = Environment.getExternalStorageDirectory().getPath();
         Button keyChooser = (Button) findViewById(R.id.bKeyChooser);
@@ -44,11 +40,10 @@ public class ImportKeyActivity extends Activity {
                 finish();
             }
         });
-        final Button importKey = (Button) findViewById(R.id.bKeyImporter);
         final EditText etPeerName = (EditText) findViewById(R.id.etPeerName);
-        if (!selfKeyExists())
-            etPeerName.setHint("Enter \"Me\" for your personal key");
+        final CheckBox isPersonalKey = (CheckBox) findViewById(R.id.cbIsPersonalKey);
         final EditText etHostname = (EditText) findViewById(R.id.etHostname);
+        final Button importKey = (Button) findViewById(R.id.bKeyImporter);
         importKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +69,7 @@ public class ImportKeyActivity extends Activity {
                                 Toast.makeText(context, "Please enter a Name", Toast.LENGTH_SHORT).show();
                             else {
                                 in = new FileInputStream(importKeyPath);
-                                if (etPeerName.getText().toString().equals("Me") || etPeerName.getText().toString().equals("me"))
+                                if (isPersonalKey.isChecked())
                                     out = new FileOutputStream(sdcard + "/comslav/self.ppk");
                                 else
                                     out = new FileOutputStream(sdcard + "/comslav/" + etHostname.getText() + ".ppk");
@@ -106,15 +101,6 @@ public class ImportKeyActivity extends Activity {
             }
         });
 
-    }
-
-    private boolean selfKeyExists() {
-        dbHandler dbHandlerInstance = new dbHandler(this, null);
-        for (String hostNames : dbHandlerInstance.getContactNameList()) {
-            if (hostNames.equals("Me") || hostNames.equals("me"))
-                return true;
-        }
-        return false;
     }
 
     @Override

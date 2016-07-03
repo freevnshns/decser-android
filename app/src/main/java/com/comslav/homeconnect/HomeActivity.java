@@ -16,17 +16,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.comslav.homeconnect.helpers.dbHandler;
-
 public class HomeActivity extends Activity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.splashScreen);
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_home);
-        final dbHandler dbInstance;
-        dbInstance = new dbHandler(this, null);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            String[] perms = {"android.permission.READ_EXTERNAL_STORAGE"};
+            requestPermissions(perms, 200);
+        }
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
@@ -34,7 +36,6 @@ public class HomeActivity extends Activity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvContactList);
         mLayoutManager = new LinearLayoutManager(this);
-        assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new TrackListAdapter(HomeActivity.this);

@@ -3,6 +3,7 @@ package com.comslav.homeconnect;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -20,7 +21,7 @@ public class ListFileActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
-        path = "/";
+        path = Environment.getExternalStorageDirectory().getPath();
         if (getIntent().hasExtra("path")) {
             path = getIntent().getStringExtra("path");
         }
