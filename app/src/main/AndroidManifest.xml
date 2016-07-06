@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.comslav.homeconnect">
+    package="com.ihs.homeconnect">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name=".HomeActivity"
+            android:name="com.ihs.homeconnect.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/splashScreen">
             <intent-filter>
@@ -25,22 +25,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DashboardActivity"
+            android:name="com.ihs.homeconnect.DashboardActivity"
             android:label="@string/title_activity_dash" />
         <activity
-            android:name=".ImportKeyActivity"
+            android:name="com.ihs.homeconnect.ImportKeyActivity"
             android:label="@string/title_activity_import_key" />
         <activity
-            android:name=".ExportActivity"
+            android:name="com.ihs.homeconnect.ExportActivity"
             android:label="@string/title_activity_export" />
         <activity
-            android:name=".DownloadMediaActivity"
+            android:name="com.ihs.homeconnect.DownloadMediaActivity"
             android:label="@string/title_activity_download_media" />
         <activity
-            android:name=".PeerConnectActivity"
+            android:name="com.ihs.homeconnect.PeerConnectActivity"
             android:label="@string/title_activity_peer_connect" />
         <activity
-            android:name=".ListFileActivity"
+            android:name="com.ihs.homeconnect.ListFileActivity"
             android:label="@string/selectKey" />
     </application>
 

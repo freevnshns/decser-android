@@ -1,4 +1,4 @@
-package com.comslav.homeconnect;
+package com.ihs.homeconnect;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

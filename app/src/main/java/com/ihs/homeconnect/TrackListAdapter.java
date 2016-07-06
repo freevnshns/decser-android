@@ -1,4 +1,4 @@
-package com.comslav.homeconnect;
+package com.ihs.homeconnect;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.comslav.homeconnect.helpers.connectionHandler;
-import com.comslav.homeconnect.helpers.dbHandler;
+import com.ihs.homeconnect.helpers.connectionHandler;
+import com.ihs.homeconnect.helpers.dbHandler;
 import com.jcraft.jsch.JSchException;
 
 public class TrackListAdapter extends RecyclerView.Adapter<TrackListAdapter.ViewHolder> {

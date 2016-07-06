@@ -6,13 +6,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <Button
-        android:id="@+id/bKeyChooser"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/keyChooserHelpText" />
-
 
     <EditText
         android:id="@+id/etPeerName"
@@ -20,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/bKeyChooser"
         android:ems="8"
         android:hint="@string/contact_name_hint"
         android:inputType="textPersonName" />

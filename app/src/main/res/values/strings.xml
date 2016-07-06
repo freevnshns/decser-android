@@ -32,4 +32,5 @@
     <string name="isPersonalKey">Personal Key</string>
     <string name="contact_name_hint">Name</string>
     <string name="selectKey">Select the key file</string>
+    <string name="profile_picture">Profile picture</string>
 </resources>
