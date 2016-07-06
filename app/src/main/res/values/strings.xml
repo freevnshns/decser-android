@@ -31,4 +31,5 @@
     <string name="title_activity_peer_connect">Peer Connect</string>
     <string name="isPersonalKey">Personal Key</string>
     <string name="contact_name_hint">Name</string>
+    <string name="selectKey">Select the key file</string>
 </resources>

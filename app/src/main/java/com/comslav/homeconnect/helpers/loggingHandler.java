@@ -12,7 +12,7 @@ public class loggingHandler {
     public loggingHandler() {
         logWriter = null;
         try {
-            logWriter = new PrintWriter(new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/comsla-log.txt", false));
+            logWriter = new PrintWriter(new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/log.txt", false));
         } catch (Exception e) {
             e.printStackTrace();
         }

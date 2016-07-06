@@ -37,7 +37,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
         else {
             keyName = hostname + ".ppk";
         }
-        String Path = Environment.getExternalStorageDirectory().getPath() + "/comslav/" + keyName;
+        String Path = Environment.getExternalStorageDirectory().getPath() + "/ihs/" + keyName;
         jsch.addIdentity(Path);
         Properties prop = new Properties();
         prop.put("StrictHostKeyChecking", "no");
@@ -52,7 +52,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
         super.onPreExecute();
         this.progressDialog.setMessage("Connecting");
         this.progressDialog.show();
-
+        this.progressDialog.setCancelable(false);
     }
 
     @Override

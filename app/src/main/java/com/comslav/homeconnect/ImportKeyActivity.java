@@ -30,11 +30,12 @@ public class ImportKeyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_key);
         final Context context = getApplicationContext();
-        final String sdcard = Environment.getExternalStorageDirectory().getPath();
+        final String sdcard = Environment.getExternalStorageDirectory().getPath() + "/ihs/";
         Button keyChooser = (Button) findViewById(R.id.bKeyChooser);
         keyChooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                TODO add an option to use other file explorers
                 Intent intent = new Intent(getApplicationContext(), ListFileActivity.class);
                 startActivity(intent);
                 finish();
@@ -50,7 +51,7 @@ public class ImportKeyActivity extends Activity {
                 InputStream in;
                 OutputStream out;
                 try {
-                    File dir = new File(sdcard + "/comslav/media/");
+                    File dir = new File(sdcard + "server_downloads/");
                     if (!dir.exists()) {
                         //noinspection StatementWithEmptyBody
                         if (dir.mkdirs()) {
@@ -70,9 +71,9 @@ public class ImportKeyActivity extends Activity {
                             else {
                                 in = new FileInputStream(importKeyPath);
                                 if (isPersonalKey.isChecked())
-                                    out = new FileOutputStream(sdcard + "/comslav/self.ppk");
+                                    out = new FileOutputStream(sdcard + "self.ppk");
                                 else
-                                    out = new FileOutputStream(sdcard + "/comslav/" + etHostname.getText() + ".ppk");
+                                    out = new FileOutputStream(sdcard + etHostname.getText() + ".ppk");
                                 byte[] buffer = new byte[1024];
                                 int read;
                                 while ((read = in.read(buffer)) != -1) {

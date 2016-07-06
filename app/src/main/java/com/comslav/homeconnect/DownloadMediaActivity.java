@@ -54,7 +54,7 @@ public class DownloadMediaActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String filename = parent.getItemAtPosition(position).toString();
                 try {
-                    channelSftp.get(filename, Environment.getExternalStorageDirectory().getPath() + "/comslav/media/" + filename);
+                    channelSftp.get(filename, Environment.getExternalStorageDirectory().getPath() + "/ihs/server_downloads/" + filename);
                     Toast.makeText(getApplicationContext(), "File Download Successful", Toast.LENGTH_SHORT).show();
 
                 } catch (SftpException e) {
@@ -78,7 +78,7 @@ public class DownloadMediaActivity extends Activity {
                     e.printStackTrace();
                 }
                 if (filesInDirectory != null) {
-                    File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/comslav/media/" + filename + "/");
+                    File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/ihs/server_downloads/" + filename + "/");
                     if (!dir.exists()) {
                         System.out.print(dir.mkdirs());
                     }
@@ -92,7 +92,7 @@ public class DownloadMediaActivity extends Activity {
                                 recursiveDownload(filename + "/" + fName);
                             }
                             try {
-                                channelSftp.get(filename + "/" + fName, Environment.getExternalStorageDirectory().getPath() + "/comslav/media/" + filename + "/" + fName);
+                                channelSftp.get(filename + "/" + fName, Environment.getExternalStorageDirectory().getPath() + "/ihs/server_downloads/" + filename + "/" + fName);
                             } catch (SftpException se) {
                                 se.printStackTrace();
                             }

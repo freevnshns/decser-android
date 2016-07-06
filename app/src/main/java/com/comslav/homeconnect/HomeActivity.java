@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class HomeActivity extends Activity {
 
@@ -46,7 +47,8 @@ public class HomeActivity extends Activity {
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ImportKeyActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ListFileActivity.class);
+                Toast.makeText(getApplicationContext(), R.string.selectKey, Toast.LENGTH_LONG).show();
                 startActivity(intent);
                 finish();
             }

@@ -39,11 +39,9 @@
         <activity
             android:name=".PeerConnectActivity"
             android:label="@string/title_activity_peer_connect" />
-        <activity android:name=".ListFileActivity" />
-
-        <!--<service-->
-        <!--android:name=".helpers.sshConnectionHandler"-->
-        <!--android:exported="false"></service>-->
+        <activity
+            android:name=".ListFileActivity"
+            android:label="@string/selectKey" />
     </application>
 
 </manifest>

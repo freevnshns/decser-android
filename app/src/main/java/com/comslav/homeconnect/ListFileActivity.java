@@ -70,8 +70,7 @@ public class ListFileActivity extends ListActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, ImportKeyActivity.class);
-        ImportKeyActivity.importKeyPath = null;
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
