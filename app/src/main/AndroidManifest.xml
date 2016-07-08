@@ -42,6 +42,9 @@
         <activity
             android:name="com.ihs.homeconnect.ListFileActivity"
             android:label="@string/selectKey" />
+        <activity
+            android:name=".DownloadManagerActivity"
+            android:label="Download Manager" />
     </application>
 
 </manifest>

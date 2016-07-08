@@ -61,9 +61,14 @@ public class DashboardActivity extends Activity {
     }
 
     public void launchService(int port, String type) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String url = "http://127.0.0.1:" + port;
-        intent.setData(Uri.parse(url));
+        Intent intent;
+        if (type.equals("Torrent")) {
+            intent = new Intent(this, DownloadManagerActivity.class);
+        } else {
+            intent = new Intent(Intent.ACTION_VIEW);
+            String url = "http://127.0.0.1:" + port;
+            intent.setData(Uri.parse(url));
+        }
         startActivity(intent);
     }
 
