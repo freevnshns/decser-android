@@ -1,7 +1,6 @@
 package com.ihs.homeconnect;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -10,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends AppCompatActivity {
 
 
     @Override
@@ -37,12 +37,15 @@ public class HomeActivity extends Activity {
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvContactList);
         mLayoutManager = new LinearLayoutManager(this);
+
+        assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new TrackListAdapter(HomeActivity.this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
+        assert floatingActionUploadButton != null;
         floatingActionUploadButton.setImageResource(R.drawable.ic_add_contact);
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override

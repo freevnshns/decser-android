@@ -8,22 +8,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ihs.homeconnect.DashboardActivity">
 
-    <TextView
-        android:id="@+id/tvLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/label"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ListView
         android:id="@+id/lvDashOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/tvLabel" />
+        android:layout_alignParentRight="true" />
 
 
 </RelativeLayout>

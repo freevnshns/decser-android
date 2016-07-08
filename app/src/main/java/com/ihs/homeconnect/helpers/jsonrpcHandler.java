@@ -1,9 +1,10 @@
 package com.ihs.homeconnect.helpers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,11 +26,9 @@ public class jsonrpcHandler extends AsyncTask<String, Void, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject result) {
-        try {
-            Toast.makeText(mContext, result.getString("jsonrpc"), Toast.LENGTH_LONG).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Intent rpc_result = new Intent("com.ihs.homeconnect.dm.ARIA_UPDATE");
+        rpc_result.putExtra("rpc_result", result.toString());
+        mContext.sendBroadcast(rpc_result);
     }
 
     @Override
@@ -38,10 +37,16 @@ public class jsonrpcHandler extends AsyncTask<String, Void, JSONObject> {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("jsonrpc", "2.0");
-            for (String param : params) {
-                jsonObject.accumulate("method", param);
+            jsonObject.accumulate("method", params[0]);
+            if (params.length > 1) {
+                JSONArray parameters = new JSONArray();
+                JSONArray urls = new JSONArray();
+                urls.put(params[1]);
+                parameters.put(urls);
+                jsonObject.accumulate("params", parameters);
             }
             jsonObject.accumulate("id", "aria2c");
+
             String endpoint = "http://192.168.1.200:6800/jsonrpc";
             HttpURLConnection httpURLConnection = (HttpURLConnection) (new URL(endpoint)).openConnection();
             httpURLConnection.setDoOutput(true);
@@ -50,6 +55,7 @@ public class jsonrpcHandler extends AsyncTask<String, Void, JSONObject> {
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
             outputStreamWriter.write(jsonObject.toString());
             outputStreamWriter.flush();
+
             int responseCode = httpURLConnection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 StringBuilder stringResponse = new StringBuilder();
