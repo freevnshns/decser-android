@@ -124,7 +124,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
             mDownloadsList = rpc_result.getJSONArray("result");
             for (int i = 0; i < mDownloadsList.length(); i++) {
                 mDownloads.add(mDownloadsList.getJSONObject(i).getJSONArray("files").getJSONObject(0).get("path").toString());
-                mDownloadsPercentage.add(String.valueOf((Integer.valueOf(mDownloadsList.getJSONObject(i).get("completedLength").toString()) / Integer.valueOf(mDownloadsList.getJSONObject(i).get("totalLength").toString()))) + "%");
+                mDownloadsPercentage.add(String.valueOf((Float.valueOf(mDownloadsList.getJSONObject(i).get("completedLength").toString()) / Float.valueOf(mDownloadsList.getJSONObject(i).get("totalLength").toString())) * 100) + "%");
             }
         }
 
