@@ -1,7 +1,5 @@
 package com.ihs.homeconnect.helpers;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 import org.json.JSONArray;
@@ -16,20 +14,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class jsonrpcHandler extends AsyncTask<String, Void, JSONObject> {
-
-    private Context mContext;
-
-    public jsonrpcHandler(Context mContext) {
-        this.mContext = mContext;
-    }
-
-
-    @Override
-    protected void onPostExecute(JSONObject result) {
-        Intent rpc_result = new Intent("com.ihs.homeconnect.dm.ARIA_UPDATE");
-        rpc_result.putExtra("rpc_result", result.toString());
-        mContext.sendBroadcast(rpc_result);
-    }
 
     @Override
     protected JSONObject doInBackground(String... params) {
