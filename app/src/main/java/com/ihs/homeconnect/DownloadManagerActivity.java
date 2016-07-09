@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.jsonrpcHandler;
 
@@ -64,12 +65,21 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 final EditText input_url = new EditText(getApplicationContext());
                 input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
                 input_url.setTextColor(Color.BLACK);
+                input_url.setHint("Paste the download url");
                 builder.setView(input_url);
                 builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         jsonrpcHandler jsonrpcHandler = new jsonrpcHandler();
-                        jsonrpcHandler.execute("aria2.addUri", input_url.getText().toString());
+                        try {
+                            JSONObject result = jsonrpcHandler.execute("aria2.addUri", input_url.getText().toString()).get();
+                            if (result.has("error"))
+                                Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
+                            else
+                                Toast.makeText(DownloadManagerActivity.this, "Added Successfully", Toast.LENGTH_LONG).show();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 builder.show();
