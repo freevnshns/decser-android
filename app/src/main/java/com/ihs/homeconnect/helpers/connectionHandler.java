@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.widget.Toast;
 
-import com.ihs.homeconnect.DashboardActivity;
+import com.ihs.homeconnect.DownloadManagerActivity;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -31,7 +31,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
         hostName = hostname;
         userName = username;
         JSch jsch = new JSch();
-        session = jsch.getSession(userName, hostName, 22);
+        session = jsch.getSession(userName, hostName, 3933);
         if (userName.equals("user"))
             keyName = "self.ppk";
         else {
@@ -62,8 +62,8 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
             this.progressDialog.dismiss();
         }
         if (session != null) {
-            DashboardActivity.session = session;
-            Intent intent = new Intent(mContext, DashboardActivity.class);
+            DownloadManagerActivity.session = session;
+            Intent intent = new Intent(mContext, DownloadManagerActivity.class);
             mContext.startActivity(intent);
         } else {
             Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();

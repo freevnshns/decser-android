@@ -1,7 +1,7 @@
 package com.ihs.homeconnect.helpers;
 
 public enum services {
-    Torrent(9091),
+    Torrent(6800),
     MediaServer(32400),
     Backup(42000),
     HomeBase(10000),

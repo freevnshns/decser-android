@@ -14,24 +14,23 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class jsonrpcHandler extends AsyncTask<String, Void, JSONObject> {
-
     @Override
     protected JSONObject doInBackground(String... params) {
         JSONObject response = null;
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("jsonrpc", "2.0");
-            jsonObject.accumulate("method", params[0]);
-            if (params.length > 1) {
+            jsonObject.accumulate("method", params[1]);
+            if (params.length > 2) {
                 JSONArray parameters = new JSONArray();
                 JSONArray urls = new JSONArray();
-                urls.put(params[1]);
+                urls.put(params[2]);
                 parameters.put(urls);
                 jsonObject.accumulate("params", parameters);
             }
             jsonObject.accumulate("id", "aria2c");
 
-            String endpoint = "http://192.168.1.200:6800/jsonrpc";
+            String endpoint = params[0];
             HttpURLConnection httpURLConnection = (HttpURLConnection) (new URL(endpoint)).openConnection();
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setDoInput(true);
