@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,47 +39,6 @@ public class DashboardActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new servicesAdapter();
         mRecyclerView.setAdapter(mAdapter);
-
-//        final dbHandler dbInstance;
-//        dbInstance = new dbHandler(this, null);
-//        final ArrayList<String> installedServices = dbInstance.getServices(1);
-//        ArrayAdapter<String> dashAdapter = new ArrayAdapter<>(this, R.layout.activity_dashboard, R.id.tvDashTemp, installedServices);
-//        final ListView listView = (ListView) findViewById(R.id.lvDashOptions);
-//        listView.setAdapter(dashAdapter);
-//        listView.setClickable(true);
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                for (services ser : services.values()) {
-//                    if (ser.toString().equals(installedServices.get(position))) {
-//                        try {
-//                            session.setPortForwardingL(ser.port, "127.0.0.1", ser.port);
-//                            launchService(9000 + ser.port, ser.toString());
-//                        } catch (JSchException e) {
-//                            if (e.getMessage().startsWith("PortForwardingL"))
-//                                launchService(9000 + ser.port, ser.toString());
-//                            else {
-//                                loggingHandler loggingHandler = new loggingHandler();
-//                                loggingHandler.addLog(e.getMessage());
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//    }
-//
-//        public void launchService ( int port, String type){
-//            Intent intent;
-//            if (type.equals("Torrent")) {
-//                intent = new Intent(this, DownloadManagerActivity.class);
-//            } else {
-//                intent = new Intent(Intent.ACTION_VIEW);
-//                String url = "http://127.0.0.1:" + port;
-//                intent.setData(Uri.parse(url));
-//            }
-//            startActivity(intent);
-//        }
     }
 
     @Override
@@ -130,7 +90,10 @@ public class DashboardActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            holder.itemView.setTag(position);
             holder.tvServiceName.setText(mServicesList.get(position));
+            holder.ivServiceIcon.setImageResource(R.drawable.ic_temp);
+
         }
 
         @Override
@@ -140,10 +103,45 @@ public class DashboardActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             private TextView tvServiceName;
+            private ImageView ivServiceIcon;
 
             public ViewHolder(View view) {
                 super(view);
                 this.tvServiceName = (TextView) view.findViewById(R.id.tvServiceName);
+                this.ivServiceIcon = (ImageView) view.findViewById(R.id.ivServiceIcon);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = null;
+                        switch (services.values()[(Integer) v.getTag()]) {
+                            case DownloadsManager:
+                                DownloadManagerActivity.session = session;
+                                intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
+                                break;
+                            case Backup:
+//                                TODO Launch OwnCloud activity , if not present download from f-droid and install and launch
+//                                intent = new Intent(DashboardActivity.this, .class);
+                                break;
+                            case HomeBase:
+//                                TODO Launch Server Dashboard
+//                                intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
+                                break;
+                            case VideoSurveillance:
+                                intent = new Intent(DashboardActivity.this, VideoSurveillanceActivity.class);
+                                break;
+                            case Printing:
+//                                Launch printing app
+                                break;
+                            default:
+                                break;
+                        }
+                        if (intent != null) {
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(DashboardActivity.this, "Support for this service is not available", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
             }
         }
     }

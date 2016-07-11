@@ -42,7 +42,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_manager);
         try {
-            session.setPortForwardingL(services.Torrent.port, "127.0.0.1", services.Torrent.port);
+            session.setPortForwardingL(services.DownloadsManager.port, "127.0.0.1", services.DownloadsManager.port);
         } catch (JSchException e) {
             e.printStackTrace();
         }
@@ -54,7 +54,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         jsonrpcHandler jsonrpcHandler = new jsonrpcHandler();
         try {
-            JSONObject rpc_result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.Torrent.port) + "/jsonrpc", "aria2.tellActive").get();
+            JSONObject rpc_result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.DownloadsManager.port) + "/jsonrpc", "aria2.tellActive").get();
             mAdapter = new DownloadsAdapter(rpc_result);
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
@@ -85,7 +85,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
                             Toast.makeText(DownloadManagerActivity.this, "Please enter a valid url", Toast.LENGTH_SHORT).show();
                         } else {
                             try {
-                                JSONObject result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.Torrent.port) + "/jsonrpc", "aria2.addUri", input_url.getText().toString()).get();
+                                JSONObject result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.DownloadsManager.port) + "/jsonrpc", "aria2.addUri", input_url.getText().toString()).get();
                                 if (result.has("error"))
                                     Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
                                 else
@@ -140,12 +140,11 @@ public class DownloadManagerActivity extends AppCompatActivity {
     }
 
     private class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.ViewHolder> {
-        private JSONArray mDownloadsList;
         private ArrayList<String> mDownloads = new ArrayList<>();
         private ArrayList<String> mDownloadsPercentage = new ArrayList<>();
 
         public DownloadsAdapter(JSONObject rpc_result) throws JSONException {
-            mDownloadsList = rpc_result.getJSONArray("result");
+            JSONArray mDownloadsList = rpc_result.getJSONArray("result");
             for (int i = 0; i < mDownloadsList.length(); i++) {
                 mDownloads.add(mDownloadsList.getJSONObject(i).getJSONArray("files").getJSONObject(0).get("path").toString());
                 mDownloadsPercentage.add(String.valueOf((Float.valueOf(mDownloadsList.getJSONObject(i).get("completedLength").toString()) / Float.valueOf(mDownloadsList.getJSONObject(i).get("totalLength").toString())) * 100) + "%");
