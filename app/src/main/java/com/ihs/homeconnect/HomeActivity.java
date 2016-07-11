@@ -60,7 +60,6 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ListFileActivity.class);
-                Toast.makeText(getApplicationContext(), R.string.selectKey, Toast.LENGTH_LONG).show();
                 startActivity(intent);
                 finish();
             }
