@@ -38,7 +38,7 @@ public class DownloadMediaActivity extends Activity {
         setContentView(R.layout.activity_download_media);
 
         ListView lvMediaFileList;
-        lvMediaFileList = populateList("/var/lib/transmission-daemon/downloads/");
+        lvMediaFileList = populateList("/home/user/downloads/");
         lvMediaFileList.setClickable(true);
         lvMediaFileList.setLongClickable(true);
         lvMediaFileList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

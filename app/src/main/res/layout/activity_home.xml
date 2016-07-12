@@ -42,5 +42,12 @@
             android:text="@string/empty_home_view"
             android:textColor="@color/text_secondary" />
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/bLoadFromServer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="@string/serverMediaDownload" />
 </RelativeLayout>
 

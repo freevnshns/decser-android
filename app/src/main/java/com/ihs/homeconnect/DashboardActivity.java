@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,16 @@ public class DashboardActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new servicesAdapter();
         mRecyclerView.setAdapter(mAdapter);
+        Button bLoadFromServer = (Button) findViewById(R.id.bLoadFromServer);
+        assert bLoadFromServer != null;
+        bLoadFromServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DashboardActivity.this, DownloadMediaActivity.class);
+                DownloadMediaActivity.session = session;
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
