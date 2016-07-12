@@ -63,7 +63,9 @@ public class HomeActivity extends AppCompatActivity {
             rlEmpty.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
-        mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+        }
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
         assert floatingActionUploadButton != null;
         floatingActionUploadButton.setImageResource(R.drawable.ic_add_contact);

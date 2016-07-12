@@ -74,7 +74,9 @@ public class DownloadManagerActivity extends AppCompatActivity {
             rlEmpty.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
-        mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+        }
         FloatingActionButton fabAddNewUri = (FloatingActionButton) findViewById(R.id.fabAddDownloadUri);
         assert fabAddNewUri != null;
         fabAddNewUri.setImageResource(R.drawable.ic_add_contact);
