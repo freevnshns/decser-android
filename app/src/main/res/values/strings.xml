@@ -33,4 +33,6 @@
     <string name="contact_name_hint">Name</string>
     <string name="selectKey">Select the key file</string>
     <string name="profile_picture">Profile picture</string>
+    <string name="empty_home_view">Tap the + icon to add your first contact</string>
+    <string name="empty_download_manager_view">There are no active downloads on your server , tap on the + icon to add one</string>
 </resources>

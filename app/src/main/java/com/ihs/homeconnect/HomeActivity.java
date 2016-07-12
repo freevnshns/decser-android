@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,17 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new ContactListAdapter(HomeActivity.this);
+
         mRecyclerView.setAdapter(mAdapter);
+        RelativeLayout rlEmpty = (RelativeLayout) findViewById(R.id.rlEmptyHomeView);
+        assert rlEmpty != null;
+        if (mAdapter.getItemCount() == 0) {
+            mRecyclerView.setVisibility(View.GONE);
+            rlEmpty.setVisibility(View.VISIBLE);
+        } else {
+            rlEmpty.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
         mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
         assert floatingActionUploadButton != null;
@@ -221,5 +232,4 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
 }

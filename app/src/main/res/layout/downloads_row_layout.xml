@@ -8,13 +8,13 @@
         android:id="@+id/tvDownloadName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/contact_name" />
+        android:textColor="@color/text_primary" />
 
     <TextView
         android:id="@+id/tvCompletionPercentage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvDownloadName"
-        android:textColor="@color/contact_hostname" />
+        android:textColor="@color/text_secondary" />
 
 </RelativeLayout>

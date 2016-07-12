@@ -25,4 +25,20 @@
         app:backgroundTint="@color/primary"
         app:borderWidth="2dp" />
 
+    <RelativeLayout
+        android:id="@+id/rlEmptyDMView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <TextView
+            style="@android:style/TextAppearance.DeviceDefault.Large"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:text="@string/empty_download_manager_view"
+            android:textColor="@color/text_secondary" />
+    </RelativeLayout>
+
 </RelativeLayout>
