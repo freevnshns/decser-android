@@ -21,7 +21,7 @@ public class ListFileActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
-        Toast.makeText(this, R.string.selectKey, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.select_key, Toast.LENGTH_LONG).show();
         path = Environment.getExternalStorageDirectory().getPath();
         if (getIntent().hasExtra("path")) {
             path = getIntent().getStringExtra("path");

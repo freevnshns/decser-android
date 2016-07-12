@@ -41,7 +41,7 @@
             android:label="@string/title_activity_peer_connect" />
         <activity
             android:name="com.ihs.homeconnect.ListFileActivity"
-            android:label="@string/selectKey" />
+            android:label="@string/select_key" />
         <activity
             android:name=".DownloadManagerActivity"
             android:label="Download Manager" />

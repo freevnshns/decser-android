@@ -1,10 +1,10 @@
 package com.ihs.homeconnect;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImportKeyActivity extends Activity {
+public class ImportKeyActivity extends AppCompatActivity {
     public static String importKeyPath;
 
     @Override
@@ -33,6 +33,7 @@ public class ImportKeyActivity extends Activity {
         final CheckBox isPersonalKey = (CheckBox) findViewById(R.id.cbIsPersonalKey);
         final EditText etHostname = (EditText) findViewById(R.id.etHostname);
         final Button importKey = (Button) findViewById(R.id.bKeyImporter);
+        assert importKey != null;
         importKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,13 +52,16 @@ public class ImportKeyActivity extends Activity {
                     if (importKeyPath == null)
                         Toast.makeText(context, "Please select a key file", Toast.LENGTH_SHORT).show();
                     else {
+                        assert etHostname != null;
                         if (etHostname.getText().toString().equals(""))
                             Toast.makeText(context, "Please enter the hostname", Toast.LENGTH_SHORT).show();
                         else {
+                            assert etPeerName != null;
                             if (etPeerName.getText().toString().equals(""))
                                 Toast.makeText(context, "Please enter a Name", Toast.LENGTH_SHORT).show();
                             else {
                                 in = new FileInputStream(importKeyPath);
+                                assert isPersonalKey != null;
                                 if (isPersonalKey.isChecked())
                                     out = new FileOutputStream(sdcard + "self.ppk");
                                 else

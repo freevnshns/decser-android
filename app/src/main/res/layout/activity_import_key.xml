@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etHostname"
-        android:text="@string/isPersonalKey" />
+        android:text="@string/is_personal_key" />
 
     <Button
         android:id="@+id/bKeyImporter"
