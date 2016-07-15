@@ -59,6 +59,8 @@ public class DownloadManagerActivity extends AppCompatActivity {
             mAdapter = new DownloadsAdapter(rpc_result);
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Download Manger failed to start on your server please restart the server", Toast.LENGTH_LONG).show();
+            onBackPressed();
         }
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
