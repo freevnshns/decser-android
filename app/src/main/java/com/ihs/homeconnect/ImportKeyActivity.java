@@ -7,8 +7,8 @@ import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.dbHandler;
@@ -30,7 +30,9 @@ public class ImportKeyActivity extends AppCompatActivity {
         final Context context = getApplicationContext();
         final String sdcard = Environment.getExternalStorageDirectory().getPath() + "/ihs/";
         final EditText etPeerName = (EditText) findViewById(R.id.etPeerName);
-        final CheckBox isPersonalKey = (CheckBox) findViewById(R.id.cbIsPersonalKey);
+        final RadioGroup isPersonalKey = (RadioGroup) findViewById(R.id.rgIsPersonalKey);
+        assert isPersonalKey != null;
+        isPersonalKey.check(R.id.rbGuestKey);
         final EditText etHostname = (EditText) findViewById(R.id.etHostname);
         final Button importKey = (Button) findViewById(R.id.bKeyImporter);
         assert importKey != null;
@@ -61,8 +63,7 @@ public class ImportKeyActivity extends AppCompatActivity {
                                 Toast.makeText(context, "Please enter a Name", Toast.LENGTH_SHORT).show();
                             else {
                                 in = new FileInputStream(importKeyPath);
-                                assert isPersonalKey != null;
-                                if (isPersonalKey.isChecked())
+                                if (isPersonalKey.getCheckedRadioButtonId() == R.id.rbPersonalKey)
                                     out = new FileOutputStream(sdcard + "self.ppk");
                                 else
                                     out = new FileOutputStream(sdcard + etHostname.getText() + ".ppk");

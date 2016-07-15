@@ -23,4 +23,5 @@
     <string name="profile_picture">Profile picture</string>
     <string name="empty_home_view">Tap + to add a new connection</string>
     <string name="empty_download_manager_view">No active downloads on your server , tap + to add one</string>
+    <string name="is_guest_key">Friend\'s Key</string>
 </resources>

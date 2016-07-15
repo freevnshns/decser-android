@@ -27,18 +27,31 @@
         android:hint="@string/hostname"
         android:inputType="textNoSuggestions|text" />
 
-    <CheckBox
-        android:id="@+id/cbIsPersonalKey"
+    <RadioGroup
+        android:id="@+id/rgIsPersonalKey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etHostname"
-        android:text="@string/is_personal_key" />
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbPersonalKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_personal_key" />
+
+        <RadioButton
+            android:id="@+id/rbGuestKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_guest_key" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/bKeyImporter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/cbIsPersonalKey"
+        android:layout_below="@+id/rgIsPersonalKey"
         android:text="@string/importHelperText" />
 
 </RelativeLayout>
