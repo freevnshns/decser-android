@@ -1,7 +1,14 @@
 package com.ihs.homeconnect;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.services;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -123,15 +132,44 @@ public class DashboardActivity extends AppCompatActivity {
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = null;
+                        Intent intent;
+                        PackageManager packageManager = getPackageManager();
                         switch (services.values()[(Integer) v.getTag()]) {
                             case DownloadsManager:
                                 DownloadManagerActivity.session = session;
                                 intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
+                                startActivity(intent);
                                 break;
                             case Backup:
-//                                TODO Launch OwnCloud activity , if not present download from f-droid and install and launch
-//                                intent = new Intent(DashboardActivity.this, .class);
+                                try {
+                                    packageManager.getPackageInfo("com.owncloud.android", PackageManager.GET_ACTIVITIES);
+                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
+                                    try {
+                                        session.setPortForwardingL(services.Backup.port + 9000, "127.0.0.1", services.Backup.port);
+                                        startActivity(launchIntent);
+                                    } catch (JSchException e) {
+                                        e.printStackTrace();
+                                    }
+                                } catch (PackageManager.NameNotFoundException e) {
+                                    BroadcastReceiver onComplete = new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+                                            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+                                                    .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.owncloud.android_20000001.apk")),
+                                                            "application/vnd.android.package-archive");
+                                            startActivity(promptInstall);
+                                        }
+                                    };
+                                    String url = "https://f-droid.org/repo/com.owncloud.android_20000001.apk";
+                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                    request.setDescription("com.owncloud.android_20000001.apk");
+                                    request.setTitle("Backup App");
+                                    request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "com.owncloud.android_20000001.apk");
+                                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                                    manager.enqueue(request);
+                                    registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                                }
+                                Toast.makeText(DashboardActivity.this, "Sorry this service is not available at the moment", Toast.LENGTH_LONG).show();
                                 break;
                             case HomeBase:
 //                                TODO Launch Server Dashboard
@@ -139,17 +177,13 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case VideoSurveillance:
                                 intent = new Intent(DashboardActivity.this, VideoSurveillanceActivity.class);
+                                startActivity(intent);
                                 break;
                             case Printing:
 //                                Launch printing app
                                 break;
                             default:
                                 break;
-                        }
-                        if (intent != null) {
-                            startActivity(intent);
-                        } else {
-                            Toast.makeText(DashboardActivity.this, "Support for this service is not available", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
