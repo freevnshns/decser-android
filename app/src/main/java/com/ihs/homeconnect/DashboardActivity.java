@@ -180,7 +180,22 @@ public class DashboardActivity extends AppCompatActivity {
                                 startActivity(intent);
                                 break;
                             case Printing:
-//                                Launch printing app
+                                try {
+                                    packageManager.getPackageInfo("com.blackspruce.lpd", PackageManager.GET_ACTIVITIES);
+                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
+                                    try {
+                                        session.setPortForwardingL(services.Printing.port + 9000, "127.0.0.1", services.Printing.port);
+                                        startActivity(launchIntent);
+                                    } catch (JSchException e) {
+                                        e.printStackTrace();
+                                    }
+                                } catch (PackageManager.NameNotFoundException e) {
+                                    try {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.blackspruce.lpd")));
+                                    } catch (android.content.ActivityNotFoundException a) {
+                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + "com.blackspruce.lpd")));
+                                    }
+                                }
                                 break;
                             default:
                                 break;
