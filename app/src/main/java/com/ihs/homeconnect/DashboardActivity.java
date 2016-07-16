@@ -158,18 +158,18 @@ public class DashboardActivity extends AppCompatActivity {
                                                     .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.owncloud.android_20000001.apk")),
                                                             "application/vnd.android.package-archive");
                                             startActivity(promptInstall);
+                                            unregisterReceiver(this);
                                         }
                                     };
                                     String url = "https://f-droid.org/repo/com.owncloud.android_20000001.apk";
                                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                                     request.setDescription("com.owncloud.android_20000001.apk");
-                                    request.setTitle("Backup App");
+                                    request.setTitle("ownCloud Backup App");
                                     request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "com.owncloud.android_20000001.apk");
                                     DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
                                     manager.enqueue(request);
                                     registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                                 }
-                                Toast.makeText(DashboardActivity.this, "Sorry this service is not available at the moment", Toast.LENGTH_LONG).show();
                                 break;
                             case HomeBase:
 //                                TODO Launch Server Dashboard
