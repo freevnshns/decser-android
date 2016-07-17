@@ -5,14 +5,17 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class keyExchangeHandler extends AsyncTask<Void, Void, Void> {
-    private ServerSocket serverSocket;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class keyExchangeHandler extends AsyncTask<Void, Void, String> {
     private Context mContext;
 
     public keyExchangeHandler(Context mContext) {
@@ -21,76 +24,63 @@ public class keyExchangeHandler extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        try {
-            int commPort = 21000;
-            serverSocket = new ServerSocket(commPort);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected void onPostExecute(Void o) {
+    protected void onPostExecute(String o) {
         super.onPostExecute(o);
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+
+        try {
+            if (o.equals("")) {
+                builder.setTitle("No user connected during this period");
+            } else {
+                builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setCancelable(false);
             }
-        });
-        builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            AlertDialog promptAccess = builder.create();
+            JSONObject exchange_user = new JSONObject(o);
+            promptAccess.setTitle("Allow for " + exchange_user.get("user"));
+            promptAccess.show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected String doInBackground(Void[] params) {
+        String str = "";
+        try {
+            URL url = new URL("http://127.0.0.1:9080/keyExchange");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(300000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod("GET");
+            conn.connect();
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                InputStream stream = conn.getInputStream();
                 try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    Reader reader;
+                    reader = new InputStreamReader(stream, "UTF-8");
+                    char[] buffer = new char[1000];
+                    reader.read(buffer);
+                    str = new String(buffer);
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
                 }
             }
-        });
-        builder.setCancelable(false);
-        AlertDialog promptAccess = builder.create();
-        String requestId = "";
-        promptAccess.setTitle("Allow for " + requestId);
-        promptAccess.show();
-//        Process rest of the formatlitire here
-    }
-
-    @Override
-    protected void onCancelled(Void o) {
-        super.onCancelled(o);
-        try {
-            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected Void doInBackground(Void[] params) {
-        Socket socket;
-        BufferedReader bufferedReader;
-        try {
-            socket = serverSocket.accept();
-            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            bufferedReader.readLine();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return str;
     }
 }

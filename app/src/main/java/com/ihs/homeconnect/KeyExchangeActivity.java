@@ -6,10 +6,11 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.ihs.homeconnect.helpers.keyExchangeHandler;
+import com.ihs.homeconnect.helpers.services;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-public class ShareKeyActivity extends AppCompatActivity {
+public class KeyExchangeActivity extends AppCompatActivity {
     public static Session session = null;
 
     @Override
@@ -23,8 +24,8 @@ public class ShareKeyActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     try {
-                        session.setPortForwardingR(21000, "127.0.0.1", 21000);
-                        new keyExchangeHandler(ShareKeyActivity.this).execute();
+                        session.setPortForwardingL(services.HomeBase.port + 9000, "127.0.0.1", services.HomeBase.port);
+                        new keyExchangeHandler(KeyExchangeActivity.this).execute();
                     } catch (JSchException e) {
                         e.printStackTrace();
                     }
