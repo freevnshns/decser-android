@@ -44,6 +44,11 @@ public class keyExchangeHandler extends AsyncTask<Void, Void, Void> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         builder.setCancelable(false);
@@ -52,11 +57,6 @@ public class keyExchangeHandler extends AsyncTask<Void, Void, Void> {
         promptAccess.setTitle("Allow for " + requestId);
         promptAccess.show();
 //        Process rest of the formatlitire here
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
