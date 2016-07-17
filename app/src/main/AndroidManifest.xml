@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
-            android:name="com.ihs.homeconnect.HomeActivity"
+            android:name=".HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/splashScreen">
             <intent-filter>
@@ -25,26 +25,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ihs.homeconnect.DashboardActivity"
+            android:name=".DashboardActivity"
             android:label="@string/title_activity_dash" />
         <activity
-            android:name="com.ihs.homeconnect.ImportKeyActivity"
+            android:name=".ImportKeyActivity"
             android:label="@string/title_activity_import_key" />
         <activity
-            android:name="com.ihs.homeconnect.ExportActivity"
-            android:label="@string/title_activity_export" />
-        <activity
-            android:name="com.ihs.homeconnect.DownloadMediaActivity"
+            android:name=".DownloadMediaActivity"
             android:label="@string/title_activity_download_media" />
         <activity
-            android:name="com.ihs.homeconnect.PeerConnectActivity"
+            android:name=".PeerConnectActivity"
             android:label="@string/title_activity_peer_connect" />
         <activity
-            android:name="com.ihs.homeconnect.ListFileActivity"
+            android:name=".ListFileActivity"
             android:label="@string/select_key" />
         <activity
             android:name=".DownloadManagerActivity"
             android:label="Download Manager" />
+        <activity android:name=".ShareKeyActivity" />
     </application>
 
 </manifest>

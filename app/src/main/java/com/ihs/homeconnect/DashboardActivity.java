@@ -76,8 +76,8 @@ public class DashboardActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.serverMediaDownload) {
-            Intent intent = new Intent(this, DownloadMediaActivity.class);
-            DownloadMediaActivity.session = session;
+            Intent intent = new Intent(this, ShareKeyActivity.class);
+            ShareKeyActivity.session = session;
             startActivity(intent);
         }
 
