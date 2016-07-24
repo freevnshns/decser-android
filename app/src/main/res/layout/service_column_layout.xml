@@ -16,6 +16,7 @@
         style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/ivServiceIcon"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_toEndOf="@+id/ivServiceIcon"
+        android:layout_toRightOf="@+id/ivServiceIcon" />
 </RelativeLayout>

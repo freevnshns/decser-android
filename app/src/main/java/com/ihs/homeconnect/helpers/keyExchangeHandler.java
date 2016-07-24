@@ -27,7 +27,6 @@ public class keyExchangeHandler extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String o) {
         super.onPostExecute(o);
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
         try {
             if (o.equals("")) {
                 builder.setTitle("No user connected during this period");

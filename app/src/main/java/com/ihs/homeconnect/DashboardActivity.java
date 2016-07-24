@@ -10,7 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,7 +42,7 @@ public class DashboardActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager;
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvDashboard);
-        mLayoutManager = new GridLayoutManager(this, 2);
+        mLayoutManager = new LinearLayoutManager(this);
 
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -76,8 +76,8 @@ public class DashboardActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.serverMediaDownload) {
-            Intent intent = new Intent(this, KeyExchangeActivity.class);
-            KeyExchangeActivity.session = session;
+            Intent intent = new Intent(this, ShareKeyActivity.class);
+            ShareKeyActivity.session = session;
             startActivity(intent);
         }
 

@@ -42,7 +42,8 @@
         <activity
             android:name=".DownloadManagerActivity"
             android:label="Download Manager" />
-        <activity android:name=".KeyExchangeActivity" />
+        <activity android:name=".ShareKeyActivity" />
+        <activity android:name=".RequestKeyActivity" />
     </application>
 
 </manifest>

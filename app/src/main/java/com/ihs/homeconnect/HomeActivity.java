@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ListFileActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RequestKeyActivity.class);
                 startActivity(intent);
                 finish();
             }

@@ -10,7 +10,7 @@ import com.ihs.homeconnect.helpers.services;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-public class KeyExchangeActivity extends AppCompatActivity {
+public class ShareKeyActivity extends AppCompatActivity {
     public static Session session = null;
 
     @Override
@@ -25,7 +25,7 @@ public class KeyExchangeActivity extends AppCompatActivity {
                 if (isChecked) {
                     try {
                         session.setPortForwardingL(services.HomeBase.port + 9000, "127.0.0.1", services.HomeBase.port);
-                        new keyExchangeHandler(KeyExchangeActivity.this).execute();
+                        new keyExchangeHandler(ShareKeyActivity.this).execute();
                     } catch (JSchException e) {
                         e.printStackTrace();
                     }
