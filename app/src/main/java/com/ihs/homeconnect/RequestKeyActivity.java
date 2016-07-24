@@ -14,7 +14,6 @@ public class RequestKeyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_key);
-//        Connection check
         final EditText etRequestHostname = (EditText) findViewById(R.id.etRequestHostname);
         Button bRequestKey = (Button) findViewById(R.id.bRequestKey);
         assert bRequestKey != null;
@@ -22,7 +21,7 @@ public class RequestKeyActivity extends AppCompatActivity {
         bRequestKey.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new keyRequestHandler().execute(etRequestHostname.getText().toString());
+                new keyRequestHandler(RequestKeyActivity.this).execute(etRequestHostname.getText().toString());
             }
         });
     }

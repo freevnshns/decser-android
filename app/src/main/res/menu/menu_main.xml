@@ -1,8 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Main">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_export_key"
+        android:id="@+id/action_request_key"
         android:orderInCategory="100"
-        android:title="@string/share_guest_key" />
+        android:title="@string/request_guest_key"
+        app:showAsAction="always" />
 </menu>

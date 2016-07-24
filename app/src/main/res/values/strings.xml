@@ -8,9 +8,7 @@
     <string name="peerName">Name</string>
     <string name="action_import">Import Key</string>
     <string name="hostname">Web address</string>
-    <string name="share_guest_key">Share Guest Key</string>
-    <string name="title_activity_export">Share Guest Key</string>
-    <string name="shareGuestKey">Share</string>
+    <string name="request_guest_key">Request guest key</string>
     <string name="title_activity_download_media">Download Media</string>
     <string name="tvDownloadLabel">Server Files</string>
     <string name="title_activity_splash_screen">Splash Screen</string>
