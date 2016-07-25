@@ -180,7 +180,6 @@ public class HomeActivity extends AppCompatActivity {
             public TextView tvContactName;
             public TextView tvContactHostname;
 
-
             public ViewHolder(View view) {
                 super(view);
                 this.tvContactName = (TextView) view.findViewById(R.id.tvContactName);
@@ -208,7 +207,6 @@ public class HomeActivity extends AppCompatActivity {
                 final int tempContactPosition = (int) v.getTag(R.id.TAG_CONTACT_POSITION);
                 final dbHandler dbInstance = new dbHandler(mContext, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
                 builder.setTitle("Delete Contact").setMessage("Are you sure you want to delete this contact ?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
