@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import com.ihs.homeconnect.DashboardActivity;
+import com.ihs.homeconnect.PeerConnectActivity;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -62,8 +63,14 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
             this.progressDialog.dismiss();
         }
         if (session != null) {
-            DashboardActivity.session = session;
-            Intent intent = new Intent(mContext, DashboardActivity.class);
+            Intent intent;
+            if (userName.equals("user")) {
+                DashboardActivity.session = session;
+                intent = new Intent(mContext, DashboardActivity.class);
+            } else {
+                PeerConnectActivity.session = session;
+                intent = new Intent(mContext, PeerConnectActivity.class);
+            }
             mContext.startActivity(intent);
         } else {
             Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();

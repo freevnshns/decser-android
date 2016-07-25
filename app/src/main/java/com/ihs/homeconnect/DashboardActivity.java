@@ -80,7 +80,6 @@ public class DashboardActivity extends AppCompatActivity {
             ShareKeyActivity.session = session;
             startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 

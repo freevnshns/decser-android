@@ -39,6 +39,8 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
         progressDialog.dismiss();
         if (s) {
             Toast.makeText(mContext, "Key received", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(mContext, "Failed", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -51,16 +53,15 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out.write("lol@lolmail.com");
             out.flush();
-            out.close();
             String buffer;
             PrintWriter keyWriter = new PrintWriter(new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + params[0] + ".ppk", false));
             while ((buffer = in.readLine()) != null) {
                 keyWriter.append(buffer).append('\n');
             }
             in.close();
+            out.close();
             keyWriter.close();
         } catch (ConnectException e) {
-            Toast.makeText(mContext, "Remote user isn't visible", Toast.LENGTH_SHORT).show();
             return Boolean.FALSE;
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,7 +70,7 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
             try {
                 assert socket != null;
                 socket.close();
-            } catch (IOException e) {
+            } catch (IOException | NullPointerException e) {
                 e.printStackTrace();
             }
         }

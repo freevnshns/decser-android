@@ -134,7 +134,7 @@ public class dbHandler extends SQLiteOpenHelper {
 
     public String getAccessType(String hostname) {
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE " + COLUMN_ACCESS + "=" + hostname + ";";
+        String query = "SELECT " + COLUMN_ACCESS + " FROM " + TABLE_CONTACTS + " WHERE " + COLUMN_HOST_NAME + "='" + hostname + "';";
         String ac_lvl = "limited-user";
         try {
             Cursor c = db.rawQuery(query, null);

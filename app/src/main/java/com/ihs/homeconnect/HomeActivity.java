@@ -193,7 +193,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
                 try {
-                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, new dbHandler(mContext, null).getAccessType(tempContactHostname),
+                    String access_lvl = new dbHandler(mContext, null).getAccessType(tempContactHostname);
+                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, access_lvl,
                             mContext);
                     connectionHandler.execute();
                 } catch (JSchException e) {
