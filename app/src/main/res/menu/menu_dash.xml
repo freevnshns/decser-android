@@ -1,8 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.ihs.homeconnect.DashboardActivity">
     <item
-        android:id="@+id/serverMediaDownload"
+        android:id="@+id/share_key"
         android:orderInCategory="200"
-        android:title="@string/serverMediaDownload" />
+        android:title="@string/share_key"
+        app:showAsAction="always" />
 </menu>

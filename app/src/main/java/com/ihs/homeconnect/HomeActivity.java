@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_home);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
+            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
             requestPermissions(perms, 200);
         }
 
@@ -193,7 +193,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
                 try {
-                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, "user", mContext);
+                    connectionHandler connectionHandler = new connectionHandler(tempContactHostname, new dbHandler(mContext, null).getAccessType(tempContactHostname),
+                            mContext);
                     connectionHandler.execute();
                 } catch (JSchException e) {
                     e.printStackTrace();

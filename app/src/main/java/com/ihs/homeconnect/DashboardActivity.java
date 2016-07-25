@@ -75,7 +75,7 @@ public class DashboardActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.serverMediaDownload) {
+        if (id == R.id.share_key) {
             Intent intent = new Intent(this, ShareKeyActivity.class);
             ShareKeyActivity.session = session;
             startActivity(intent);

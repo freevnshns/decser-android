@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     //    TABLE 1 DD STARTS HERE
     public static final String DATABASE_NAME = "homeConnect.db";
     public static final String TABLE_CONTACTS = "contacts";
@@ -25,21 +25,8 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_HOST_NAME = "hostname";
     public static final String COLUMN_HOST_NAME_TYPE = "TEXT";
 
-    //    TABLE 2 DD STARTS HERE
-    public static final String TABLE_AVAILABLE_SERVICES = "available_services";
-
-    public static final String COLUMN_SERVICE_ID = "serviceId";
-    public static final String COLUMN_SERVICE_ID_TYPE = "INTEGER PRIMARY KEY";
-
-    public static final String COLUMN_SERVICE_NAME = "serviceName";
-    public static final String COLUMN_SERVICE_NAME_TYPE = "TEXT UNIQUE";
-
-    public static final String COLUMN_SERVICE_STATUS = "serviceStatus";
-    public static final String COLUMN_SERVICE_STATUS_TYPE = "INTEGER";
-
-    public static final String COLUMN_SERVICE_PORT = "servicePort";
-    public static final String COLUMN_SERVICE_PORT_TYPE = "INTEGER";
-
+    public static final String COLUMN_ACCESS = "access";
+    public static final String COLUMN_ACCESS_TYPE = "TEXT";
 
     public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -47,12 +34,9 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "\n);";
-        String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_AVAILABLE_SERVICES + "\n(\n" + COLUMN_SERVICE_ID + " " + COLUMN_SERVICE_ID_TYPE + " , " + COLUMN_SERVICE_NAME + " " + COLUMN_SERVICE_NAME_TYPE + " , " + COLUMN_SERVICE_STATUS + " " + COLUMN_SERVICE_STATUS_TYPE + " , " + COLUMN_SERVICE_PORT + " " + COLUMN_SERVICE_PORT_TYPE + "\n);";
+        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
         try {
             db.execSQL(query);
-            db.execSQL(query2);
-            populateServices(db);
         } catch (SQLException e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -62,7 +46,6 @@ public class dbHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_AVAILABLE_SERVICES);
         onCreate(db);
     }
 
@@ -80,11 +63,12 @@ public class dbHandler extends SQLiteOpenHelper {
         return false;
     }
 
-    public void addContact(String name, String hostname) {
+    public void addContact(String name, String hostname, String access) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_HOST_NAME, hostname);
+        values.put(COLUMN_ACCESS, access);
         try {
             db.insert(TABLE_CONTACTS, null, values);
         } catch (Exception e) {
@@ -93,47 +77,6 @@ public class dbHandler extends SQLiteOpenHelper {
         }
         db.close();
     }
-
-    public void populateServices(SQLiteDatabase db) {
-        for (services ser : services.values()) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_SERVICE_NAME, ser.toString());
-            values.put(COLUMN_SERVICE_STATUS, 1);
-            values.put(COLUMN_SERVICE_PORT, ser.port);
-            try {
-                db.insert(TABLE_AVAILABLE_SERVICES, null, values);
-            } catch (Exception e) {
-                loggingHandler loggingHandler = new loggingHandler();
-                loggingHandler.addLog(e.getMessage());
-            }
-        }
-    }
-
-    public ArrayList<String> getServices(int status) {
-        ArrayList<String> servicesList = new ArrayList<>();
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_AVAILABLE_SERVICES + " WHERE " + COLUMN_SERVICE_STATUS + "==" + status + ";";
-        try {
-            Cursor c = db.rawQuery(query, null);
-            c.moveToFirst();
-            int index = 0;
-            while (!c.isAfterLast()) {
-                if (c.getString(c.getColumnIndex(COLUMN_SERVICE_NAME)) != null) {
-                    servicesList.add(index, c.getString(c.getColumnIndex(COLUMN_SERVICE_NAME)));
-                    index++;
-                }
-                c.moveToNext();
-            }
-            c.close();
-            db.close();
-            return servicesList;
-        } catch (Exception e) {
-            loggingHandler loggingHandler = new loggingHandler();
-            loggingHandler.addLog(e.getMessage());
-        }
-        return null;
-    }
-
 
     public String[] getContactNameList() {
         ArrayList<String> tempContactsList = new ArrayList<>();
@@ -187,5 +130,21 @@ public class dbHandler extends SQLiteOpenHelper {
             hostnameArray[i] = tempHostnameList.get(i);
         }
         return hostnameArray;
+    }
+
+    public String getAccessType(String hostname) {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE " + COLUMN_ACCESS + "=" + hostname + ";";
+        String ac_lvl = "limited-user";
+        try {
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+            ac_lvl = c.getString(c.getColumnIndex(COLUMN_ACCESS));
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ac_lvl;
     }
 }

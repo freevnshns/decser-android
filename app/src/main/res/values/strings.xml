@@ -12,7 +12,7 @@
     <string name="title_activity_download_media">Download Media</string>
     <string name="tvDownloadLabel">Server Files</string>
     <string name="title_activity_splash_screen">Splash Screen</string>
-    <string name="serverMediaDownload">Load media from server</string>
+    <string name="share_key">Share key</string>
     <string name="bDeleteKey">Delete</string>
     <string name="title_activity_peer_connect">Peer Connect</string>
     <string name="is_personal_key">Personal Key</string>
