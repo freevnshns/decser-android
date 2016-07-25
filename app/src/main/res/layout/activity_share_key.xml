@@ -9,14 +9,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ShareKeyActivity">
 
-    <CheckBox
-        android:id="@+id/cbDiscoverable"
+    <EditText
+        android:id="@+id/etEmailID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="8"
+        android:hint="@string/share_id_hint"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/bDiscoverable"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etEmailID"
+        android:text="@string/turn_on_discovery" />
 
     <TextView
         android:id="@+id/tvTimeCount"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bDiscoverable" />
 
 </RelativeLayout>

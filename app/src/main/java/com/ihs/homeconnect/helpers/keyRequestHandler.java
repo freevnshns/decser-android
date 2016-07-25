@@ -7,13 +7,16 @@ import android.os.Environment;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.Socket;
 
-public class keyRequestHandler extends AsyncTask<String, Void, String> {
+public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
     public ProgressDialog progressDialog;
     private Context mContext;
 
@@ -31,28 +34,45 @@ public class keyRequestHandler extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(Boolean s) {
         super.onPostExecute(s);
         progressDialog.dismiss();
-        Toast.makeText(mContext, "Key received", Toast.LENGTH_LONG).show();
+        if (s) {
+            Toast.makeText(mContext, "Key received", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected Boolean doInBackground(String... params) {
+        Socket socket = null;
         try {
-            Socket socket = new Socket(params[0], 42000);
-            BufferedReader in;
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socket = new Socket(params[0], 42000);
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out.write("lol@lolmail.com");
+            out.flush();
+            out.close();
             String buffer;
             PrintWriter keyWriter = new PrintWriter(new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + params[0] + ".ppk", false));
             while ((buffer = in.readLine()) != null) {
                 keyWriter.append(buffer).append('\n');
             }
+            in.close();
             keyWriter.close();
-            socket.close();
+        } catch (ConnectException e) {
+            Toast.makeText(mContext, "Remote user isn't visible", Toast.LENGTH_SHORT).show();
+            return Boolean.FALSE;
         } catch (IOException e) {
             e.printStackTrace();
+            return Boolean.FALSE;
+        } finally {
+            try {
+                assert socket != null;
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return Boolean.TRUE;
     }
 }
