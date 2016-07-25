@@ -28,7 +28,7 @@
             android:name=".DashboardActivity"
             android:label="@string/title_activity_dash" />
         <activity
-            android:name=".ImportKeyActivity"
+            android:name=".AddContactActivity"
             android:label="@string/title_activity_import_key" />
         <activity
             android:name=".DownloadMediaActivity"

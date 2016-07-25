@@ -38,7 +38,7 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
         super.onPostExecute(s);
         progressDialog.dismiss();
         if (s) {
-            Toast.makeText(mContext, "Key received", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Key received", Toast.LENGTH_LONG).show();
         }
     }
 

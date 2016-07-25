@@ -63,8 +63,8 @@ public class ListFileActivity extends ListActivity {
             finish();
         } else {
 //            Code to implement import
-            Intent intent = new Intent(this, ImportKeyActivity.class);
-            ImportKeyActivity.importKeyPath = filename;
+            Intent intent = new Intent(this, AddContactActivity.class);
+            AddContactActivity.importKeyPath = filename;
             startActivity(intent);
             finish();
         }

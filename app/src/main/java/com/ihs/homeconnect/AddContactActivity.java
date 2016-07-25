@@ -20,7 +20,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImportKeyActivity extends AppCompatActivity {
+public class AddContactActivity extends AppCompatActivity {
     public static String importKeyPath;
 
     @Override
