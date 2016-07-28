@@ -44,6 +44,7 @@
             android:label="Download Manager" />
         <activity android:name=".ShareKeyActivity" />
         <activity android:name=".RequestKeyActivity" />
+        <activity android:name=".VideoCamActivity" />
     </application>
 
 </manifest>

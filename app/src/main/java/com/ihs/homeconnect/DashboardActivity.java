@@ -175,7 +175,8 @@ public class DashboardActivity extends AppCompatActivity {
 //                                intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
                                 break;
                             case VideoSurveillance:
-                                intent = new Intent(DashboardActivity.this, VideoSurveillanceActivity.class);
+                                intent = new Intent(DashboardActivity.this, VideoCamActivity.class);
+                                VideoCamActivity.session = session;
                                 startActivity(intent);
                                 break;
                             case Printing:
