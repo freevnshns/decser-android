@@ -145,10 +145,10 @@ public class DashboardActivity extends AppCompatActivity {
                                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
                                     try {
                                         session.setPortForwardingL(services.Backup.port + 9000, "127.0.0.1", services.Backup.port);
-                                        startActivity(launchIntent);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
                                     }
+                                    startActivity(launchIntent);
                                 } catch (PackageManager.NameNotFoundException e) {
                                     BroadcastReceiver onComplete = new BroadcastReceiver() {
                                         @Override
@@ -172,7 +172,14 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case HomeBase:
 //                                TODO Launch Server Dashboard
-//                                intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
+                                intent = new Intent(Intent.ACTION_VIEW);
+                                try {
+                                    session.setPortForwardingL(services.HomeBase.port + 9000, "127.0.0.1", services.HomeBase.port);
+                                } catch (JSchException e) {
+                                    e.printStackTrace();
+                                }
+                                intent.setData(Uri.parse("http://127.0.0.1:9080/"));
+                                startActivity(intent);
                                 break;
                             case VideoSurveillance:
                                 intent = new Intent(DashboardActivity.this, VideoCamActivity.class);
@@ -185,10 +192,10 @@ public class DashboardActivity extends AppCompatActivity {
                                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
                                     try {
                                         session.setPortForwardingL(services.Printing.port + 9000, "127.0.0.1", services.Printing.port);
-                                        startActivity(launchIntent);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
                                     }
+                                    startActivity(launchIntent);
                                 } catch (PackageManager.NameNotFoundException e) {
                                     try {
                                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.blackspruce.lpd")));
