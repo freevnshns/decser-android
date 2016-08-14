@@ -5,6 +5,6 @@
         <bitmap
             android:antialias="true"
             android:gravity="center"
-            android:src="@drawable/ic_add_contact" />
+            android:src="@drawable/ic_logo_app" />
     </item>
 </layer-list>

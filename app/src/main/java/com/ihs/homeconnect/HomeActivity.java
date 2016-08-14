@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
         assert floatingActionUploadButton != null;
-        floatingActionUploadButton.setImageResource(R.drawable.ic_add_contact);
+        floatingActionUploadButton.setImageResource(R.drawable.ic_addkey);
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

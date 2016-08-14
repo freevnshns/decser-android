@@ -1,11 +1,11 @@
 package com.ihs.homeconnect.helpers;
 
 public enum services {
-    DownloadsManager(6800),
-    Backup(80),
-    HomeBase(80),
-    VideoSurveillance(8081),
-    Printing(631);
+    downloadmanager(6800),
+    backup(80),
+    homebase(80),
+    videosurveillance(8081),
+    printer(631);
     public final int port;
 
     services(int port) {

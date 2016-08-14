@@ -2,21 +2,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/ivServiceIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/tvServiceName"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_toEndOf="@+id/ivServiceIcon"
-        android:layout_toRightOf="@+id/ivServiceIcon" />
+        android:paddingBottom="35dp"
+        android:paddingTop="35dp" />
+    <!--android:layout_toEndOf="@+id/ivServiceIcon"-->
+    <!--android:layout_toRightOf="@+id/ivServiceIcon"-->
 </RelativeLayout>

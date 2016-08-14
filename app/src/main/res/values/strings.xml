@@ -24,4 +24,5 @@
     <string name="is_guest_key">Friend\'s Key</string>
     <string name="share_id_hint">Email ID of the person to share key with</string>
     <string name="turn_on_discovery">Turn on discovery</string>
+    <string name="load_server_media">Load media from server</string>
 </resources>

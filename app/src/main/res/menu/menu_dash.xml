@@ -4,6 +4,7 @@
     tools:context="com.ihs.homeconnect.DashboardActivity">
     <item
         android:id="@+id/share_key"
+        android:icon="@drawable/ic_guestkey"
         android:orderInCategory="200"
         android:title="@string/share_key"
         app:showAsAction="always" />

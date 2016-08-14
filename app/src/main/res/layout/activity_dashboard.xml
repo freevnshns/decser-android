@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/primary"
-        android:text="@string/share_key"
+        android:text="@string/load_server_media"
         android:textColor="@android:color/white" />
 
 

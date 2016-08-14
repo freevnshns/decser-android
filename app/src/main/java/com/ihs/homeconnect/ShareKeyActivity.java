@@ -21,7 +21,7 @@ public class ShareKeyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_key);
         try {
-            session.setPortForwardingL(services.HomeBase.port + 9000, "127.0.0.1", services.HomeBase.port);
+            session.setPortForwardingL(services.homebase.port + 9000, "127.0.0.1", services.homebase.port);
         } catch (JSchException e) {
             e.printStackTrace();
         }

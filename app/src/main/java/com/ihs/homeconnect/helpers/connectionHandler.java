@@ -49,11 +49,17 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
     }
 
     @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        session = null;
+    }
+
+    @Override
     protected void onPreExecute() {
         super.onPreExecute();
         this.progressDialog.setMessage("Connecting");
         this.progressDialog.show();
-        this.progressDialog.setCancelable(false);
+        this.progressDialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
