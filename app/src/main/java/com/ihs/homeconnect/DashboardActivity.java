@@ -1,28 +1,34 @@
 package com.ihs.homeconnect;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -179,6 +185,7 @@ public class DashboardActivity extends AppCompatActivity {
                 this.tvServiceName = (TextView) view.findViewById(R.id.tvServiceName);
                 this.ivServiceIcon = (ImageView) view.findViewById(R.id.ivServiceIcon);
                 view.setOnClickListener(new View.OnClickListener() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onClick(View v) {
                         Intent intent;
@@ -192,13 +199,27 @@ public class DashboardActivity extends AppCompatActivity {
                             case backup:
                                 try {
                                     packageManager.getPackageInfo("com.owncloud.android", PackageManager.GET_ACTIVITIES);
-                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
+                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
                                     try {
                                         session.setPortForwardingL(services.backup.port + 9000, "127.0.0.1", services.backup.port);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
+                                    } finally {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                                        builder.setTitle("Please copy the following url and paste it at the next screen to setup backup.");
+                                        final EditText input_url = new EditText(getApplicationContext());
+                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+                                        input_url.setTextColor(Color.BLACK);
+                                        input_url.setText("http://127.0.0.1:9080/owncloud");
+                                        builder.setView(input_url);
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                startActivity(launchIntent);
+                                            }
+                                        });
+                                        builder.show();
                                     }
-                                    startActivity(launchIntent);
                                 } catch (PackageManager.NameNotFoundException e) {
                                     BroadcastReceiver onComplete = new BroadcastReceiver() {
                                         @Override
@@ -244,13 +265,27 @@ public class DashboardActivity extends AppCompatActivity {
                             case printer:
                                 try {
                                     packageManager.getPackageInfo("com.blackspruce.lpd", PackageManager.GET_ACTIVITIES);
-                                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
+                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
                                     try {
                                         session.setPortForwardingL(services.printer.port + 9000, "127.0.0.1", services.printer.port);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
+                                    } finally {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                                        builder.setTitle("Please copy the following url and paste it at the setup screen to setup print.");
+                                        final EditText input_url = new EditText(getApplicationContext());
+                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+                                        input_url.setTextColor(Color.BLACK);
+                                        input_url.setText("http://127.0.0.1:9631/");
+                                        builder.setView(input_url);
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                startActivity(launchIntent);
+                                            }
+                                        });
+                                        builder.show();
                                     }
-                                    startActivity(launchIntent);
                                 } catch (PackageManager.NameNotFoundException e) {
                                     try {
                                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.blackspruce.lpd")));
