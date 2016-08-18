@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -153,7 +154,31 @@ public class DashboardActivity extends AppCompatActivity {
         public servicesAdapter() {
             for (services aService : services.values()) {
                 mServiceNameList.add(aService.toString());
-                mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                try {
+                    mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                } catch (Exception e) {
+                    mServiceIconList.add(new Drawable() {
+                        @Override
+                        public void draw(Canvas canvas) {
+
+                        }
+
+                        @Override
+                        public void setAlpha(int alpha) {
+
+                        }
+
+                        @Override
+                        public void setColorFilter(ColorFilter colorFilter) {
+
+                        }
+
+                        @Override
+                        public int getOpacity() {
+                            return 0;
+                        }
+                    });
+                }
             }
         }
 
@@ -292,6 +317,51 @@ public class DashboardActivity extends AppCompatActivity {
                                     } catch (android.content.ActivityNotFoundException a) {
                                         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + "com.blackspruce.lpd")));
                                     }
+                                }
+                                break;
+                            case xmpp:
+                                try {
+                                    packageManager.getPackageInfo("com.xabber.androiddev", PackageManager.GET_ACTIVITIES);
+                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.xabber.androiddev");
+                                    try {
+                                        session.setPortForwardingL(services.xmpp.port + 9000, "127.0.0.1", services.xmpp.port);
+                                    } catch (JSchException e) {
+                                        e.printStackTrace();
+                                    } finally {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                                        builder.setTitle("Please copy the following url and paste it at the next screen to setup.");
+                                        final EditText input_url = new EditText(getApplicationContext());
+                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+                                        input_url.setTextColor(Color.BLACK);
+                                        input_url.setText("http://127.0.0.1:14222/");
+                                        builder.setView(input_url);
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                startActivity(launchIntent);
+                                            }
+                                        });
+                                        builder.show();
+                                    }
+                                } catch (PackageManager.NameNotFoundException e) {
+                                    BroadcastReceiver onComplete = new BroadcastReceiver() {
+                                        @Override
+                                        public void onReceive(Context context, Intent intent) {
+                                            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
+                                                    .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.owncloud.android_20000001.apk")),
+                                                            "application/vnd.android.package-archive");
+                                            startActivity(promptInstall);
+                                            unregisterReceiver(this);
+                                        }
+                                    };
+                                    String url = "https://f-droid.org/repo/com.xabber.androiddev_247.apk";
+                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                    request.setDescription("https://f-droid.org/repo/com.xabber.androiddev_247.apk");
+                                    request.setTitle("IHS");
+                                    request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "com.xabber.androiddev_247.apk");
+                                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                                    manager.enqueue(request);
+                                    registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                                 }
                                 break;
                             default:

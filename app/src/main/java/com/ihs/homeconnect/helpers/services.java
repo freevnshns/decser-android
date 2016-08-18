@@ -5,6 +5,7 @@ public enum services {
     backup(80),
     homebase(80),
     videosurveillance(8081),
+    xmpp(5222),
     printer(631);
     public final int port;
 
