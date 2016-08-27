@@ -155,7 +155,11 @@ public class DashboardActivity extends AppCompatActivity {
             for (services aService : services.values()) {
                 mServiceNameList.add(aService.toString());
                 try {
-                    mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                        mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                    } else {
+                        mServiceIconList.add(getResources().getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                    }
                 } catch (Exception e) {
                     mServiceIconList.add(new Drawable() {
                         @Override
