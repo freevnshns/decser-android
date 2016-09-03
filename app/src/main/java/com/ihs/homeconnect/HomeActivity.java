@@ -41,6 +41,11 @@ public class HomeActivity extends AppCompatActivity {
             requestPermissions(perms, 200);
         }
 
+//        Temporary fr dev
+
+        Intent intent = new Intent(this, XmppActivity.class);
+        startActivity(intent);
+
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
         RecyclerView.LayoutManager mLayoutManager;

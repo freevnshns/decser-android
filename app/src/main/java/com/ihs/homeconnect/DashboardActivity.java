@@ -220,7 +220,7 @@ public class DashboardActivity extends AppCompatActivity {
                         Intent intent;
                         PackageManager packageManager = getPackageManager();
                         switch (services.values()[(Integer) v.getTag()]) {
-                            case downloadmanager:
+                            case dm:
                                 DownloadManagerActivity.session = session;
                                 intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
                                 startActivity(intent);
@@ -281,11 +281,11 @@ public class DashboardActivity extends AppCompatActivity {
                                 intent.setData(Uri.parse("http://127.0.0.1:9080/"));
                                 startActivity(intent);
                                 break;
-                            case videosurveillance:
+                            case vs:
                                 try {
-                                    session.setPortForwardingL(services.videosurveillance.port, "127.0.0.1", services.videosurveillance.port);
+                                    session.setPortForwardingL(services.vs.port, "127.0.0.1", services.vs.port);
                                     Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.videosurveillance.port) + "/"));
+                                    i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
                                     startActivity(i);
                                 } catch (JSchException e) {
                                     e.printStackTrace();
@@ -325,92 +325,11 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case xmpp:
                                 try {
-                                    packageManager.getPackageInfo("com.xabber.androiddev", PackageManager.GET_ACTIVITIES);
-                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.xabber.androiddev");
-                                    try {
-                                        session.setPortForwardingL(services.xmpp.port + 9000, "127.0.0.1", services.xmpp.port);
-                                    } catch (JSchException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                                        builder.setTitle("Please copy the following url and paste it at the next screen to setup.");
-                                        final EditText input_url = new EditText(getApplicationContext());
-                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                                        input_url.setTextColor(Color.BLACK);
-                                        input_url.setText("http://127.0.0.1:14222/");
-                                        builder.setView(input_url);
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                startActivity(launchIntent);
-                                            }
-                                        });
-                                        builder.show();
-                                    }
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    BroadcastReceiver onComplete = new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-                                            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                                                    .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.xabber.androiddev_247.apk")),
-                                                            "application/vnd.android.package-archive");
-                                            startActivity(promptInstall);
-                                            unregisterReceiver(this);
-                                        }
-                                    };
-                                    String url = "https://f-droid.org/repo/com.xabber.androiddev_247.apk";
-                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                    request.setDescription("https://f-droid.org/repo/com.xabber.androiddev_247.apk");
-                                    request.setTitle("IHS");
-                                    request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "/com.xabber.androiddev_247.apk");
-                                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                                    manager.enqueue(request);
-                                    registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-                                }
-                                break;
-                            case voip:
-                                try {
-                                    packageManager.getPackageInfo("com.morlunk.mumbleclient", PackageManager.GET_ACTIVITIES);
-                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.morlunk.mumbleclient");
-                                    try {
-                                        session.setPortForwardingL(services.voip.port, "127.0.0.1", services.voip.port);
-                                    } catch (JSchException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                                        builder.setTitle("Please copy the following url and paste it at the next screen to setup.");
-                                        final EditText input_url = new EditText(getApplicationContext());
-                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                                        input_url.setTextColor(Color.BLACK);
-                                        input_url.setText("http://127.0.0.1:" + String.valueOf(services.voip.port) + "/");
-                                        builder.setView(input_url);
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                startActivity(launchIntent);
-                                            }
-                                        });
-                                        builder.show();
-                                    }
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    BroadcastReceiver onComplete = new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-                                            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                                                    .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.morlunk.mumbleclient_73.apk")),
-                                                            "application/vnd.android.package-archive");
-                                            startActivity(promptInstall);
-                                            unregisterReceiver(this);
-                                        }
-                                    };
-                                    String url = "https://f-droid.org/repo/com.morlunk.mumbleclient_73.apk";
-                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-//                                    request.setDescription("https://f-droid.org/repo/com.xabber.androiddev_247.apk");
-                                    request.setTitle("IHS");
-                                    request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "com.morlunk.mumbleclient_73.apk");
-                                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                                    manager.enqueue(request);
-                                    registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+                                    session.setPortForwardingL(services.xmpp.port + 9000, "127.0.0.1", services.xmpp.port);
+                                    intent = new Intent(DashboardActivity.this, XmppActivity.class);
+                                    startActivity(intent);
+                                } catch (JSchException e) {
+                                    e.printStackTrace();
                                 }
                                 break;
 

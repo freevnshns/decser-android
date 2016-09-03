@@ -18,9 +18,9 @@ public class VideoCamActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_cam);
         try {
-            session.setPortForwardingL(services.videosurveillance.port, "127.0.0.1", services.videosurveillance.port);
+            session.setPortForwardingL(services.vs.port, "127.0.0.1", services.vs.port);
             Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.videosurveillance.port) + "/"));
+            i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
             startActivity(i);
         } catch (JSchException e) {
             e.printStackTrace();
