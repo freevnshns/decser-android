@@ -1,7 +1,6 @@
 package com.ihs.homeconnect;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -35,8 +33,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.services;
+import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
+import com.ihs.homeconnect.helpers.xmppHandler;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+
+import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,44 +112,6 @@ public class DashboardActivity extends AppCompatActivity {
         finish();
     }
 
-    private class verticalSpaceDecorationHelper extends RecyclerView.ItemDecoration {
-        private Drawable mDivider;
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public verticalSpaceDecorationHelper(Context mContext) {
-            mDivider = mContext.getDrawable(R.drawable.line_divider);
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-
-            if (parent.getChildAdapterPosition(view) == 0) {
-                return;
-            }
-            outRect.top = mDivider.getIntrinsicHeight();
-        }
-
-        @Override
-        public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
-            int dividerLeft = parent.getPaddingLeft();
-            int dividerRight = parent.getWidth() - parent.getPaddingRight();
-
-            int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount - 1; i++) {
-                View child = parent.getChildAt(i);
-
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-
-                int dividerTop = child.getBottom() + params.bottomMargin;
-                int dividerBottom = dividerTop + mDivider.getIntrinsicHeight();
-
-                mDivider.setBounds(dividerLeft, dividerTop, dividerRight, dividerBottom);
-                mDivider.draw(canvas);
-            }
-        }
-    }
-
     private class servicesAdapter extends RecyclerView.Adapter<servicesAdapter.ViewHolder> {
         private ArrayList<String> mServiceNameList = new ArrayList<>();
         private ArrayList<Drawable> mServiceIconList = new ArrayList<>();
@@ -158,6 +124,7 @@ public class DashboardActivity extends AppCompatActivity {
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                         mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
                     } else {
+                        //noinspection deprecation
                         mServiceIconList.add(getResources().getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
                     }
                 } catch (Exception e) {
@@ -230,7 +197,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     packageManager.getPackageInfo("com.owncloud.android", PackageManager.GET_ACTIVITIES);
                                     final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
                                     try {
-                                        session.setPortForwardingL(services.backup.port + 9000, "127.0.0.1", services.backup.port);
+                                        session.setPortForwardingL(services.backup.lport, "127.0.0.1", services.backup.port);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
                                     } finally {
@@ -274,7 +241,7 @@ public class DashboardActivity extends AppCompatActivity {
 //                                TODO Launch Server Dashboard
                                 intent = new Intent(Intent.ACTION_VIEW);
                                 try {
-                                    session.setPortForwardingL(services.homebase.port + 9000, "127.0.0.1", services.homebase.port);
+                                    session.setPortForwardingL(services.homebase.lport, "127.0.0.1", services.homebase.port);
                                 } catch (JSchException e) {
                                     e.printStackTrace();
                                 }
@@ -296,7 +263,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     packageManager.getPackageInfo("com.blackspruce.lpd", PackageManager.GET_ACTIVITIES);
                                     final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
                                     try {
-                                        session.setPortForwardingL(services.printer.port + 9000, "127.0.0.1", services.printer.port);
+                                        session.setPortForwardingL(services.printer.lport, "127.0.0.1", services.printer.port);
                                     } catch (JSchException e) {
                                         e.printStackTrace();
                                     } finally {
@@ -325,9 +292,18 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case xmpp:
                                 try {
-                                    session.setPortForwardingL(services.xmpp.port + 9000, "127.0.0.1", services.xmpp.port);
-                                    intent = new Intent(DashboardActivity.this, XmppActivity.class);
-                                    startActivity(intent);
+                                    AbstractXMPPConnection connection;
+
+                                    session.setPortForwardingL(services.xmpp.lport, "127.0.0.1", services.xmpp.port);
+                                    XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
+                                    builder.setUsernameAndPassword("sandi", "abcd");//use default
+                                    builder.setServiceName("sinecos.local");//replace using bottom level domain name and .local
+                                    builder.setHost("127.0.0.1");
+                                    builder.setPort(services.xmpp.lport);
+                                    connection = new XMPPTCPConnection(builder.build());
+                                    xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
+                                    xmppHandler.execute(connection);
+
                                 } catch (JSchException e) {
                                     e.printStackTrace();
                                 }

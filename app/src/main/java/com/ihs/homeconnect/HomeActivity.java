@@ -1,12 +1,8 @@
 package com.ihs.homeconnect;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +21,7 @@ import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.connectionHandler;
 import com.ihs.homeconnect.helpers.dbHandler;
+import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 import com.jcraft.jsch.JSchException;
 
 public class HomeActivity extends AppCompatActivity {
@@ -40,11 +37,6 @@ public class HomeActivity extends AppCompatActivity {
             String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
             requestPermissions(perms, 200);
         }
-
-//        Temporary fr dev
-
-        Intent intent = new Intent(this, XmppActivity.class);
-        startActivity(intent);
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
@@ -103,44 +95,6 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class verticalSpaceDecorationHelper extends RecyclerView.ItemDecoration {
-        private Drawable mDivider;
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public verticalSpaceDecorationHelper(Context mContext) {
-            mDivider = mContext.getDrawable(R.drawable.line_divider);
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-
-            if (parent.getChildAdapterPosition(view) == 0) {
-                return;
-            }
-            outRect.top = mDivider.getIntrinsicHeight();
-        }
-
-        @Override
-        public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
-            int dividerLeft = parent.getPaddingLeft();
-            int dividerRight = parent.getWidth() - parent.getPaddingRight();
-
-            int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount - 1; i++) {
-                View child = parent.getChildAt(i);
-
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-
-                int dividerTop = child.getBottom() + params.bottomMargin;
-                int dividerBottom = dividerTop + mDivider.getIntrinsicHeight();
-
-                mDivider.setBounds(dividerLeft, dividerTop, dividerRight, dividerBottom);
-                mDivider.draw(canvas);
-            }
-        }
     }
 
     private class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
