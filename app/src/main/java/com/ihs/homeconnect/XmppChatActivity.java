@@ -1,5 +1,6 @@
 package com.ihs.homeconnect;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,36 +48,49 @@ public class XmppChatActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         ChatManager chatManager = ChatManager.getInstanceFor(connection);
+
         final Chat newChat = chatManager.createChat(chatReceipient, new ChatMessageListener() {
             @Override
             public void processMessage(Chat chat, final Message message) {
-                chatAdapter.messageUpdate(message.getBody());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatAdapter.messageUpdate(message.getBody(), false);
+                    }
+                });
             }
         });
         if (bSendChatMessage != null && etChatMessage != null)
             bSendChatMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        String message = etChatMessage.getText().toString();
-                        newChat.sendMessage(message);
-                        chatAdapter.messageUpdate(message);
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                String message = etChatMessage.getText().toString();
+                                newChat.sendMessage(message);
+                                chatAdapter.messageUpdate(message, true);
+                                etChatMessage.setText("");
+                            } catch (SmackException.NotConnectedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
                 }
             });
     }
 
     private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
-        public ArrayList<String> chatEntries;
+        public ArrayList<chatMessage> chatEntries;
 
         public xmppChatAdapter() {
             chatEntries = new ArrayList<>();
         }
 
-        public void messageUpdate(String messageString) {
-            chatEntries.add(messageString);
+        public void messageUpdate(String messageString, boolean chatMe) {
+            chatEntries.add(new chatMessage(messageString, chatMe));
             notifyDataSetChanged();
         }
 
@@ -88,12 +102,27 @@ public class XmppChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(xmppChatAdapter.ViewHolder holder, int position) {
-            holder.tvChatBody.setText(chatEntries.get(position));
+            if (chatEntries.get(holder.getAdapterPosition()).chatMe) {
+                holder.tvChatBody.setTextColor(Color.GRAY);
+            } else {
+                holder.tvChatBody.setTextColor(Color.BLACK);
+            }
+            holder.tvChatBody.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
         }
 
         @Override
         public int getItemCount() {
             return chatEntries.size();
+        }
+
+        private class chatMessage {
+            public String chatBody;
+            public boolean chatMe;
+
+            public chatMessage(String chatBody, boolean chatMe) {
+                this.chatBody = chatBody;
+                this.chatMe = chatMe;
+            }
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

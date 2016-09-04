@@ -35,6 +35,12 @@ public class xmppHandler extends AsyncTask<AbstractXMPPConnection, Void, Abstrac
     @Override
     protected AbstractXMPPConnection doInBackground(AbstractXMPPConnection[] params) {
         try {
+//            params[0].addAsyncStanzaListener(new StanzaListener() {
+//                @Override
+//                public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
+//                    return;
+//                }
+//            }, filter);
             params[0].connect();
             params[0].login();
             return params[0];
