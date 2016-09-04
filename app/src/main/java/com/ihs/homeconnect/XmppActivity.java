@@ -1,5 +1,6 @@
 package com.ihs.homeconnect;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -82,6 +83,7 @@ public class XmppActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(xmppRosterAdapter.ViewHolder holder, int position) {
             holder.tvRosterName.setText(rosterEntries.get(position));
+            holder.itemView.setTag("duas@sinecos.local");
         }
 
         @Override
@@ -89,13 +91,23 @@ public class XmppActivity extends AppCompatActivity {
             return rosterEntries.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public TextView tvRosterName;
 
             public ViewHolder(View view) {
                 super(view);
                 this.tvRosterName = (TextView) view.findViewById(R.id.tvContactName);
+                view.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                XmppChatActivity.connection = connection;
+                XmppChatActivity.chatReceipient = "duas@sinecos.local";
+                Intent intent = new Intent(XmppActivity.this, XmppChatActivity.class);
+                startActivity(intent);
             }
         }
     }
+
 }

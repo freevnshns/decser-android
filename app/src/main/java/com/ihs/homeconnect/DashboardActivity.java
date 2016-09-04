@@ -26,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -71,16 +70,6 @@ public class DashboardActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         }
-        Button bLoadFromServer = (Button) findViewById(R.id.bLoadFromServer);
-        assert bLoadFromServer != null;
-        bLoadFromServer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, DownloadMediaActivity.class);
-                DownloadMediaActivity.session = session;
-                startActivity(intent);
-            }
-        });
     }
 
     @Override

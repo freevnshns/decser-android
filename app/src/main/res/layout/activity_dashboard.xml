@@ -14,14 +14,4 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-    <Button
-        android:id="@+id/bLoadFromServer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/primary"
-        android:text="@string/load_server_media"
-        android:textColor="@android:color/white" />
-
-
 </RelativeLayout>
