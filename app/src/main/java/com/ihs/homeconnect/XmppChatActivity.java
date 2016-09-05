@@ -12,18 +12,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
 import java.util.ArrayList;
 
 public class XmppChatActivity extends AppCompatActivity {
-    public static String chatReceipient;
-    public static AbstractXMPPConnection connection;
+    public static Chat chat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +44,8 @@ public class XmppChatActivity extends AppCompatActivity {
         mAdapter = chatAdapter;
         mRecyclerView.setAdapter(mAdapter);
 
-        ChatManager chatManager = ChatManager.getInstanceFor(connection);
 
-        final Chat newChat = chatManager.createChat(chatReceipient, new ChatMessageListener() {
+        chat.addMessageListener(new ChatMessageListener() {
             @Override
             public void processMessage(Chat chat, final Message message) {
                 runOnUiThread(new Runnable() {
@@ -60,6 +56,7 @@ public class XmppChatActivity extends AppCompatActivity {
                 });
             }
         });
+
         if (bSendChatMessage != null && etChatMessage != null)
             bSendChatMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -69,7 +66,7 @@ public class XmppChatActivity extends AppCompatActivity {
                         public void run() {
                             try {
                                 String message = etChatMessage.getText().toString();
-                                newChat.sendMessage(message);
+                                chat.sendMessage(message);
                                 chatAdapter.messageUpdate(message, true);
                                 etChatMessage.setText("");
                             } catch (SmackException.NotConnectedException e) {

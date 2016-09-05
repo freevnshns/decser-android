@@ -1,6 +1,7 @@
 package com.ihs.homeconnect;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,34 +15,48 @@ import android.widget.TextView;
 import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 
 public class XmppActivity extends AppCompatActivity {
 
     public static AbstractXMPPConnection connection;
+    public static PacketCollector packetCollector;
+    public ChatManager chatManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xmpp);
-        ChatManager chatManager = ChatManager.getInstanceFor(connection);
+        chatManager = ChatManager.getInstanceFor(connection);
         chatManager.addChatListener(new ChatManagerListener() {
             @Override
             public void chatCreated(Chat chat, boolean createdLocally) {
                 if (!createdLocally) {
-//                    add a listener
+                    XmppChatActivity.chat = chat;
+                    Intent intent = new Intent(XmppActivity.this, XmppChatActivity.class);
+                    startActivity(intent);
                 }
             }
         });
-
+        packetCollector.cancel();
+        int offline_message_count = packetCollector.getCollectedCount();
+        ArrayList<rosterEntry> roster_sender = new ArrayList<>();
+        while (offline_message_count > 0) {
+            Stanza offlineMessage = packetCollector.pollResult();
+            String sender = offlineMessage.getFrom().substring(0, offlineMessage.getFrom().lastIndexOf("/"));
+            if (!roster_sender.contains(new rosterEntry(sender, true)))
+                roster_sender.add(new rosterEntry(sender, true));
+//            ((Message)offlineMessage).getBody(); Add this to database
+            offline_message_count--;
+        }
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
@@ -54,7 +69,15 @@ public class XmppActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         Roster roster = Roster.getInstanceFor(connection);
-        mAdapter = new xmppRosterAdapter(roster.getEntries());
+
+
+        for (RosterEntry entry : roster.getEntries()) {
+            if (!((roster_sender.contains(new rosterEntry(entry.getUser(), false))) && roster_sender.contains(new rosterEntry(entry.getUser(), true))))
+                roster_sender.add(new rosterEntry(entry.getUser(), false));
+        }
+
+
+        mAdapter = new xmppRosterAdapter(roster_sender);
         mRecyclerView.setAdapter(mAdapter);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
@@ -78,14 +101,22 @@ public class XmppActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private class xmppRosterAdapter extends RecyclerView.Adapter<xmppRosterAdapter.ViewHolder> {
-        public ArrayList<String> rosterEntries;
+    private class rosterEntry {
+        String rosterName;
+        boolean newMessage;
 
-        public xmppRosterAdapter(Set rosterSet) {
-            rosterEntries = new ArrayList<>(rosterSet.size());
-            for (RosterEntry entry : (Collection<RosterEntry>) rosterSet) {
-                rosterEntries.add(entry.getUser());
-            }
+        public rosterEntry(String rosterName, boolean newMessage) {
+            this.rosterName = rosterName;
+            this.newMessage = newMessage;
+        }
+    }
+
+    private class xmppRosterAdapter extends RecyclerView.Adapter<xmppRosterAdapter.ViewHolder> {
+
+        public ArrayList<rosterEntry> rosterEntries;
+
+        public xmppRosterAdapter(ArrayList<rosterEntry> rosterEntries) {
+            this.rosterEntries = rosterEntries;
         }
 
         @Override
@@ -96,7 +127,9 @@ public class XmppActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(xmppRosterAdapter.ViewHolder holder, int position) {
-            holder.tvRosterName.setText(rosterEntries.get(position));
+            if (rosterEntries.get(position).newMessage)
+                holder.itemView.setBackgroundColor(Color.parseColor("#ff9900"));
+            holder.tvRosterName.setText(rosterEntries.get(position).rosterName);
             holder.itemView.setTag("duas@sinecos.local");
         }
 
@@ -116,8 +149,8 @@ public class XmppActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                XmppChatActivity.connection = connection;
-                XmppChatActivity.chatReceipient = "duas@sinecos.local";
+                Chat newChat = chatManager.createChat("duas@sinecos.local");
+                XmppChatActivity.chat = newChat;
                 Intent intent = new Intent(XmppActivity.this, XmppChatActivity.class);
                 startActivity(intent);
             }

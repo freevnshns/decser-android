@@ -297,7 +297,6 @@ public class DashboardActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
                                 break;
-
                             default:
                                 break;
                         }

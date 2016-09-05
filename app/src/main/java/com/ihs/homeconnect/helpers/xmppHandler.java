@@ -8,13 +8,18 @@ import android.os.AsyncTask;
 import com.ihs.homeconnect.XmppActivity;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
+import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.Message;
 
 import java.io.IOException;
 
 
 public class xmppHandler extends AsyncTask<AbstractXMPPConnection, Void, AbstractXMPPConnection> {
+    PacketCollector packetCollector;
     private ProgressDialog progressDialog;
     private Context mContext;
 
@@ -35,12 +40,8 @@ public class xmppHandler extends AsyncTask<AbstractXMPPConnection, Void, Abstrac
     @Override
     protected AbstractXMPPConnection doInBackground(AbstractXMPPConnection[] params) {
         try {
-//            params[0].addAsyncStanzaListener(new StanzaListener() {
-//                @Override
-//                public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
-//                    return;
-//                }
-//            }, filter);
+            StanzaFilter filter = new StanzaTypeFilter(Message.class);
+            packetCollector = params[0].createPacketCollector(filter);
             params[0].connect();
             params[0].login();
             return params[0];
@@ -57,6 +58,8 @@ public class xmppHandler extends AsyncTask<AbstractXMPPConnection, Void, Abstrac
             this.progressDialog.dismiss();
         }
         XmppActivity.connection = connection;
+        XmppActivity.packetCollector = packetCollector;
+
         Intent intent = new Intent(mContext, XmppActivity.class);
         mContext.startActivity(intent);
     }
