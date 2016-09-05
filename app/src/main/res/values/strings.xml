@@ -25,4 +25,7 @@
     <string name="share_id_hint">Email ID of the person to share key with</string>
     <string name="turn_on_discovery">Turn on discovery</string>
     <string name="load_server_media">Load media from server</string>
+    <string name="title_activity_xmpp">XmppActivity</string>
+    <string name="enter_message">Enter message</string>
+    <string name="message_send">send</string>
 </resources>

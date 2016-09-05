@@ -43,7 +43,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_manager);
         try {
-            session.setPortForwardingL(services.downloadmanager.port, "127.0.0.1", services.downloadmanager.port);
+            session.setPortForwardingL(services.dm.port, "127.0.0.1", services.dm.port);
         } catch (JSchException e) {
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         jsonrpcHandler jsonrpcHandler = new jsonrpcHandler();
         try {
-            JSONObject rpc_result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.downloadmanager.port) + "/jsonrpc", "aria2.tellActive").get();
+            JSONObject rpc_result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.dm.port) + "/jsonrpc", "aria2.tellActive").get();
             mAdapter = new DownloadsAdapter(rpc_result);
         } catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
@@ -100,7 +100,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
                             Toast.makeText(DownloadManagerActivity.this, "Please enter a valid url", Toast.LENGTH_SHORT).show();
                         } else {
                             try {
-                                JSONObject result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.downloadmanager.port) + "/jsonrpc", "aria2.addUri", input_url.getText().toString()).get();
+                                JSONObject result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.dm.port) + "/jsonrpc", "aria2.addUri", input_url.getText().toString()).get();
                                 if (result.has("error"))
                                     Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
                                 else

@@ -12,8 +12,9 @@ import java.util.ArrayList;
 
 public class dbHandler extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 15;
-    //    TABLE 1 DD STARTS HERE
     public static final String DATABASE_NAME = "homeConnect.db";
+
+    //    TABLE contacts
     public static final String TABLE_CONTACTS = "contacts";
 
     public static final String COLUMN_ID = "id";
@@ -27,6 +28,13 @@ public class dbHandler extends SQLiteOpenHelper {
 
     public static final String COLUMN_ACCESS = "access";
     public static final String COLUMN_ACCESS_TYPE = "TEXT";
+
+//    Table xmpp messages
+
+//    public static final String TABLE_XMPP_MESSAGES="xmpp_messages";
+//
+//    public static final String COLUMN_ = "id";
+//    public static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
 
     public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
