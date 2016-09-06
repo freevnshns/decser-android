@@ -90,7 +90,7 @@ public class dbHandler extends SQLiteOpenHelper {
         return true;
     }
 
-    public int getUserDetails() {
+    public int getUserRegistration() {
         SQLiteDatabase db = getReadableDatabase();
         int registered = 0;
         try {
@@ -109,7 +109,26 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return registered;
+    }
 
+    public String getUserHostname() {
+        SQLiteDatabase db = getReadableDatabase();
+        String user_hostname = null;
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            c.moveToFirst();
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_USER_HOST_NAME)) != null) {
+                    user_hostname = c.getString(c.getColumnIndex(COLUMN_HOST_NAME));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user_hostname;
     }
 
     public boolean deleteContact(String hostname) {

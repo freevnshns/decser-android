@@ -35,7 +35,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         dbHandler dbInstance = new dbHandler(this, null);
-        if (dbInstance.getUserDetails() == 0) {
+        if (dbInstance.getUserRegistration() == 0) {
             Intent intent = new Intent(this, RegistrationActivity.class);
             startActivity(intent);
             finish();
