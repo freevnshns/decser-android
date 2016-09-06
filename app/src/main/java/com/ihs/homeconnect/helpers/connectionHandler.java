@@ -72,9 +72,11 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
             Intent intent;
             if (userName.equals("user")) {
                 DashboardActivity.session = session;
+                DashboardActivity.connected_hostname = hostName;
                 intent = new Intent(mContext, DashboardActivity.class);
             } else {
                 PeerConnectActivity.session = session;
+                PeerConnectActivity.connected_hostname = hostName;
                 intent = new Intent(mContext, PeerConnectActivity.class);
             }
             mContext.startActivity(intent);

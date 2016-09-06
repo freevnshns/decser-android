@@ -37,15 +37,12 @@ import com.ihs.homeconnect.helpers.xmppHandler;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
-
 import java.io.File;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
     public static Session session = null;
+    public static String connected_hostname = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -281,18 +278,9 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case xmpp:
                                 try {
-                                    AbstractXMPPConnection connection;
-
                                     session.setPortForwardingL(services.xmpp.lport, "127.0.0.1", services.xmpp.port);
-                                    XMPPTCPConnectionConfiguration.Builder builder = XMPPTCPConnectionConfiguration.builder();
-                                    builder.setUsernameAndPassword("sandi", "abcd");//use default
-                                    builder.setServiceName("sinecos.local");//replace using bottom level domain name and .local
-                                    builder.setHost("127.0.0.1");
-                                    builder.setPort(services.xmpp.lport);
-                                    connection = new XMPPTCPConnection(builder.build());
                                     xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
-                                    xmppHandler.execute(connection);
-
+                                    xmppHandler.execute();
                                 } catch (JSchException e) {
                                     e.printStackTrace();
                                 }

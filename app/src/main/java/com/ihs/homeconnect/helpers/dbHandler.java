@@ -11,14 +11,14 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 16;
+    public static final int DATABASE_VERSION = 17;
     public static final String DATABASE_NAME = "homeConnect.db";
 
     //    Table UserData
     public static final String TABLE_USERDATA = "userdata";
 
-    public static final String COLUMN_EMAIL = "email";
-    public static final String COLUMN_EMAIL_TYPE = "TEXT PRIMARY KEY";
+    public static final String COLUMN_USER_EMAIL = "email";
+    public static final String COLUMN_USER_EMAIL_TYPE = "TEXT PRIMARY KEY";
 
     public static final String COLUMN_USER_HOST_NAME = "hostname";
     public static final String COLUMN_USER_HOST_NAME_TYPE = "TEXT";
@@ -44,10 +44,17 @@ public class dbHandler extends SQLiteOpenHelper {
 
 //    Table xmpp messages
 
-//    public static final String TABLE_XMPP_MESSAGES="xmpp_messages";
-//
-//    public static final String COLUMN_ = "id";
-//    public static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
+    public static final String TABLE_XMPP_MESSAGES = "xmpp_messages";
+
+    public static final String COLUMN_MID = "mid";
+    public static final String COLUMN_MID_TYPE = "INTEGER PRIMARY KEY";
+
+    public static final String COLUMN_MESSAGE_BODY = "body";
+    public static final String COLUMN_MESSAGE_BODY_TYPE = "TEXT";
+
+    public static final String COLUMN_SENDER_ID = "sender";
+    public static final String COLUMN_SENDER_ID_TYPE = "TEXT";
+
 
     public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -55,11 +62,13 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_EMAIL + " " + COLUMN_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + "\n);";
+        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + "\n);";
         String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
+        String query3 = "CREATE TABLE IF NOT EXISTS " + TABLE_XMPP_MESSAGES + "\n(\n" + COLUMN_MID + " " + COLUMN_MID_TYPE + " , " + COLUMN_MESSAGE_BODY + " " + COLUMN_MESSAGE_BODY_TYPE + " , " + COLUMN_SENDER_ID + " " + COLUMN_SENDER_ID_TYPE + "\n);";
         try {
             db.execSQL(query1);
             db.execSQL(query2);
+            db.execSQL(query3);
         } catch (SQLException e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -76,7 +85,7 @@ public class dbHandler extends SQLiteOpenHelper {
     public boolean insertUserDetails(String email, String hostname, int registered) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_EMAIL, email);
+        values.put(COLUMN_USER_EMAIL, email);
         values.put(COLUMN_USER_HOST_NAME, hostname);
         values.put(COLUMN_REGISTERED, registered);
         try {
@@ -119,7 +128,7 @@ public class dbHandler extends SQLiteOpenHelper {
             c.moveToFirst();
             while (!c.isAfterLast()) {
                 if (c.getString(c.getColumnIndex(COLUMN_USER_HOST_NAME)) != null) {
-                    user_hostname = c.getString(c.getColumnIndex(COLUMN_HOST_NAME));
+                    user_hostname = c.getString(c.getColumnIndex(COLUMN_USER_HOST_NAME));
                 }
                 c.moveToNext();
             }
@@ -129,6 +138,26 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return user_hostname;
+    }
+
+    public String getUserEmail() {
+        SQLiteDatabase db = getReadableDatabase();
+        String user_email = null;
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            c.moveToFirst();
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_USER_EMAIL)) != null) {
+                    user_email = c.getString(c.getColumnIndex(COLUMN_USER_EMAIL));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user_email;
     }
 
     public boolean deleteContact(String hostname) {
@@ -228,5 +257,42 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return ac_lvl;
+    }
+
+    public void addMessage(String sender, String body) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SENDER_ID, sender);
+        values.put(COLUMN_MESSAGE_BODY, body);
+        try {
+            db.insert(TABLE_XMPP_MESSAGES, null, values);
+        } catch (Exception e) {
+            loggingHandler loggingHandler = new loggingHandler();
+            loggingHandler.addLog(e.getMessage());
+        }
+        db.close();
+    }
+
+    public ArrayList<String> getMessages(String participant) {
+        SQLiteDatabase db = getWritableDatabase();
+        ArrayList<String> arrayList = new ArrayList<>();
+        String query = "SELECT " + COLUMN_MESSAGE_BODY + " FROM " + TABLE_XMPP_MESSAGES + " WHERE " + COLUMN_SENDER_ID + "='" + participant + "';";
+        try {
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_MESSAGE_BODY)) != null) {
+                    arrayList.add(c.getString(c.getColumnIndex(COLUMN_MESSAGE_BODY)));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
+
     }
 }

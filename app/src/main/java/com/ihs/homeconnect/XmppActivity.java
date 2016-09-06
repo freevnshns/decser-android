@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ihs.homeconnect.helpers.dbHandler;
 import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -19,6 +20,7 @@ import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
@@ -36,6 +38,7 @@ public class XmppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xmpp);
         chatManager = ChatManager.getInstanceFor(connection);
+//        There is bug here , first message does not appear :( TODO fix it
         chatManager.addChatListener(new ChatManagerListener() {
             @Override
             public void chatCreated(Chat chat, boolean createdLocally) {
@@ -49,14 +52,19 @@ public class XmppActivity extends AppCompatActivity {
         packetCollector.cancel();
         int offline_message_count = packetCollector.getCollectedCount();
         ArrayList<rosterEntry> roster_sender = new ArrayList<>();
+        ArrayList<String> sender_list = new ArrayList<>();
+        dbHandler dbHandler = new dbHandler(this, null);
         while (offline_message_count > 0) {
             Stanza offlineMessage = packetCollector.pollResult();
             String sender = offlineMessage.getFrom().substring(0, offlineMessage.getFrom().lastIndexOf("/"));
-            if (!roster_sender.contains(new rosterEntry(sender, true)))
+            if (!(sender_list.contains(sender))) {
+                sender_list.add(sender);
                 roster_sender.add(new rosterEntry(sender, true));
-//            ((Message)offlineMessage).getBody(); Add this to database
+            }
+            dbHandler.addMessage(sender, ((Message) offlineMessage).getBody());
             offline_message_count--;
         }
+
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
@@ -72,7 +80,7 @@ public class XmppActivity extends AppCompatActivity {
 
 
         for (RosterEntry entry : roster.getEntries()) {
-            if (!((roster_sender.contains(new rosterEntry(entry.getUser(), false))) && roster_sender.contains(new rosterEntry(entry.getUser(), true))))
+            if (!sender_list.contains(entry.getUser()))
                 roster_sender.add(new rosterEntry(entry.getUser(), false));
         }
 
@@ -127,10 +135,15 @@ public class XmppActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(xmppRosterAdapter.ViewHolder holder, int position) {
-            if (rosterEntries.get(position).newMessage)
+            if (rosterEntries.get(position).newMessage) {
                 holder.itemView.setBackgroundColor(Color.parseColor("#ff9900"));
+//                BAD UX TODO improve the foll. statement to be executed after click
+                rosterEntries.get(position).newMessage = false;
+            } else
+                holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+//            Strip domain name if req.
             holder.tvRosterName.setText(rosterEntries.get(position).rosterName);
-            holder.itemView.setTag("duas@sinecos.local");
+            holder.itemView.setTag(rosterEntries.get(position).rosterName);
         }
 
         @Override
@@ -149,12 +162,10 @@ public class XmppActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                Chat newChat = chatManager.createChat("duas@sinecos.local");
-                XmppChatActivity.chat = newChat;
+                XmppChatActivity.chat = chatManager.createChat(v.getTag().toString());
                 Intent intent = new Intent(XmppActivity.this, XmppChatActivity.class);
                 startActivity(intent);
             }
         }
     }
-
 }

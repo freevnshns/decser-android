@@ -8,6 +8,7 @@ import com.jcraft.jsch.Session;
 
 public class PeerConnectActivity extends Activity {
     public static Session session = null;
+    public static String connected_hostname = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

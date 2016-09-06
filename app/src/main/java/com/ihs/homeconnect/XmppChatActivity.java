@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ihs.homeconnect.helpers.dbHandler;
+
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
@@ -21,15 +23,16 @@ import java.util.ArrayList;
 
 public class XmppChatActivity extends AppCompatActivity {
     public static Chat chat;
+    private String chatParticipant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xmpp_chat);
-
+        chatParticipant = chat.getParticipant();
         final Button bSendChatMessage = (Button) findViewById(R.id.bSendMessage);
         final EditText etChatMessage = (EditText) findViewById(R.id.etChatMessage);
-        RecyclerView mRecyclerView;
+        final RecyclerView mRecyclerView;
         final RecyclerView.Adapter mAdapter;
         RecyclerView.LayoutManager mLayoutManager;
 
@@ -40,7 +43,7 @@ public class XmppChatActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        final xmppChatAdapter chatAdapter = new xmppChatAdapter();
+        final xmppChatAdapter chatAdapter = new xmppChatAdapter(chatParticipant);
         mAdapter = chatAdapter;
         mRecyclerView.setAdapter(mAdapter);
 
@@ -52,6 +55,7 @@ public class XmppChatActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         chatAdapter.messageUpdate(message.getBody(), false);
+                        mRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount());
                     }
                 });
             }
@@ -68,6 +72,7 @@ public class XmppChatActivity extends AppCompatActivity {
                                 String message = etChatMessage.getText().toString();
                                 chat.sendMessage(message);
                                 chatAdapter.messageUpdate(message, true);
+                                mRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount());
                                 etChatMessage.setText("");
                             } catch (SmackException.NotConnectedException e) {
                                 e.printStackTrace();
@@ -81,14 +86,25 @@ public class XmppChatActivity extends AppCompatActivity {
 
     private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
         public ArrayList<chatMessage> chatEntries;
+        private dbHandler dbHandler = new dbHandler(XmppChatActivity.this, null);
 
-        public xmppChatAdapter() {
+        public xmppChatAdapter(String participant) {
             chatEntries = new ArrayList<>();
+            ArrayList<String> offline_chats = dbHandler.getMessages(participant);
+            while (!offline_chats.isEmpty()) {
+                chatEntries.add(new chatMessage(offline_chats.remove(0), false));
+            }
         }
 
         public void messageUpdate(String messageString, boolean chatMe) {
-            chatEntries.add(new chatMessage(messageString, chatMe));
-            notifyDataSetChanged();
+            if (!messageString.equals("")) {
+                chatEntries.add(new chatMessage(messageString, chatMe));
+                if (chatMe)
+                    dbHandler.addMessage(chatParticipant, "Me : > " + messageString);
+                else
+                    dbHandler.addMessage(chatParticipant, chatParticipant + " : > " + messageString);
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -99,7 +115,7 @@ public class XmppChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(xmppChatAdapter.ViewHolder holder, int position) {
-            if (chatEntries.get(holder.getAdapterPosition()).chatMe) {
+            if (chatEntries.get(holder.getAdapterPosition()).messageIsMine) {
                 holder.tvChatBody.setTextColor(Color.GRAY);
             } else {
                 holder.tvChatBody.setTextColor(Color.BLACK);
@@ -114,11 +130,11 @@ public class XmppChatActivity extends AppCompatActivity {
 
         private class chatMessage {
             public String chatBody;
-            public boolean chatMe;
+            public boolean messageIsMine;
 
-            public chatMessage(String chatBody, boolean chatMe) {
+            public chatMessage(String chatBody, boolean messageIsMine) {
                 this.chatBody = chatBody;
-                this.chatMe = chatMe;
+                this.messageIsMine = messageIsMine;
             }
         }
 
