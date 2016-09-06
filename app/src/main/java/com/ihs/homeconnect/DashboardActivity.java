@@ -108,7 +108,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         public servicesAdapter() {
             for (services aService : services.values()) {
-                mServiceNameList.add(aService.toString());
+                mServiceNameList.add(aService.name);
                 try {
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                         mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));

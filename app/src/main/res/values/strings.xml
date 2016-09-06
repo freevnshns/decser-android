@@ -28,4 +28,7 @@
     <string name="title_activity_xmpp">XmppActivity</string>
     <string name="enter_message">Enter message</string>
     <string name="message_send">send</string>
+    <string name="enter_your_hostname">Enter your Hostname</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="register">Register</string>
 </resources>
