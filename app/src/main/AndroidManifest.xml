@@ -48,7 +48,8 @@
         <activity
             android:name=".XmppActivity"
             android:label="@string/title_activity_xmpp" />
-        <activity android:name=".XmppChatActivity"></activity>
+        <activity android:name=".XmppChatActivity" />
+        <activity android:name=".RegistrationActivity" />
     </application>
 
 </manifest>

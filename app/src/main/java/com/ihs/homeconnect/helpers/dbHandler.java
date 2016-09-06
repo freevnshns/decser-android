@@ -11,8 +11,21 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 15;
+    public static final int DATABASE_VERSION = 16;
     public static final String DATABASE_NAME = "homeConnect.db";
+
+    //    Table UserData
+    public static final String TABLE_USERDATA = "userdata";
+
+    public static final String COLUMN_EMAIL = "email";
+    public static final String COLUMN_EMAIL_TYPE = "TEXT PRIMARY KEY";
+
+    public static final String COLUMN_USER_HOST_NAME = "hostname";
+    public static final String COLUMN_USER_HOST_NAME_TYPE = "TEXT";
+
+    public static final String COLUMN_REGISTERED = "registered";
+    public static final String COLUMN_REGISTERED_TYPE = "INTEGER";
+
 
     //    TABLE contacts
     public static final String TABLE_CONTACTS = "contacts";
@@ -42,9 +55,11 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
+        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_EMAIL + " " + COLUMN_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + "\n);";
+        String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
         try {
-            db.execSQL(query);
+            db.execSQL(query1);
+            db.execSQL(query2);
         } catch (SQLException e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -53,8 +68,48 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERDATA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
         onCreate(db);
+    }
+
+    public boolean insertUserDetails(String email, String hostname, int registered) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_EMAIL, email);
+        values.put(COLUMN_USER_HOST_NAME, hostname);
+        values.put(COLUMN_REGISTERED, registered);
+        try {
+            db.insert(TABLE_USERDATA, null, values);
+        } catch (Exception e) {
+            loggingHandler loggingHandler = new loggingHandler();
+            loggingHandler.addLog(e.getMessage());
+            return false;
+        }
+        db.close();
+        return true;
+    }
+
+    public int getUserDetails() {
+        SQLiteDatabase db = getReadableDatabase();
+        int registered = 0;
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_REGISTERED)) != null) {
+                    registered = c.getInt(c.getColumnIndex(COLUMN_REGISTERED));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return registered;
+
     }
 
     public boolean deleteContact(String hostname) {

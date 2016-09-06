@@ -33,14 +33,18 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_home);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
-            requestPermissions(perms, 200);
+
+        dbHandler dbInstance = new dbHandler(this, null);
+        if (dbInstance.getUserDetails() == 0) {
+            Intent intent = new Intent(this, RegistrationActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
         RecyclerView.LayoutManager mLayoutManager;
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvContactList);
         mLayoutManager = new LinearLayoutManager(this);
