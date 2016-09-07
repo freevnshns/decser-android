@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 17;
+    public static final int DATABASE_VERSION = 19;
     public static final String DATABASE_NAME = "homeConnect.db";
 
     //    Table UserData
@@ -61,11 +61,8 @@ public class dbHandler extends SQLiteOpenHelper {
     //    Table BackupEntity
     public static final String TABLE_BACKUP = "backup";
 
-    public static final String COLUMN_PID = "pid";
-    public static final String COLUMN_PID_TYPE = "INTEGER PRIMARY KEY";
-
     public static final String COLUMN_BACKUP_PATH = "bkp_path";
-    public static final String COLUMN_BACKUP_PATH_TYPE = "TEXT";
+    public static final String COLUMN_BACKUP_PATH_TYPE = "TEXT PRIMARY KEY";
 
     public static final String COLUMN_AUTO_BACKUP = "auto_bkp";
     public static final String COLUMN_AUTO_BACKUP_TYPE = "INTEGER";
@@ -80,7 +77,7 @@ public class dbHandler extends SQLiteOpenHelper {
         String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + " , " + COLUMN_BACKUP_SET + " " + COLUMN_BACKUP_SET_TYPE + "\n);";
         String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
         String query3 = "CREATE TABLE IF NOT EXISTS " + TABLE_XMPP_MESSAGES + "\n(\n" + COLUMN_MID + " " + COLUMN_MID_TYPE + " , " + COLUMN_MESSAGE_BODY + " " + COLUMN_MESSAGE_BODY_TYPE + " , " + COLUMN_SENDER_ID + " " + COLUMN_SENDER_ID_TYPE + "\n);";
-        String query4 = "CREATE TABLE IF NOT EXISTS " + TABLE_BACKUP + "\n(\n" + COLUMN_PID + " " + COLUMN_PID_TYPE + " , " + COLUMN_BACKUP_PATH + " " + COLUMN_BACKUP_PATH_TYPE + " , " + COLUMN_AUTO_BACKUP + " " + COLUMN_AUTO_BACKUP_TYPE + "\n);";
+        String query4 = "CREATE TABLE IF NOT EXISTS " + TABLE_BACKUP + "\n(\n" + COLUMN_BACKUP_PATH + " " + COLUMN_BACKUP_PATH_TYPE + " , " + COLUMN_AUTO_BACKUP + " " + COLUMN_AUTO_BACKUP_TYPE + "\n);";
 
         try {
             db.execSQL(query1);
@@ -123,7 +120,7 @@ public class dbHandler extends SQLiteOpenHelper {
     public void setColumnBackupSet() {
         SQLiteDatabase db = getWritableDatabase();
         try {
-            db.execSQL("UPDATE " + TABLE_BACKUP + " SET " + COLUMN_BACKUP_SET + " = 1 WHERE 1;");
+            db.execSQL("UPDATE " + TABLE_USERDATA + " SET " + COLUMN_BACKUP_SET + " = 1 WHERE 1;");
         } catch (Exception e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -356,6 +353,7 @@ public class dbHandler extends SQLiteOpenHelper {
         try {
             db.insert(TABLE_BACKUP, null, values);
         } catch (Exception e) {
+            e.printStackTrace();
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
         }

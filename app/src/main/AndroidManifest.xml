@@ -42,16 +42,16 @@
         <activity
             android:name=".DownloadManagerActivity"
             android:label="Download Manager" />
-        <activity android:name=".ShareKeyActivity" />
-        <activity android:name=".RequestKeyActivity" />
-        <activity android:name=".VideoCamActivity" />
         <activity
             android:name=".XmppActivity"
             android:label="@string/title_activity_xmpp" />
+        <activity android:name=".ShareKeyActivity" />
+        <activity android:name=".RequestKeyActivity" />
+        <activity android:name=".VideoCamActivity" />
         <activity android:name=".XmppChatActivity" />
         <activity android:name=".RegistrationActivity" />
         <activity android:name=".BackupActivity" />
-        <activity android:name=".SetupBackupActivity"></activity>
+        <activity android:name=".BackupSetupActivity" />
     </application>
 
 </manifest>

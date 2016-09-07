@@ -181,7 +181,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case backup:
                                 try {
-                                    session.setPortForwardingL(services.backup.port, "127.0.0.1", services.backup.port);
+                                    session.setPortForwardingL(services.backup.lport, "127.0.0.1", services.backup.port);
                                 } catch (JSchException e) {
                                     if (!e.getMessage().startsWith("PortForwardingL:")) {
                                         e.printStackTrace();
