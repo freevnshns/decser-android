@@ -50,7 +50,8 @@
             android:label="@string/title_activity_xmpp" />
         <activity android:name=".XmppChatActivity" />
         <activity android:name=".RegistrationActivity" />
-        <activity android:name=".BackupActivity"></activity>
+        <activity android:name=".BackupActivity" />
+        <activity android:name=".SetupBackupActivity"></activity>
     </application>
 
 </manifest>

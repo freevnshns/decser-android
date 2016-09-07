@@ -48,10 +48,18 @@
     </RadioGroup>
 
     <Button
+        android:id="@+id/bSelectKey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rgIsPersonalKey"
+        android:text="@string/select_key_file" />
+
+    <Button
         android:id="@+id/bKeyImporter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rgIsPersonalKey"
+        android:layout_toEndOf="@+id/bSelectKey"
         android:text="@string/importHelperText" />
 
 </RelativeLayout>

@@ -58,7 +58,7 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_SENDER_ID = "sender";
     public static final String COLUMN_SENDER_ID_TYPE = "TEXT";
 
-    //    Table backup
+    //    Table BackupEntity
     public static final String TABLE_BACKUP = "backup";
 
     public static final String COLUMN_PID = "pid";
@@ -360,5 +360,27 @@ public class dbHandler extends SQLiteOpenHelper {
             loggingHandler.addLog(e.getMessage());
         }
         db.close();
+    }
+
+    public ArrayList<String> getBackupPaths(int auto) {
+        ArrayList<String> paths = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT " + COLUMN_BACKUP_PATH + " FROM " + TABLE_BACKUP + " WHERE " + COLUMN_AUTO_BACKUP + "='" + auto + "';";
+        try {
+            Cursor c = db.rawQuery(query, null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_BACKUP_PATH)) != null) {
+                    paths.add(c.getString(c.getColumnIndex(COLUMN_BACKUP_PATH)));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return paths;
     }
 }
