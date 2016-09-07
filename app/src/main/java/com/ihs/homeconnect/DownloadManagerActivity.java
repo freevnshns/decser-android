@@ -25,8 +25,6 @@ import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.jsonrpcHandler;
 import com.ihs.homeconnect.helpers.services;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,17 +34,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class DownloadManagerActivity extends AppCompatActivity {
-    public static Session session = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_manager);
-        try {
-            session.setPortForwardingL(services.dm.port, "127.0.0.1", services.dm.port);
-        } catch (JSchException e) {
-            e.printStackTrace();
-        }
+
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter = null;
         RecyclerView.LayoutManager mLayoutManager;

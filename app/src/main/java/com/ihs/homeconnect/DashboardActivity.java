@@ -174,7 +174,14 @@ public class DashboardActivity extends AppCompatActivity {
                         PackageManager packageManager = getPackageManager();
                         switch (services.values()[(Integer) v.getTag()]) {
                             case dm:
-                                DownloadManagerActivity.session = session;
+                                try {
+                                    session.setPortForwardingL(services.dm.port, "127.0.0.1", services.dm.port);
+                                } catch (JSchException e) {
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
+                                }
                                 intent = new Intent(DashboardActivity.this, DownloadManagerActivity.class);
                                 startActivity(intent);
                                 break;
@@ -185,23 +192,26 @@ public class DashboardActivity extends AppCompatActivity {
                                     try {
                                         session.setPortForwardingL(services.backup.lport, "127.0.0.1", services.backup.port);
                                     } catch (JSchException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                                        builder.setTitle("Please copy the following url and paste it at the next screen to setup backup.");
-                                        final EditText input_url = new EditText(getApplicationContext());
-                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                                        input_url.setTextColor(Color.BLACK);
-                                        input_url.setText("http://127.0.0.1:9080/owncloud");
-                                        builder.setView(input_url);
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                startActivity(launchIntent);
-                                            }
-                                        });
-                                        builder.show();
+                                        if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                            e.printStackTrace();
+                                            break;
+                                        }
                                     }
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+                                    builder.setTitle("Please copy the following url and paste it at the next screen to setup backup.");
+                                    final EditText input_url = new EditText(getApplicationContext());
+                                    input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+                                    input_url.setTextColor(Color.BLACK);
+                                    input_url.setText("http://127.0.0.1:9080/owncloud");
+                                    builder.setView(input_url);
+                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startActivity(launchIntent);
+                                        }
+                                    });
+                                    builder.show();
+
                                 } catch (PackageManager.NameNotFoundException e) {
                                     BroadcastReceiver onComplete = new BroadcastReceiver() {
                                         @Override
@@ -229,7 +239,10 @@ public class DashboardActivity extends AppCompatActivity {
                                 try {
                                     session.setPortForwardingL(services.homebase.lport, "127.0.0.1", services.homebase.port);
                                 } catch (JSchException e) {
-                                    e.printStackTrace();
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
                                 }
                                 intent.setData(Uri.parse("http://127.0.0.1:9080/"));
                                 startActivity(intent);
@@ -237,12 +250,15 @@ public class DashboardActivity extends AppCompatActivity {
                             case vs:
                                 try {
                                     session.setPortForwardingL(services.vs.port, "127.0.0.1", services.vs.port);
-                                    Intent i = new Intent(Intent.ACTION_VIEW);
-                                    i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
-                                    startActivity(i);
                                 } catch (JSchException e) {
-                                    e.printStackTrace();
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
                                 }
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
+                                startActivity(i);
                                 break;
                             case printer:
                                 try {
@@ -279,11 +295,14 @@ public class DashboardActivity extends AppCompatActivity {
                             case xmpp:
                                 try {
                                     session.setPortForwardingL(services.xmpp.lport, "127.0.0.1", services.xmpp.port);
-                                    xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
-                                    xmppHandler.execute();
                                 } catch (JSchException e) {
-                                    e.printStackTrace();
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
                                 }
+                                xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
+                                xmppHandler.execute();
                                 break;
                             default:
                                 break;
