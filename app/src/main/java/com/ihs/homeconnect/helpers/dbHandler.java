@@ -26,6 +26,9 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_REGISTERED = "registered";
     public static final String COLUMN_REGISTERED_TYPE = "INTEGER";
 
+    public static final String COLUMN_BACKUP_SET = "bkp_set";
+    public static final String COLUMN_BACKUP_SET_TYPE = "INTEGER";
+
 
     //    TABLE contacts
     public static final String TABLE_CONTACTS = "contacts";
@@ -55,6 +58,18 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_SENDER_ID = "sender";
     public static final String COLUMN_SENDER_ID_TYPE = "TEXT";
 
+    //    Table backup
+    public static final String TABLE_BACKUP = "backup";
+
+    public static final String COLUMN_PID = "pid";
+    public static final String COLUMN_PID_TYPE = "INTEGER PRIMARY KEY";
+
+    public static final String COLUMN_BACKUP_PATH = "bkp_path";
+    public static final String COLUMN_BACKUP_PATH_TYPE = "TEXT";
+
+    public static final String COLUMN_AUTO_BACKUP = "auto_bkp";
+    public static final String COLUMN_AUTO_BACKUP_TYPE = "INTEGER";
+
 
     public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -62,13 +77,16 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + "\n);";
+        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + " , " + COLUMN_BACKUP_SET + " " + COLUMN_BACKUP_SET_TYPE + "\n);";
         String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
         String query3 = "CREATE TABLE IF NOT EXISTS " + TABLE_XMPP_MESSAGES + "\n(\n" + COLUMN_MID + " " + COLUMN_MID_TYPE + " , " + COLUMN_MESSAGE_BODY + " " + COLUMN_MESSAGE_BODY_TYPE + " , " + COLUMN_SENDER_ID + " " + COLUMN_SENDER_ID_TYPE + "\n);";
+        String query4 = "CREATE TABLE IF NOT EXISTS " + TABLE_BACKUP + "\n(\n" + COLUMN_PID + " " + COLUMN_PID_TYPE + " , " + COLUMN_BACKUP_PATH + " " + COLUMN_BACKUP_PATH_TYPE + " , " + COLUMN_AUTO_BACKUP + " " + COLUMN_AUTO_BACKUP_TYPE + "\n);";
+
         try {
             db.execSQL(query1);
             db.execSQL(query2);
             db.execSQL(query3);
+            db.execSQL(query4);
         } catch (SQLException e) {
             loggingHandler loggingHandler = new loggingHandler();
             loggingHandler.addLog(e.getMessage());
@@ -79,6 +97,8 @@ public class dbHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERDATA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_XMPP_MESSAGES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_BACKUP);
         onCreate(db);
     }
 
@@ -87,6 +107,7 @@ public class dbHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_EMAIL, email);
         values.put(COLUMN_USER_HOST_NAME, hostname);
+        values.put(COLUMN_BACKUP_SET, 0);
         values.put(COLUMN_REGISTERED, registered);
         try {
             db.insert(TABLE_USERDATA, null, values);
@@ -97,6 +118,17 @@ public class dbHandler extends SQLiteOpenHelper {
         }
         db.close();
         return true;
+    }
+
+    public void setColumnBackupSet() {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            db.execSQL("UPDATE " + TABLE_BACKUP + " SET " + COLUMN_BACKUP_SET + " = 1 WHERE 1;");
+        } catch (Exception e) {
+            loggingHandler loggingHandler = new loggingHandler();
+            loggingHandler.addLog(e.getMessage());
+        }
+        db.close();
     }
 
     public int getUserRegistration() {
@@ -138,6 +170,27 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return user_hostname;
+    }
+
+    public int isBackupSet() {
+        SQLiteDatabase db = getReadableDatabase();
+        int backed = 0;
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_BACKUP_SET)) != null) {
+                    backed = c.getInt(c.getColumnIndex(COLUMN_BACKUP_SET));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return backed;
     }
 
     public String getUserEmail() {
@@ -293,6 +346,19 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return arrayList;
+    }
 
+    public void insertBackupPaths(String path, int auto) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_BACKUP_PATH, path);
+        values.put(COLUMN_AUTO_BACKUP, auto);
+        try {
+            db.insert(TABLE_BACKUP, null, values);
+        } catch (Exception e) {
+            loggingHandler loggingHandler = new loggingHandler();
+            loggingHandler.addLog(e.getMessage());
+        }
+        db.close();
     }
 }

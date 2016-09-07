@@ -1,12 +1,8 @@
 package com.ihs.homeconnect;
 
 import android.annotation.SuppressLint;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +32,6 @@ import com.ihs.homeconnect.helpers.xmppHandler;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -187,51 +181,16 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case backup:
                                 try {
-                                    packageManager.getPackageInfo("com.owncloud.android", PackageManager.GET_ACTIVITIES);
-                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.owncloud.android");
-                                    try {
-                                        session.setPortForwardingL(services.backup.lport, "127.0.0.1", services.backup.port);
-                                    } catch (JSchException e) {
-                                        if (!e.getMessage().startsWith("PortForwardingL:")) {
-                                            e.printStackTrace();
-                                            break;
-                                        }
+                                    session.setPortForwardingL(services.backup.port, "127.0.0.1", services.backup.port);
+                                } catch (JSchException e) {
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
                                     }
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                                    builder.setTitle("Please copy the following url and paste it at the next screen to setup backup.");
-                                    final EditText input_url = new EditText(getApplicationContext());
-                                    input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                                    input_url.setTextColor(Color.BLACK);
-                                    input_url.setText("http://127.0.0.1:9080/owncloud");
-                                    builder.setView(input_url);
-                                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            startActivity(launchIntent);
-                                        }
-                                    });
-                                    builder.show();
-
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    BroadcastReceiver onComplete = new BroadcastReceiver() {
-                                        @Override
-                                        public void onReceive(Context context, Intent intent) {
-                                            Intent promptInstall = new Intent(Intent.ACTION_VIEW)
-                                                    .setDataAndType(Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.getDownloadCacheDirectory().getAbsolutePath()) + "/com.owncloud.android_20000001.apk")),
-                                                            "application/vnd.android.package-archive");
-                                            startActivity(promptInstall);
-                                            unregisterReceiver(this);
-                                        }
-                                    };
-                                    String url = "https://f-droid.org/repo/com.owncloud.android_20000001.apk";
-                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                    request.setDescription("com.owncloud.android_20000001.apk");
-                                    request.setTitle("ownCloud backup App");
-                                    request.setDestinationInExternalPublicDir(Environment.getDownloadCacheDirectory().getAbsolutePath(), "com.owncloud.android_20000001.apk");
-                                    DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-                                    manager.enqueue(request);
-                                    registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
                                 }
+                                intent = new Intent(DashboardActivity.this, BackupActivity.class);
+                                startActivity(intent);
+
                                 break;
                             case homebase:
 //                                TODO Launch Server Dashboard
