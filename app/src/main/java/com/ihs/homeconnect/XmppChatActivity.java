@@ -102,7 +102,7 @@ public class XmppChatActivity extends AppCompatActivity {
                 if (chatMe)
                     dbHandler.addMessage(chatParticipant, "Me : > " + messageString);
                 else
-                    dbHandler.addMessage(chatParticipant, chatParticipant + " : > " + messageString);
+                    dbHandler.addMessage(chatParticipant, " : > " + messageString);
                 notifyDataSetChanged();
             }
         }
