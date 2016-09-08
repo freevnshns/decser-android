@@ -58,7 +58,7 @@ public class xmppHandler extends AsyncTask<Void, Void, AbstractXMPPConnection> {
 
             String user_email = dbHandler.getUserEmail();
 
-            connection.login(user_email.substring(0, user_email.lastIndexOf("@")), "abcd");
+            connection.login(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword());
 
             return connection;
         } catch (SmackException | IOException | XMPPException e) {

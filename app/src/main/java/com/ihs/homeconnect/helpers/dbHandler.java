@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 19;
+    public static final int DATABASE_VERSION = 20;
     public static final String DATABASE_NAME = "homeConnect.db";
 
     //    Table UserData
@@ -27,8 +27,8 @@ public class dbHandler extends SQLiteOpenHelper {
     public static final String COLUMN_REGISTERED = "registered";
     public static final String COLUMN_REGISTERED_TYPE = "INTEGER";
 
-    public static final String COLUMN_BACKUP_SET = "bkp_set";
-    public static final String COLUMN_BACKUP_SET_TYPE = "INTEGER";
+    public static final String COLUMN_PASSWORD = "password";
+    public static final String COLUMN_PASSWORD_TYPE = "TEXT";
 
 
     //    TABLE contacts
@@ -75,7 +75,7 @@ public class dbHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + " , " + COLUMN_BACKUP_SET + " " + COLUMN_BACKUP_SET_TYPE + "\n);";
+        String query1 = "CREATE TABLE IF NOT EXISTS " + TABLE_USERDATA + "\n(\n" + COLUMN_USER_EMAIL + " " + COLUMN_USER_EMAIL_TYPE + " , " + COLUMN_USER_HOST_NAME + " " + COLUMN_USER_HOST_NAME_TYPE + " , " + COLUMN_REGISTERED + " " + COLUMN_REGISTERED_TYPE + " , " + COLUMN_PASSWORD + " " + COLUMN_PASSWORD_TYPE + "\n);";
         String query2 = "CREATE TABLE IF NOT EXISTS " + TABLE_CONTACTS + "\n(\n" + COLUMN_ID + " " + COLUMN_ID_TYPE + " , " + COLUMN_NAME + " " + COLUMN_NAME_TYPE + " , " + COLUMN_HOST_NAME + " " + COLUMN_HOST_NAME_TYPE + "," + COLUMN_ACCESS + " " + COLUMN_ACCESS_TYPE + "\n);";
         String query3 = "CREATE TABLE IF NOT EXISTS " + TABLE_XMPP_MESSAGES + "\n(\n" + COLUMN_MID + " " + COLUMN_MID_TYPE + " , " + COLUMN_MESSAGE_BODY + " " + COLUMN_MESSAGE_BODY_TYPE + " , " + COLUMN_SENDER_ID + " " + COLUMN_SENDER_ID_TYPE + "\n);";
         String query4 = "CREATE TABLE IF NOT EXISTS " + TABLE_BACKUP + "\n(\n" + COLUMN_BACKUP_PATH + " " + COLUMN_BACKUP_PATH_TYPE + " , " + COLUMN_AUTO_BACKUP + " " + COLUMN_AUTO_BACKUP_TYPE + "\n);";
@@ -100,12 +100,12 @@ public class dbHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertUserDetails(String email, String hostname, int registered) {
+    public boolean insertUserDetails(String email, String hostname, int registered, String pass) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_USER_EMAIL, email);
         values.put(COLUMN_USER_HOST_NAME, hostname);
-        values.put(COLUMN_BACKUP_SET, 0);
+        values.put(COLUMN_PASSWORD, pass);
         values.put(COLUMN_REGISTERED, registered);
         try {
             db.insert(TABLE_USERDATA, null, values);
@@ -118,27 +118,27 @@ public class dbHandler extends SQLiteOpenHelper {
         return true;
     }
 
-    public void setColumnBackupSet() {
-        SQLiteDatabase db = getWritableDatabase();
-        try {
-            db.execSQL("UPDATE " + TABLE_USERDATA + " SET " + COLUMN_BACKUP_SET + " = 1 WHERE 1;");
-        } catch (Exception e) {
-            loggingHandler loggingHandler = new loggingHandler();
-            loggingHandler.addLog(e.getMessage());
-        }
-        db.close();
-    }
+//    public void updateColumnPassword() {
+//        SQLiteDatabase db = getWritableDatabase();
+//        try {
+//            db.execSQL("UPDATE " + TABLE_USERDATA + " SET " + COLUMN_PASSWORD + " = 1 WHERE 1;");
+//        } catch (Exception e) {
+//            loggingHandler loggingHandler = new loggingHandler();
+//            loggingHandler.addLog(e.getMessage());
+//        }
+//        db.close();
+//    }
 
-    public int isBackupSet() {
+    public String getUserPassword() {
         SQLiteDatabase db = getReadableDatabase();
-        int backed = 0;
+        String pass = null;
         try {
-            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            Cursor c = db.rawQuery("SELECT " + COLUMN_PASSWORD + " FROM " + TABLE_USERDATA + " WHERE 1;", null);
             c.moveToFirst();
 
             while (!c.isAfterLast()) {
-                if (c.getString(c.getColumnIndex(COLUMN_BACKUP_SET)) != null) {
-                    backed = c.getInt(c.getColumnIndex(COLUMN_BACKUP_SET));
+                if (c.getString(c.getColumnIndex(COLUMN_PASSWORD)) != null) {
+                    pass = c.getString(c.getColumnIndex(COLUMN_PASSWORD));
                 }
                 c.moveToNext();
             }
@@ -147,7 +147,7 @@ public class dbHandler extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return backed;
+        return pass;
     }
 
     public int getUserRegistration() {

@@ -29,6 +29,7 @@ public class RegistrationActivity extends AppCompatActivity {
             String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
             requestPermissions(perms, 200);
         }
+        final EditText etRegPass = (EditText) findViewById(R.id.etRegPass);
         final EditText etRegEmailID = (EditText) findViewById(R.id.etRegEmailID);
         final EditText etRegHostname = (EditText) findViewById(R.id.etRegHostname);
         Button bRegister = (Button) findViewById(R.id.bRegister);
@@ -47,7 +48,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                 try {
                                     if (response.getBoolean("registration")) {
                                         dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
-                                        if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1)) {
+                                        if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
                                             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                                             startActivity(intent);
                                             finish();

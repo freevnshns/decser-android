@@ -35,4 +35,5 @@
     <string name="show_back_files">Show BackedUp files</string>
     <string name="add_auto_backup_directory">Add auto backup directory</string>
     <string name="list_of_auto_back_up_directories">List of Auto-Back Up Directories</string>
+    <string name="password_hint_and_info">Enter a Password (Note that this password will not be sent to the server but will be saved on your phone locally)</string>
 </resources>

@@ -16,15 +16,18 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.dbHandler;
 import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.OwnCloudClientFactory;
 import com.owncloud.android.lib.common.OwnCloudCredentialsFactory;
+import com.owncloud.android.lib.common.network.OnDatatransferProgressListener;
 import com.owncloud.android.lib.common.operations.OnRemoteOperationListener;
 import com.owncloud.android.lib.common.operations.RemoteOperation;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
+import com.owncloud.android.lib.resources.files.CreateRemoteFolderOperation;
 import com.owncloud.android.lib.resources.files.FileUtils;
 import com.owncloud.android.lib.resources.files.ReadRemoteFolderOperation;
 import com.owncloud.android.lib.resources.files.RemoteFile;
@@ -34,7 +37,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class BackupActivity extends AppCompatActivity implements OnRemoteOperationListener {
+public class BackupActivity extends AppCompatActivity implements OnRemoteOperationListener, OnDatatransferProgressListener {
 
     final static ArrayList<uploadJob> uploadJobs = new ArrayList<>();
     private OwnCloudClient mClient;
@@ -52,7 +55,9 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         setContentView(R.layout.activity_backup);
 
         mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
-        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials("sidzi", "qazxsw"));
+        String user_email = dbHandler.getUserEmail();
+
+        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword()));
 
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
@@ -92,15 +97,9 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             });
         }
         readFilesOnServer();
-//            CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(FileUtils.PATH_SEPARATOR + "LOL", false);
-//            createOperation.execute(mClient, this, mHandler);
     }
 
     private void auto_backup(ArrayList<Object> remoteList) {
-        progressDialog = new ProgressDialog(BackupActivity.this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setIndeterminate(true);
-        progressDialog.show();
         ArrayList<String> auto_bkp_paths = dbHandler.getBackupPaths(1);
         HashSet<String> bkd_paths = new HashSet<>();
         for (Object o :
@@ -129,7 +128,16 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
                 }
             }
         }
-        uploadFilesToServer();
+        if (!uploadJobs.isEmpty()) {
+            progressDialog = new ProgressDialog(BackupActivity.this);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(100);
+            progressDialog.setProgress(0);
+            uploadFilesToServer();
+
+        }
     }
 
     private void readFilesOnServer() {
@@ -138,12 +146,15 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     }
 
     private void uploadFilesToServer() {
+        progressDialog.setProgress(0);
         uploadJob upJb = uploadJobs.remove(0);
         String filepath = upJb.getPath();
         String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
         progressDialog.setTitle(remotePath);
+        progressDialog.show();
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
+        uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
     }
 
@@ -151,21 +162,41 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     public void onRemoteOperationFinish(RemoteOperation operation, RemoteOperationResult result) {
         if (operation instanceof UploadRemoteFileOperation) {
             if (result.isSuccess()) {
-                if (uploadJobs.isEmpty()) {
-                    progressDialog.dismiss();
-                } else {
+                if (!uploadJobs.isEmpty())
                     uploadFilesToServer();
+                else {
+                    Toast.makeText(BackupActivity.this, "Backup Completed", Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                }
+            }
+        } else {
+            if (operation instanceof ReadRemoteFolderOperation) {
+                if (result.isSuccess()) {
+                    auto_backup(result.getData());
+                } else {
+                    if (result.getCode().toString().equalsIgnoreCase("FILE_NOT_FOUND")) {
+                        CreateRemoteFolderOperation createOperation = new CreateRemoteFolderOperation(FileUtils.PATH_SEPARATOR + "auto_bkp", false);
+                        createOperation.execute(mClient, this, mHandler);
+                    }
                 }
             } else {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
+                if (operation instanceof CreateRemoteFolderOperation) {
+                    if (result.isSuccess()) {
+                        readFilesOnServer();
+                    }
+                }
             }
         }
-        if (operation instanceof ReadRemoteFolderOperation) {
-            if (result.isSuccess()) {
-                auto_backup(result.getData());
+    }
+
+    @Override
+    public void onTransferProgress(final long progressRate, final long totalTransferredSoFar, final long totalToTransfer, String fileName) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.setProgress((int) (totalTransferredSoFar * 100 / totalToTransfer));
             }
-        }
+        });
     }
 
     class uploadJob {

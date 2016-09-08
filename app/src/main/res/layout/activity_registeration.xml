@@ -48,6 +48,26 @@
             android:inputType="text" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/etRegPass"
+            android:paddingBottom="20dp"
+            android:text="@string/password_hint_and_info" />
+
+        <EditText
+            android:id="@+id/etRegPass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:digits="abcdefghijklmnopqrstuvwxyz.-0123456789"
+            android:ems="10"
+            android:inputType="textPassword" />
+    </RelativeLayout>
+
     <Button
         android:id="@+id/bRegister"
         android:layout_width="wrap_content"
