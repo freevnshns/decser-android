@@ -51,7 +51,8 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
             socket = new Socket(params[0], 42000);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out.write("lol@lolmail.com");
+            dbHandler dbHandler = new dbHandler(mContext, null);
+            out.write(dbHandler.getUserEmail());
             out.flush();
             String buffer;
             PrintWriter keyWriter = new PrintWriter(new FileWriter(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + params[0] + ".ppk", false));

@@ -39,7 +39,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     RequestQueue queue = Volley.newRequestQueue(RegistrationActivity.this);
                     try {
-                        String registrationUrl = "http://192.168.1.101:5000/register";
+                        String registrationUrl = "http://decser-sidzi.rhcloud.com/decserExchange";
                         final JSONObject postRequest = new JSONObject("{'user_email':'" + etRegEmailID.getText().toString() + "','user_hostname':'" + etRegHostname.getText().toString() + "'}");
                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, registrationUrl, postRequest, new Response.Listener<JSONObject>() {
                             @Override
