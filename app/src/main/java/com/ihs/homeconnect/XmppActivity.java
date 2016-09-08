@@ -119,7 +119,7 @@ public class XmppActivity extends AppCompatActivity {
 
         @Override
         public xmppRosterAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_row_layout, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row_contact, parent, false);
             return new ViewHolder(view);
         }
 

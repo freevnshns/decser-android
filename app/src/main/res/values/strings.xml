@@ -32,4 +32,7 @@
     <string name="enter_your_email_address">Enter your email address</string>
     <string name="register">Register</string>
     <string name="select_key_file">Select Key File</string>
+    <string name="show_back_files">Show BackedUp files</string>
+    <string name="add_auto_backup_directory">Add auto backup directory</string>
+    <string name="list_of_auto_back_up_directories">List of Auto-Back Up Directories</string>
 </resources>

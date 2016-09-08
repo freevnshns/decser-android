@@ -74,7 +74,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         }
         FloatingActionButton fabAddNewUri = (FloatingActionButton) findViewById(R.id.fabAddDownloadUri);
         assert fabAddNewUri != null;
-        fabAddNewUri.setImageResource(R.drawable.ic_add_contact);
+        fabAddNewUri.setImageResource(R.drawable.ic_add);
         fabAddNewUri.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +161,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.downloads_row_layout, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row_downloads, parent, false);
             return new ViewHolder(view);
         }
 

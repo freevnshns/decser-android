@@ -109,7 +109,7 @@ public class XmppChatActivity extends AppCompatActivity {
 
         @Override
         public xmppChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_bubble_layout, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row_chat_bubble, parent, false);
             return new ViewHolder(view);
         }
 

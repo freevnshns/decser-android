@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
         assert floatingActionUploadButton != null;
-        floatingActionUploadButton.setImageResource(R.drawable.ic_addkey);
+        floatingActionUploadButton.setImageResource(R.drawable.ic_add);
         floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +122,7 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public ContactListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.contact_row_layout, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row_contact, parent, false);
             return new ViewHolder(view);
         }
 

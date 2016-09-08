@@ -136,7 +136,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_row_layout, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_row_service, parent, false);
             return new ViewHolder(view);
         }
 

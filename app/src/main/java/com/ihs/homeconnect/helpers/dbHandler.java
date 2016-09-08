@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -128,6 +129,27 @@ public class dbHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public int isBackupSet() {
+        SQLiteDatabase db = getReadableDatabase();
+        int backed = 0;
+        try {
+            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
+            c.moveToFirst();
+
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(COLUMN_BACKUP_SET)) != null) {
+                    backed = c.getInt(c.getColumnIndex(COLUMN_BACKUP_SET));
+                }
+                c.moveToNext();
+            }
+            c.close();
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return backed;
+    }
+
     public int getUserRegistration() {
         SQLiteDatabase db = getReadableDatabase();
         int registered = 0;
@@ -167,27 +189,6 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return user_hostname;
-    }
-
-    public int isBackupSet() {
-        SQLiteDatabase db = getReadableDatabase();
-        int backed = 0;
-        try {
-            Cursor c = db.rawQuery("SELECT * FROM " + TABLE_USERDATA + " WHERE 1;", null);
-            c.moveToFirst();
-
-            while (!c.isAfterLast()) {
-                if (c.getString(c.getColumnIndex(COLUMN_BACKUP_SET)) != null) {
-                    backed = c.getInt(c.getColumnIndex(COLUMN_BACKUP_SET));
-                }
-                c.moveToNext();
-            }
-            c.close();
-            db.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return backed;
     }
 
     public String getUserEmail() {
@@ -345,7 +346,7 @@ public class dbHandler extends SQLiteOpenHelper {
         return arrayList;
     }
 
-    public void insertBackupPaths(String path, int auto) {
+    public void insertBackupPaths(String path, int auto) throws SQLiteConstraintException {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_BACKUP_PATH, path);
