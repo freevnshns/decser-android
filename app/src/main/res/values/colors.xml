@@ -3,4 +3,5 @@
     <color name="text_primary">#202020</color>
     <color name="text_secondary">#787878</color>
     <color name="primary">#ff9900</color>
+    <color name="secondary">#2f2f2f</color>
 </resources>

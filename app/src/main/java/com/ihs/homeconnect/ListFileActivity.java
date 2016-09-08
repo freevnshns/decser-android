@@ -59,21 +59,25 @@ public class ListFileActivity extends ListActivity {
         if (new File(filename).isDirectory()) {
             Intent intent = new Intent(this, ListFileActivity.class);
             intent.putExtra("path", filename);
-            startActivity(intent);
-            finish();
+            startActivityForResult(intent, 3);
         } else {
 //            Code to implement import
-            Intent intent = new Intent(this, AddContactActivity.class);
-            AddContactActivity.importKeyPath = filename;
-            startActivity(intent);
+            Intent data = new Intent();
+            data.putExtra("filepath", filename);
+            setResult(RESULT_OK, data);
             finish();
         }
     }
 
+    //    Ugliest Solution Possible :( TODO Change this activity
     @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-        finish();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Intent dataRec = new Intent();
+            dataRec.putExtra("filepath", data.getStringExtra("filepath"));
+            setResult(RESULT_OK, dataRec);
+            finish();
+        }
     }
 }

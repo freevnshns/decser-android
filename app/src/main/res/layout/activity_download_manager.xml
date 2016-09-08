@@ -17,12 +17,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_marginBottom="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
         android:clickable="true"
-        app:backgroundTint="@color/primary"
+        app:backgroundTint="@color/secondary"
         app:borderWidth="2dp" />
 
     <RelativeLayout
