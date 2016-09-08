@@ -22,7 +22,6 @@ import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.OwnCloudClientFactory;
 import com.owncloud.android.lib.common.OwnCloudCredentialsFactory;
-import com.owncloud.android.lib.common.network.OnDatatransferProgressListener;
 import com.owncloud.android.lib.common.operations.OnRemoteOperationListener;
 import com.owncloud.android.lib.common.operations.RemoteOperation;
 import com.owncloud.android.lib.common.operations.RemoteOperationResult;
@@ -35,7 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class BackupActivity extends AppCompatActivity implements OnRemoteOperationListener, OnDatatransferProgressListener {
+public class BackupActivity extends AppCompatActivity implements OnRemoteOperationListener {
 
     final static ArrayList<uploadJob> uploadJobs = new ArrayList<>();
     private OwnCloudClient mClient;
@@ -100,8 +99,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     private void auto_backup(ArrayList<Object> remoteList) {
         progressDialog = new ProgressDialog(BackupActivity.this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMax(100);
+        progressDialog.setIndeterminate(true);
         progressDialog.show();
         ArrayList<String> auto_bkp_paths = dbHandler.getBackupPaths(1);
         HashSet<String> bkd_paths = new HashSet<>();
@@ -142,10 +140,10 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     private void uploadFilesToServer() {
         uploadJob upJb = uploadJobs.remove(0);
         String filepath = upJb.getPath();
-        String remotePath = upJb.getRpath();
+        String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
+        progressDialog.setTitle(remotePath);
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
-        uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
     }
 
@@ -156,7 +154,6 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
                 if (uploadJobs.isEmpty()) {
                     progressDialog.dismiss();
                 } else {
-                    progressDialog.setProgress(0);
                     uploadFilesToServer();
                 }
             } else {
@@ -171,25 +168,14 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         }
     }
 
-    @Override
-    public void onTransferProgress(final long progressRate, final long totalTransferredSoFar, final long totalToTransfer, String fileName) {
-        final int progress = (int) (totalToTransfer / totalTransferredSoFar);
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.setProgress(progress);
-            }
-        });
-    }
-
     class uploadJob {
         String path;
-        String rpath;
+        String remotePath;
         String mime;
 
-        public uploadJob(String path, String rpath, String mime) {
+        public uploadJob(String path, String remotePath, String mime) {
             this.path = path;
-            this.rpath = rpath;
+            this.remotePath = remotePath;
             this.mime = mime;
         }
 
@@ -197,8 +183,8 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             return path;
         }
 
-        public String getRpath() {
-            return rpath;
+        public String getRemotePath() {
+            return remotePath;
         }
 
         public String getMime() {
