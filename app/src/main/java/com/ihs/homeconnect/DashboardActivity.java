@@ -1,27 +1,21 @@
 package com.ihs.homeconnect;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -165,7 +159,6 @@ public class DashboardActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent;
-                        PackageManager packageManager = getPackageManager();
                         switch (services.values()[(Integer) v.getTag()]) {
                             case dm:
                                 try {
@@ -218,38 +211,6 @@ public class DashboardActivity extends AppCompatActivity {
                                 Intent i = new Intent(Intent.ACTION_VIEW);
                                 i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
                                 startActivity(i);
-                                break;
-                            case printer:
-                                try {
-                                    packageManager.getPackageInfo("com.blackspruce.lpd", PackageManager.GET_ACTIVITIES);
-                                    final Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.blackspruce.lpd");
-                                    try {
-                                        session.setPortForwardingL(services.printer.lport, "127.0.0.1", services.printer.port);
-                                    } catch (JSchException e) {
-                                        e.printStackTrace();
-                                    } finally {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
-                                        builder.setTitle("Please copy the following url and paste it at the setup screen to setup print.");
-                                        final EditText input_url = new EditText(getApplicationContext());
-                                        input_url.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-                                        input_url.setTextColor(Color.BLACK);
-                                        input_url.setText("http://127.0.0.1:9631/");
-                                        builder.setView(input_url);
-                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                startActivity(launchIntent);
-                                            }
-                                        });
-                                        builder.show();
-                                    }
-                                } catch (PackageManager.NameNotFoundException e) {
-                                    try {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + "com.blackspruce.lpd")));
-                                    } catch (android.content.ActivityNotFoundException a) {
-                                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + "com.blackspruce.lpd")));
-                                    }
-                                }
                                 break;
                             case xmpp:
                                 try {

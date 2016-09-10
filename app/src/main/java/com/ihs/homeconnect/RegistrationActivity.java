@@ -1,5 +1,6 @@
 package com.ihs.homeconnect;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText etRegHostname = (EditText) findViewById(R.id.etRegHostname);
         final RadioGroup rgHasHostname = (RadioGroup) findViewById(R.id.rgHasHostname);
         final TextView tvLabelForEtRegHostname = (TextView) findViewById(R.id.tvLabelForEtRegHostname);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
         assert tvLabelForEtRegHostname != null;
         assert etRegHostname != null;
         if (rgHasHostname != null) {
@@ -70,6 +73,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                     if (response.getBoolean("registration")) {
                                         dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
                                         if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
+                                            progressDialog.dismiss();
                                             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -84,6 +88,7 @@ public class RegistrationActivity extends AppCompatActivity {
                             public void onErrorResponse(VolleyError error) {
                             }
                         });
+                        progressDialog.show();
                         queue.add(jsonObjectRequest);
                     } catch (JSONException e) {
                         e.printStackTrace();

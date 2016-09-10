@@ -1,5 +1,6 @@
 package com.ihs.homeconnect.helpers;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -18,41 +19,20 @@ import java.net.URL;
 
 public class keyExchangeHandler extends AsyncTask<String, Void, String> {
     private Context mContext;
+    private ProgressDialog progressDialog;
 
     public keyExchangeHandler(Context mContext) {
         super();
         this.mContext = mContext;
+        progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Waiting for the User");
     }
 
     @Override
     protected void onPostExecute(String o) {
         super.onPostExecute(o);
+        progressDialog.dismiss();
         ((ShareKeyActivity) mContext).working_lock = false;
-//        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-//        try {
-//            if (o.equals("")) {
-//                builder.setTitle("No user connected during this period");
-//            } else {
-//                builder.setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                    }
-//                });
-//                builder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                    }
-//                });
-//                builder.setCancelable(false);
-//            }
-//            AlertDialog promptAccess = builder.create();
-//            JSONObject exchange_user = new JSONObject(o);
-//            promptAccess.setTitle("Allow for " + exchange_user.get("user"));
-//            promptAccess.show();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
         try {
             JSONObject status = new JSONObject(o);
             if (status.getBoolean("success")) {
@@ -67,6 +47,7 @@ public class keyExchangeHandler extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
+        progressDialog.show();
         String str = "";
         try {
             URL url = new URL("http://127.0.0.1:9080/doKeyExchangeWith" + params[0]);
