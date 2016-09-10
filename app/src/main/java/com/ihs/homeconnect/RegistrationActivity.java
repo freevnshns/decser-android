@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +27,7 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registeration);
+        setTitle("One time Registration");
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
             requestPermissions(perms, 200);
@@ -32,8 +35,26 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText etRegPass = (EditText) findViewById(R.id.etRegPass);
         final EditText etRegEmailID = (EditText) findViewById(R.id.etRegEmailID);
         final EditText etRegHostname = (EditText) findViewById(R.id.etRegHostname);
+        final RadioGroup rgHasHostname = (RadioGroup) findViewById(R.id.rgHasHostname);
+        final TextView tvLabelForEtRegHostname = (TextView) findViewById(R.id.tvLabelForEtRegHostname);
+        assert tvLabelForEtRegHostname != null;
+        assert etRegHostname != null;
+        if (rgHasHostname != null) {
+            rgHasHostname.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    if (rgHasHostname.getCheckedRadioButtonId() == R.id.rbHasHostnameY) {
+                        tvLabelForEtRegHostname.setVisibility(View.VISIBLE);
+                        etRegHostname.setVisibility(View.VISIBLE);
+                    } else {
+                        tvLabelForEtRegHostname.setVisibility(View.GONE);
+                        etRegHostname.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
         Button bRegister = (Button) findViewById(R.id.bRegister);
-        if (bRegister != null && etRegEmailID != null && etRegHostname != null && etRegEmailID.getText().toString().equals("") && etRegHostname.getText().toString().equals(""))
+        if (bRegister != null && etRegEmailID != null && etRegPass != null && etRegEmailID.getText().toString().equals("") && etRegPass.getText().toString().equals(""))
             bRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

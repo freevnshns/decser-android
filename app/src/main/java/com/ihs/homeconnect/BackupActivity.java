@@ -134,7 +134,9 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setIndeterminate(false);
             progressDialog.setMax(100);
+            progressDialog.setTitle("Backing up");
             progressDialog.setProgress(0);
+            progressDialog.show();
             uploadFilesToServer();
 
         }
@@ -146,13 +148,12 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     }
 
     private void uploadFilesToServer() {
-        progressDialog.setProgress(0);
         uploadJob upJb = uploadJobs.remove(0);
         String filepath = upJb.getPath();
         String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
-        progressDialog.setTitle(remotePath);
-        progressDialog.show();
+        progressDialog.setMessage(remotePath);
+        progressDialog.setProgress(0);
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
         uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
@@ -165,8 +166,8 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
                 if (!uploadJobs.isEmpty())
                     uploadFilesToServer();
                 else {
-                    Toast.makeText(BackupActivity.this, "Backup Completed", Toast.LENGTH_LONG).show();
                     progressDialog.dismiss();
+                    Toast.makeText(BackupActivity.this, "Backup Completed", Toast.LENGTH_LONG).show();
                 }
             }
         } else {
