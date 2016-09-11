@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -61,6 +62,7 @@ public class RegistrationActivity extends AppCompatActivity {
             bRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    progressDialog.show();
                     RequestQueue queue = Volley.newRequestQueue(RegistrationActivity.this);
                     try {
                         String registrationUrl = "http://decser-sidzi.rhcloud.com/decserExchange";
@@ -74,6 +76,7 @@ public class RegistrationActivity extends AppCompatActivity {
                                         dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
                                         if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
                                             progressDialog.dismiss();
+                                            Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
                                             startActivity(intent);
                                             finish();
@@ -86,9 +89,10 @@ public class RegistrationActivity extends AppCompatActivity {
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
+                                progressDialog.dismiss();
+                                Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_LONG).show();
                             }
                         });
-                        progressDialog.show();
                         queue.add(jsonObjectRequest);
                     } catch (JSONException e) {
                         e.printStackTrace();
