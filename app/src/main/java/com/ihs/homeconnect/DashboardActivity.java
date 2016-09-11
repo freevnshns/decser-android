@@ -90,16 +90,15 @@ public class DashboardActivity extends AppCompatActivity {
         private ArrayList<String> mServiceNameList = new ArrayList<>();
         private ArrayList<Drawable> mServiceIconList = new ArrayList<>();
 
-
         public servicesAdapter() {
             for (services aService : services.values()) {
                 mServiceNameList.add(aService.name);
                 try {
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-                        mServiceIconList.add(getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                        mServiceIconList.add(getDrawable(getResources().getIdentifier(aService.icon, "mipmap", getPackageName())));
                     } else {
                         //noinspection deprecation
-                        mServiceIconList.add(getResources().getDrawable(getResources().getIdentifier("ic_" + aService.toString(), "drawable", getPackageName())));
+                        mServiceIconList.add(getResources().getDrawable(getResources().getIdentifier(aService.icon, "mipmap", getPackageName())));
                     }
                 } catch (Exception e) {
                     mServiceIconList.add(new Drawable() {
