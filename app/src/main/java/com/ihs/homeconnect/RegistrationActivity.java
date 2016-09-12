@@ -39,10 +39,14 @@ public class RegistrationActivity extends AppCompatActivity {
         final EditText etRegHostname = (EditText) findViewById(R.id.etRegHostname);
         final RadioGroup rgHasHostname = (RadioGroup) findViewById(R.id.rgHasHostname);
         final TextView tvLabelForEtRegHostname = (TextView) findViewById(R.id.tvLabelForEtRegHostname);
+        Button bRegister = (Button) findViewById(R.id.bRegister);
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         assert tvLabelForEtRegHostname != null;
         assert etRegHostname != null;
+        assert bRegister != null;
+        assert etRegEmailID != null;
+        assert etRegPass != null;
         if (rgHasHostname != null) {
             rgHasHostname.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -57,48 +61,46 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             });
         }
-        Button bRegister = (Button) findViewById(R.id.bRegister);
-        if (bRegister != null && etRegEmailID != null && etRegPass != null && etRegEmailID.getText().toString().equals("") && etRegPass.getText().toString().equals(""))
-            bRegister.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    progressDialog.show();
-                    RequestQueue queue = Volley.newRequestQueue(RegistrationActivity.this);
-                    try {
-                        String registrationUrl = "http://decser-sidzi.rhcloud.com/decserExchange";
-                        final JSONObject postRequest = new JSONObject("{'user_email':'" + etRegEmailID.getText().toString() + "','user_hostname':'" + etRegHostname.getText().toString() + "'}");
-                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, registrationUrl, postRequest, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                System.out.print(response.toString());
-                                try {
-                                    if (response.getBoolean("registration")) {
-                                        dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
-                                        if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
-                                            progressDialog.dismiss();
-                                            Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
-                                            startActivity(intent);
-                                            finish();
-                                        }
+        bRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressDialog.show();
+                RequestQueue queue = Volley.newRequestQueue(RegistrationActivity.this);
+                try {
+                    String registrationUrl = "http://decser-sidzi.rhcloud.com/decserExchange";
+                    final JSONObject postRequest = new JSONObject("{'user_email':'" + etRegEmailID.getText().toString() + "','user_hostname':'" + etRegHostname.getText().toString() + "'}");
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, registrationUrl, postRequest, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.print(response.toString());
+                            try {
+                                if (response.getBoolean("registration")) {
+                                    dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
+                                    if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                progressDialog.dismiss();
-                                Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                        queue.add(jsonObjectRequest);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressDialog.dismiss();
+                            Toast.makeText(RegistrationActivity.this, "Registration Failed", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    queue.add(jsonObjectRequest);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
+
+            }
+        });
     }
 }
