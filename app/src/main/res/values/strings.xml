@@ -39,4 +39,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="do_you_have_a_decserver">Do you have a decserver ?</string>
+
+    <string name="title_activity_web_dashboard">WebDashboardActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

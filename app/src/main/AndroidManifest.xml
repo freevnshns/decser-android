@@ -40,21 +40,58 @@
             android:label="@string/select_key" />
         <activity
             android:name=".DownloadManagerActivity"
-            android:label="Download Manager" />
+            android:label="Download Manager"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity
             android:name=".XmppActivity"
-            android:label="@string/title_activity_xmpp" />
+            android:label="@string/title_activity_xmpp"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity
             android:name=".ShareKeyActivity"
-            android:label="Share the guest key" />
+            android:label="Share the guest key"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity
             android:name=".RequestKeyActivity"
             android:label="Request key from a friend" />
         <activity android:name=".VideoCamActivity" />
-        <activity android:name=".XmppChatActivity" />
+        <activity
+            android:name=".XmppChatActivity"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity android:name=".RegistrationActivity" />
-        <activity android:name=".BackupActivity" />
+        <activity
+            android:name=".BackupActivity"
+            android:parentActivityName=".DashboardActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity android:name=".BackupSetupActivity" />
+
+        <activity
+            android:name=".WebDashboardActivity"
+            android:label="@string/title_activity_web_dashboard"
+            android:parentActivityName=".DashboardActivity"
+            android:theme="@style/FullscreenTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
     </application>
 
 </manifest>

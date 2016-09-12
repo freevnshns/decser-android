@@ -79,6 +79,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
                 PeerConnectActivity.connected_hostname = hostName;
                 intent = new Intent(mContext, PeerConnectActivity.class);
             }
+            Toast.makeText(mContext, "Connected", Toast.LENGTH_SHORT).show();
             mContext.startActivity(intent);
         } else {
             Toast.makeText(mContext, "Failed", Toast.LENGTH_SHORT).show();

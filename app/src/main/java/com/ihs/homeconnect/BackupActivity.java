@@ -78,13 +78,14 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         }
 
         Button bShowBkpFiles = (Button) findViewById(R.id.bShowBkpFiles);
-        if (bShowBkpFiles != null)
-            bShowBkpFiles.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        assert bShowBkpFiles != null;
+        bShowBkpFiles.setVisibility(View.GONE);
+        bShowBkpFiles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                }
-            });
+            }
+        });
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddBackupDirectory);
         if (floatingActionUploadButton != null) {
             floatingActionUploadButton.setImageResource(R.drawable.ic_add);

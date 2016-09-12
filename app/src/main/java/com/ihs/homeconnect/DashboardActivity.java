@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.services;
 import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
@@ -39,7 +38,6 @@ public class DashboardActivity extends AppCompatActivity {
             onBackPressed();
         }
         setContentView(R.layout.activity_dashboard);
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
         RecyclerView mRecyclerView;
         RecyclerView.Adapter mAdapter;
         RecyclerView.LayoutManager mLayoutManager;
@@ -186,7 +184,6 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case homebase:
 //                                TODO Launch Server Dashboard
-                                intent = new Intent(Intent.ACTION_VIEW);
                                 try {
                                     session.setPortForwardingL(services.homebase.lport, "127.0.0.1", services.homebase.port);
                                 } catch (JSchException e) {
@@ -195,7 +192,7 @@ public class DashboardActivity extends AppCompatActivity {
                                         break;
                                     }
                                 }
-                                intent.setData(Uri.parse("http://127.0.0.1:9080/"));
+                                intent = new Intent(DashboardActivity.this, WebDashboardActivity.class);
                                 startActivity(intent);
                                 break;
                             case vs:
