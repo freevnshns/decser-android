@@ -159,7 +159,7 @@ public class DashboardActivity extends AppCompatActivity {
                         switch (services.values()[(Integer) v.getTag()]) {
                             case dm:
                                 try {
-                                    session.setPortForwardingL(services.dm.port, "127.0.0.1", services.dm.port);
+                                    session.setPortForwardingL(services.dm.lport, "127.0.0.1", services.dm.port);
                                 } catch (JSchException e) {
                                     if (!e.getMessage().startsWith("PortForwardingL:")) {
                                         e.printStackTrace();

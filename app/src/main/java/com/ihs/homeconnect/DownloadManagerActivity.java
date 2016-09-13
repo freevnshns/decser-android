@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,24 +17,27 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ihs.homeconnect.helpers.jsonrpcHandler;
-import com.ihs.homeconnect.helpers.services;
+import com.ihs.homeconnect.helpers.downloadManagerHandler;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class DownloadManagerActivity extends AppCompatActivity {
+    final RecyclerView.Adapter mAdapter = new DownloadsAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,27 +45,20 @@ public class DownloadManagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_download_manager);
 
         RecyclerView mRecyclerView;
-        RecyclerView.Adapter mAdapter = null;
+
         RecyclerView.LayoutManager mLayoutManager;
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvDownloadsList);
         mLayoutManager = new LinearLayoutManager(this);
-        jsonrpcHandler jsonrpcHandler = new jsonrpcHandler();
-        try {
-            JSONObject rpc_result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.dm.port) + "/jsonrpc", "aria2.tellActive").get();
-            mAdapter = new DownloadsAdapter(rpc_result);
-        } catch (InterruptedException | ExecutionException | JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Download Manger failed to start on your server please restart the server", Toast.LENGTH_LONG).show();
-            onBackPressed();
-        }
+
+
         assert mRecyclerView != null;
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
         RelativeLayout rlEmpty = (RelativeLayout) findViewById(R.id.rlEmptyDMView);
         assert rlEmpty != null;
-        assert mAdapter != null;
+
         if (mAdapter.getItemCount() == 0) {
             mRecyclerView.setVisibility(View.GONE);
             rlEmpty.setVisibility(View.VISIBLE);
@@ -70,7 +67,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
             mRecyclerView.setVisibility(View.VISIBLE);
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new panelSpaceDecorationHelper(this));
         }
         FloatingActionButton fabAddNewUri = (FloatingActionButton) findViewById(R.id.fabAddDownloadUri);
         assert fabAddNewUri != null;
@@ -88,18 +85,22 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        jsonrpcHandler jsonrpcHandler = new jsonrpcHandler();
+                        downloadManagerHandler downloadManagerHandler = new downloadManagerHandler();
                         if (input_url.getText().toString().equals("")) {
                             Toast.makeText(DownloadManagerActivity.this, "Please enter a valid url", Toast.LENGTH_SHORT).show();
                         } else {
                             try {
-                                JSONObject result = jsonrpcHandler.execute("http://127.0.0.1:" + String.valueOf(services.dm.port) + "/jsonrpc", "aria2.addUri", input_url.getText().toString()).get();
-                                if (result.has("error"))
-                                    Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
-                                else
+                                String add_result = (String) downloadManagerHandler.execute("aria2.addUri", input_url.getText().toString()).get();
+                                if (add_result != null) {
+                                    ((DownloadsAdapter) mAdapter).getDownloads();
+                                    mAdapter.notifyDataSetChanged();
                                     Toast.makeText(DownloadManagerActivity.this, "Added Successfully", Toast.LENGTH_LONG).show();
-                            } catch (InterruptedException | ExecutionException e) {
+                                } else {
+                                    Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (InterruptedException | ExecutionException | ClassCastException e) {
                                 e.printStackTrace();
+                                Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
                             }
                         }
                     }
@@ -107,13 +108,35 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 builder.show();
             }
         });
+
     }
 
-    private class verticalSpaceDecorationHelper extends RecyclerView.ItemDecoration {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_generic_refresh_helper, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            ((DownloadsAdapter) mAdapter).getDownloads();
+            mAdapter.notifyDataSetChanged();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class panelSpaceDecorationHelper extends RecyclerView.ItemDecoration {
         private Drawable mDivider;
 
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public verticalSpaceDecorationHelper(Context mContext) {
+        public panelSpaceDecorationHelper(Context mContext) {
             mDivider = mContext.getDrawable(R.drawable.line_divider);
         }
 
@@ -148,14 +171,31 @@ public class DownloadManagerActivity extends AppCompatActivity {
     }
 
     private class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.ViewHolder> {
-        private ArrayList<String> mDownloads = new ArrayList<>();
-        private ArrayList<String> mDownloadsPercentage = new ArrayList<>();
+        ArrayList<downloadTask> downloadTaskArrayList;
 
-        public DownloadsAdapter(JSONObject rpc_result) throws JSONException {
-            JSONArray mDownloadsList = rpc_result.getJSONArray("result");
-            for (int i = 0; i < mDownloadsList.length(); i++) {
-                mDownloads.add(mDownloadsList.getJSONObject(i).getJSONArray("files").getJSONObject(0).get("path").toString());
-                mDownloadsPercentage.add(String.valueOf((Float.valueOf(mDownloadsList.getJSONObject(i).get("completedLength").toString()) / Float.valueOf(mDownloadsList.getJSONObject(i).get("totalLength").toString())) * 100) + "%");
+        public DownloadsAdapter() {
+            getDownloads();
+        }
+
+        public void getDownloads() {
+            downloadTaskArrayList = new ArrayList<>();
+            net.minidev.json.JSONArray downloads;
+            JSONObject download;
+            try {
+                downloadManagerHandler dmh = new downloadManagerHandler();
+                downloads = (JSONArray) dmh.execute("aria2.tellActive").get();
+                for (int i = 0; i < downloads.size(); i++) {
+                    download = (JSONObject) downloads.get(i);
+                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 0));
+                }
+                dmh = new downloadManagerHandler();
+                downloads = (JSONArray) dmh.execute("aria2.tellWaiting", "-1", "2").get();
+                for (int i = 0; i < downloads.size(); i++) {
+                    download = (JSONObject) downloads.get(i);
+                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 1));
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
             }
         }
 
@@ -167,23 +207,66 @@ public class DownloadManagerActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.tvDownloadName.setText(mDownloads.get(position));
-            holder.tvCompletionPercentage.setText(mDownloadsPercentage.get(position));
+            holder.tvDownloadName.setText(downloadTaskArrayList.get(position).getdName());
+            holder.pbDownloadCompletion.setMax(downloadTaskArrayList.get(position).getdTotal());
+            holder.pbDownloadCompletion.setProgress(downloadTaskArrayList.get(position).getdCompleted());
+            if (downloadTaskArrayList.get(position).getdStatus() == 0) {
+                holder.ibPlayPause.setImageResource(R.drawable.ic_pause);
+            } else {
+                holder.ibPlayPause.setImageResource(R.drawable.ic_start);
+            }
         }
 
         @Override
         public int getItemCount() {
-            return mDownloads.size();
+            return downloadTaskArrayList.size();
+        }
+
+        private class downloadTask {
+            private String dName;
+            private int dCompleted;
+            private int dTotal;
+            private int dStatus;//0 -> active , 1 -> paused
+
+
+            public downloadTask(String dName, int dCompleted, int dTotal, int dStatus) {
+                this.dName = dName;
+                this.dCompleted = dCompleted;
+                this.dTotal = dTotal;
+                this.dStatus = dStatus;
+            }
+
+            public String getdName() {
+                return dName;
+            }
+
+            public int getdCompleted() {
+                return dCompleted;
+            }
+
+            public int getdTotal() {
+                return dTotal;
+            }
+
+            public int getdStatus() {
+                return dStatus;
+            }
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             private TextView tvDownloadName;
-            private TextView tvCompletionPercentage;
+            private ProgressBar pbDownloadCompletion;
+            private ImageButton ibPlayPause;
 
             public ViewHolder(View view) {
                 super(view);
                 this.tvDownloadName = (TextView) view.findViewById(R.id.tvDownloadName);
-                this.tvCompletionPercentage = (TextView) view.findViewById(R.id.tvCompletionPercentage);
+                this.pbDownloadCompletion = (ProgressBar) view.findViewById(R.id.pbDownloadCompletion);
+                this.pbDownloadCompletion.setIndeterminate(false);
+                this.pbDownloadCompletion.getProgressDrawable().setColorFilter(Color.parseColor("#ff9900"), PorterDuff.Mode.SRC_IN);
+                this.ibPlayPause = (ImageButton) view.findViewById(R.id.ibPlayPause);
+                this.ibPlayPause.setBackgroundColor(Color.TRANSPARENT);
+//                TODO fix layout of the row because it uses dps' which is very bad
             }
         }
     }
