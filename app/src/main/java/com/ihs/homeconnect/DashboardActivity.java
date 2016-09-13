@@ -196,7 +196,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 break;
                             case vs:
                                 try {
-                                    session.setPortForwardingL(services.vs.port, "127.0.0.1", services.vs.port);
+                                    session.setPortForwardingL(services.vs.lport, "127.0.0.1", services.vs.port);
                                 } catch (JSchException e) {
                                     if (!e.getMessage().startsWith("PortForwardingL:")) {
                                         e.printStackTrace();
@@ -204,7 +204,7 @@ public class DashboardActivity extends AppCompatActivity {
                                     }
                                 }
                                 Intent i = new Intent(Intent.ACTION_VIEW);
-                                i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.port) + "/"));
+                                i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.lport) + "/videocam"));
                                 startActivity(i);
                                 break;
                             case xmpp:

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:labelFor="@+id/etRegEmailID"
-            android:text="@string/enter_your_email_address" />
+            android:text="@string/enter_a_username" />
 
         <EditText
             android:id="@+id/etRegEmailID"

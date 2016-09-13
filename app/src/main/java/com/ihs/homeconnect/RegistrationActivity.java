@@ -68,7 +68,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(RegistrationActivity.this);
                 try {
                     String registrationUrl = "http://decser-sidzi.rhcloud.com/decserExchange";
-                    final JSONObject postRequest = new JSONObject("{'user_email':'" + etRegEmailID.getText().toString() + "','user_hostname':'" + etRegHostname.getText().toString() + "'}");
+                    final JSONObject postRequest = new JSONObject("{'username':'" + etRegEmailID.getText().toString() + "','user_hostname':'" + etRegHostname.getText().toString() + "'}");
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, registrationUrl, postRequest, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -76,7 +76,7 @@ public class RegistrationActivity extends AppCompatActivity {
                             try {
                                 if (response.getBoolean("registration")) {
                                     dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
-                                    if (dbInstance.insertUserDetails(postRequest.getString("user_email"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
+                                    if (dbInstance.insertUserDetails(postRequest.getString("username"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
                                         progressDialog.dismiss();
                                         Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
@@ -99,7 +99,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         });
     }

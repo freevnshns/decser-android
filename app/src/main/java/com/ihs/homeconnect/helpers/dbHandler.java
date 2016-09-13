@@ -103,7 +103,7 @@ public class dbHandler extends SQLiteOpenHelper {
     public boolean insertUserDetails(String email, String hostname, int registered, String pass) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_USER_EMAIL, email);
+        values.put(COLUMN_USER_EMAIL, email + "@decser.com");
         values.put(COLUMN_USER_HOST_NAME, hostname);
         values.put(COLUMN_PASSWORD, pass);
         values.put(COLUMN_REGISTERED, registered);

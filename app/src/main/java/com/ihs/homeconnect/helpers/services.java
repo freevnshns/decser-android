@@ -4,7 +4,7 @@ public enum services {
     dm(6800, "Download Manager", "ic_dm"),
     backup(80, "Backup", "ic_backup"),
     homebase(80, "Dashboard", "ic_hb"),
-    vs(8081, "WebCam", "ic_vs"),
+    vs(80, "WebCam", "ic_vs"),
     xmpp(5222, "Messaging", "ic_messaging");
     public final int port;
     public final String name;
