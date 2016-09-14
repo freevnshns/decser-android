@@ -82,7 +82,6 @@
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
         <activity android:name=".BackupSetupActivity" />
-
         <activity
             android:name=".WebDashboardActivity"
             android:label="@string/title_activity_web_dashboard"
@@ -92,6 +91,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
+        <activity android:name=".PowerActivity"></activity>
     </application>
 
 </manifest>

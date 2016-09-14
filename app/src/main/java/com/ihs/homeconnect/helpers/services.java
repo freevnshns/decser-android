@@ -5,7 +5,8 @@ public enum services {
     backup(80, "Backup", "ic_backup"),
     homebase(80, "Dashboard", "ic_hb"),
     vs(80, "WebCam", "ic_vs"),
-    xmpp(5222, "Messaging", "ic_messaging");
+    xmpp(5222, "Messaging", "ic_messaging"),
+    power(80, "Power Button", "ic_power");
     public final int port;
     public final String name;
     public final int lport;

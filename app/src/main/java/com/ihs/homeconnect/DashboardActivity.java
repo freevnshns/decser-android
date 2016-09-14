@@ -219,6 +219,18 @@ public class DashboardActivity extends AppCompatActivity {
                                 xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
                                 xmppHandler.execute();
                                 break;
+                            case power:
+                                try {
+                                    session.setPortForwardingL(services.power.lport, "127.0.0.1", services.power.port);
+                                } catch (JSchException e) {
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
+                                }
+                                intent = new Intent(DashboardActivity.this, PowerActivity.class);
+                                startActivity(intent);
+                                break;
                             default:
                                 break;
                         }
