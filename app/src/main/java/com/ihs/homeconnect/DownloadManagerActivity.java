@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class DownloadManagerActivity extends AppCompatActivity {
+
     final RecyclerView.Adapter mAdapter = new DownloadsAdapter();
 
     @Override
@@ -186,13 +187,13 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 downloads = (JSONArray) dmh.execute("aria2.tellActive").get();
                 for (int i = 0; i < downloads.size(); i++) {
                     download = (JSONObject) downloads.get(i);
-                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 0));
+                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 0, String.valueOf(download.get("gid"))));
                 }
                 dmh = new downloadManagerHandler();
                 downloads = (JSONArray) dmh.execute("aria2.tellWaiting", "-1", "2").get();
                 for (int i = 0; i < downloads.size(); i++) {
                     download = (JSONObject) downloads.get(i);
-                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 1));
+                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 1, String.valueOf(download.get("gid"))));
                 }
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
@@ -210,10 +211,13 @@ public class DownloadManagerActivity extends AppCompatActivity {
             holder.tvDownloadName.setText(downloadTaskArrayList.get(position).getdName());
             holder.pbDownloadCompletion.setMax(downloadTaskArrayList.get(position).getdTotal());
             holder.pbDownloadCompletion.setProgress(downloadTaskArrayList.get(position).getdCompleted());
+            holder.ibPlayPause.setTag(R.id.TAG_DOWNLOAD_GID, downloadTaskArrayList.get(position).getdGid());
             if (downloadTaskArrayList.get(position).getdStatus() == 0) {
                 holder.ibPlayPause.setImageResource(R.drawable.ic_pause);
+                holder.ibPlayPause.setTag(R.id.TAG_DOWNLOAD_STATUS, 0);
             } else {
                 holder.ibPlayPause.setImageResource(R.drawable.ic_start);
+                holder.ibPlayPause.setTag(R.id.TAG_DOWNLOAD_STATUS, 1);
             }
         }
 
@@ -224,16 +228,18 @@ public class DownloadManagerActivity extends AppCompatActivity {
 
         private class downloadTask {
             private String dName;
+            private String dGid;
             private int dCompleted;
             private int dTotal;
             private int dStatus;//0 -> active , 1 -> paused
 
 
-            public downloadTask(String dName, int dCompleted, int dTotal, int dStatus) {
+            public downloadTask(String dName, int dCompleted, int dTotal, int dStatus, String dGid) {
                 this.dName = dName;
                 this.dCompleted = dCompleted;
                 this.dTotal = dTotal;
                 this.dStatus = dStatus;
+                this.dGid = dGid;
             }
 
             public String getdName() {
@@ -251,6 +257,10 @@ public class DownloadManagerActivity extends AppCompatActivity {
             public int getdStatus() {
                 return dStatus;
             }
+
+            public String getdGid() {
+                return dGid;
+            }
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
@@ -267,6 +277,19 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 this.ibPlayPause = (ImageButton) view.findViewById(R.id.ibPlayPause);
                 this.ibPlayPause.setBackgroundColor(Color.TRANSPARENT);
 //                TODO fix layout of the row because it uses dps' which is very bad
+                this.ibPlayPause.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        downloadManagerHandler dmh = new downloadManagerHandler();
+                        if (v.getTag(R.id.TAG_DOWNLOAD_STATUS).equals(1)) {
+                            dmh.execute("aria2.unpause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
+                            ((ImageButton) v).setImageResource(R.drawable.ic_pause);
+                        } else {
+                            dmh.execute("aria2.pause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
+                            ((ImageButton) v).setImageResource(R.drawable.ic_start);
+                        }
+                    }
+                });
             }
         }
     }

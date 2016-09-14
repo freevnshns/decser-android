@@ -21,16 +21,18 @@ public class downloadManagerHandler extends AsyncTask<String, Void, Object> {
             JSONRPC2Request request;
             result = new net.minidev.json.JSONArray();
             request = new JSONRPC2Request(params[0], "aria2c");
-            if (params.length == 1) {
-
-
-            }
             if (params.length == 2) {
-                ArrayList<Object> uris = new ArrayList<>();
-                ArrayList<String> uri = new ArrayList<>();
-                uri.add(params[1]);
-                uris.add(uri);
-                request.setPositionalParams(uris);
+                if (params[0].equals("aria2.addUri")) {
+                    ArrayList<Object> uris = new ArrayList<>();
+                    ArrayList<String> uri = new ArrayList<>();
+                    uri.add(params[1]);
+                    uris.add(uri);
+                    request.setPositionalParams(uris);
+                } else {
+                    ArrayList<Object> par = new ArrayList<>();
+                    par.add(params[1]);
+                    request.setPositionalParams(par);
+                }
             }
             if (params.length == 3) {
                 ArrayList<Object> parm = new ArrayList<>();
