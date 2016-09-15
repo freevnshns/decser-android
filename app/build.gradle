@@ -1,41 +1,32 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    compileSdkVersion 24
+    buildToolsVersion '24.0.1'
 
     defaultConfig {
         applicationId "com.ihs.homeconnect"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-    }
-    signingConfigs {
-        release {
-            storeFile file("myreleasekey.jks")
-            storePassword "password"
-            keyAlias "MyReleaseKey"
-            keyPassword "password"
-        }
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 }
 //noinspection GroovyAssignabilityCheck
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:recyclerview-v7:23.4.0'
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
     compile 'org.igniterealtime.smack:smack-android:4.1.8'
     compile 'org.igniterealtime.smack:smack-tcp:4.1.8'
     compile 'eu.the4thfloor.volley:com.android.volley:2015.05.28'
-    compile 'com.android.support:support-v4:23.4.0'
-    compile 'net.minidev:json-smart:2.2.1'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.jcraft:jsch:0.1.54'
 }

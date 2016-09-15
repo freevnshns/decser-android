@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,21 +25,31 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ihs.homeconnect.helpers.downloadManagerHandler;
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.ihs.homeconnect.helpers.services;
 
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class DownloadManagerActivity extends AppCompatActivity {
 
     final RecyclerView.Adapter mAdapter = new DownloadsAdapter();
+    RequestQueue rpcQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +68,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        RelativeLayout rlEmpty = (RelativeLayout) findViewById(R.id.rlEmptyDMView);
-        assert rlEmpty != null;
 
-        if (mAdapter.getItemCount() == 0) {
-            mRecyclerView.setVisibility(View.GONE);
-            rlEmpty.setVisibility(View.VISIBLE);
-        } else {
-            rlEmpty.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
-        }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             mRecyclerView.addItemDecoration(new panelSpaceDecorationHelper(this));
         }
@@ -86,23 +88,10 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        downloadManagerHandler downloadManagerHandler = new downloadManagerHandler();
                         if (input_url.getText().toString().equals("")) {
                             Toast.makeText(DownloadManagerActivity.this, "Please enter a valid url", Toast.LENGTH_SHORT).show();
                         } else {
-                            try {
-                                String add_result = (String) downloadManagerHandler.execute("aria2.addUri", input_url.getText().toString()).get();
-                                if (add_result != null) {
-                                    ((DownloadsAdapter) mAdapter).getDownloads();
-                                    mAdapter.notifyDataSetChanged();
-                                    Toast.makeText(DownloadManagerActivity.this, "Added Successfully", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
-                                }
-                            } catch (InterruptedException | ExecutionException | ClassCastException e) {
-                                e.printStackTrace();
-                                Toast.makeText(DownloadManagerActivity.this, "Adding Failed", Toast.LENGTH_LONG).show();
-                            }
+                            ((DownloadsAdapter) mAdapter).rpcMethods("aria2.addUri", input_url.getText().toString());
                         }
                     }
                 });
@@ -127,8 +116,8 @@ public class DownloadManagerActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.refresh) {
-            ((DownloadsAdapter) mAdapter).getDownloads();
-            mAdapter.notifyDataSetChanged();
+            ((DownloadsAdapter) mAdapter).rpcMethods("aria2.tellActive");
+            ((DownloadsAdapter) mAdapter).rpcMethods("aria2.tellWaiting", "-1", "2");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -172,32 +161,79 @@ public class DownloadManagerActivity extends AppCompatActivity {
     }
 
     private class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.ViewHolder> {
-        ArrayList<downloadTask> downloadTaskArrayList;
+        public dtArrayList downloadTaskArrayList = new dtArrayList();
 
         public DownloadsAdapter() {
-            getDownloads();
+            rpcMethods("aria2.tellActive");
+            rpcMethods("aria2.tellWaiting", "-1", "2");
         }
 
-        public void getDownloads() {
-            downloadTaskArrayList = new ArrayList<>();
-            net.minidev.json.JSONArray downloads;
-            JSONObject download;
+        void rpcMethods(final String... params) {
+            Cache cache = new DiskBasedCache(Environment.getDownloadCacheDirectory());
+            Network network = new BasicNetwork(new HurlStack());
+            rpcQueue = new RequestQueue(cache, network);
+            JSONObject rpcRequest = new JSONObject();
             try {
-                downloadManagerHandler dmh = new downloadManagerHandler();
-                downloads = (JSONArray) dmh.execute("aria2.tellActive").get();
-                for (int i = 0; i < downloads.size(); i++) {
-                    download = (JSONObject) downloads.get(i);
-                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 0, String.valueOf(download.get("gid"))));
+                rpcRequest.accumulate("jsonrpc", "2.0");
+                rpcRequest.accumulate("method", params[0]);
+                if (params.length == 2) {
+                    if (params[0].equals("aria2.addUri")) {
+                        JSONArray uris = new JSONArray();
+                        JSONArray uri = new JSONArray();
+                        uri.put(params[1]);
+                        uris.put(uri);
+                        rpcRequest.accumulate("params", uris);
+                    } else {
+                        JSONArray par = new JSONArray();
+                        par.put(params[1]);
+                        rpcRequest.accumulate("params", par);
+                    }
                 }
-                dmh = new downloadManagerHandler();
-                downloads = (JSONArray) dmh.execute("aria2.tellWaiting", "-1", "2").get();
-                for (int i = 0; i < downloads.size(); i++) {
-                    download = (JSONObject) downloads.get(i);
-                    downloadTaskArrayList.add(new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), 1, String.valueOf(download.get("gid"))));
+                if (params.length == 3) {
+                    JSONArray parm = new JSONArray();
+                    parm.put(Integer.valueOf(params[1]));
+                    parm.put(Integer.valueOf(params[2]));
+                    rpcRequest.accumulate("params", parm);
                 }
-            } catch (ExecutionException | InterruptedException e) {
+                rpcRequest.accumulate("id", "aria2c");
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://127.0.0.1:" + String.valueOf(services.dm.lport) + "/jsonrpc", rpcRequest, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        JSONObject download;
+                        JSONArray downloads;
+                        if (params.length == 2) {
+                            System.out.print("Handle success add or pause here here");
+                            rpcMethods("aria2.tellActive");
+                            rpcMethods("aria2.tellWaiting", "-1", "2");
+                        } else {
+                            downloads = (JSONArray) response.get("result");
+                            for (int i = 0; i < downloads.length(); i++) {
+                                download = (JSONObject) downloads.get(i);
+                                downloadTask dlt = new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), String.valueOf(download.get("status")), String.valueOf(download.get("gid")));
+                                if (downloadTaskArrayList.contains(dlt)) {
+                                    downloadTaskArrayList.update(dlt);
+                                } else {
+                                    downloadTaskArrayList.add(dlt);
+                                }
+                            }
+                            notifyDataSetChanged();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            });
+            rpcQueue.start();
+            rpcQueue.add(jsonObjectRequest);
         }
 
         @Override
@@ -212,7 +248,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
             holder.pbDownloadCompletion.setMax(downloadTaskArrayList.get(position).getdTotal());
             holder.pbDownloadCompletion.setProgress(downloadTaskArrayList.get(position).getdCompleted());
             holder.ibPlayPause.setTag(R.id.TAG_DOWNLOAD_GID, downloadTaskArrayList.get(position).getdGid());
-            if (downloadTaskArrayList.get(position).getdStatus() == 0) {
+            if (downloadTaskArrayList.get(position).getdStatus().equals("active")) {
                 holder.ibPlayPause.setImageResource(R.drawable.ic_pause);
                 holder.ibPlayPause.setTag(R.id.TAG_DOWNLOAD_STATUS, 0);
             } else {
@@ -226,40 +262,31 @@ public class DownloadManagerActivity extends AppCompatActivity {
             return downloadTaskArrayList.size();
         }
 
-        private class downloadTask {
-            private String dName;
-            private String dGid;
-            private int dCompleted;
-            private int dTotal;
-            private int dStatus;//0 -> active , 1 -> paused
-
-
-            public downloadTask(String dName, int dCompleted, int dTotal, int dStatus, String dGid) {
-                this.dName = dName;
-                this.dCompleted = dCompleted;
-                this.dTotal = dTotal;
-                this.dStatus = dStatus;
-                this.dGid = dGid;
+        public class dtArrayList extends ArrayList<downloadTask> {
+            @Override
+            public boolean contains(Object o) {
+                boolean flag = false;
+                for (downloadTask dt :
+                        this) {
+                    if (((downloadTask) o).getdGid().equals(dt.getdGid())) {
+                        flag = true;
+                        break;
+                    }
+                }
+                return flag;
             }
 
-            public String getdName() {
-                return dName;
-            }
+            public void update(downloadTask dtn) {
+                for (downloadTask dt :
+                        this) {
+                    if (dtn.getdGid().equals(dt.getdGid())) {
+                        dt.setdCompleted(dtn.getdCompleted());
+                        dt.setdStatus(dtn.getdStatus());
+                        dt.setdTotal(dtn.getdTotal());
+                        break;
+                    }
+                }
 
-            public int getdCompleted() {
-                return dCompleted;
-            }
-
-            public int getdTotal() {
-                return dTotal;
-            }
-
-            public int getdStatus() {
-                return dStatus;
-            }
-
-            public String getdGid() {
-                return dGid;
             }
         }
 
@@ -280,17 +307,63 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 this.ibPlayPause.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        downloadManagerHandler dmh = new downloadManagerHandler();
                         if (v.getTag(R.id.TAG_DOWNLOAD_STATUS).equals(1)) {
-                            dmh.execute("aria2.unpause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
-                            ((ImageButton) v).setImageResource(R.drawable.ic_pause);
+                            rpcMethods("aria2.unpause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
                         } else {
-                            dmh.execute("aria2.pause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
-                            ((ImageButton) v).setImageResource(R.drawable.ic_start);
+                            rpcMethods("aria2.pause", v.getTag(R.id.TAG_DOWNLOAD_GID).toString());
                         }
                     }
                 });
             }
+        }
+    }
+
+    private class downloadTask {
+        private String dName;
+        private String dGid;
+        private String dStatus;
+        private int dCompleted;
+        private int dTotal;
+
+
+        public downloadTask(String dName, int dCompleted, int dTotal, String dStatus, String dGid) {
+            this.dName = dName;
+            this.dCompleted = dCompleted;
+            this.dTotal = dTotal;
+            this.dStatus = dStatus;
+            this.dGid = dGid;
+        }
+
+        public String getdName() {
+            return dName;
+        }
+
+        public int getdCompleted() {
+            return dCompleted;
+        }
+
+        public void setdCompleted(int dCompleted) {
+            this.dCompleted = dCompleted;
+        }
+
+        public int getdTotal() {
+            return dTotal;
+        }
+
+        public void setdTotal(int dTotal) {
+            this.dTotal = dTotal;
+        }
+
+        public String getdStatus() {
+            return dStatus;
+        }
+
+        public void setdStatus(String dStatus) {
+            this.dStatus = dStatus;
+        }
+
+        public String getdGid() {
+            return dGid;
         }
     }
 }
