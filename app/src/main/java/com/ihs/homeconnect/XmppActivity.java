@@ -153,6 +153,7 @@ public class XmppActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 XmppChatActivity.chat = chatManager.createChat(v.getTag().toString());
+                v.setBackgroundColor(Color.TRANSPARENT);
                 Intent intent = new Intent(XmppActivity.this, XmppChatActivity.class);
                 startActivity(intent);
             }

@@ -50,7 +50,7 @@ public class keyExchangeHandler extends AsyncTask<String, Void, String> {
         progressDialog.show();
         String str = "";
         try {
-            URL url = new URL("http://127.0.0.1:9080/doKeyExchangeWith" + params[0]);
+            URL url = new URL("http://127.0.0.1:9080/dKE" + params[0]);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(300000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);

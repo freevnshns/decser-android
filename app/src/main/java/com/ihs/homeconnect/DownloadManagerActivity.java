@@ -213,7 +213,11 @@ public class DownloadManagerActivity extends AppCompatActivity {
                             downloads = (JSONArray) response.get("result");
                             for (int i = 0; i < downloads.length(); i++) {
                                 download = (JSONObject) downloads.get(i);
-                                downloadTask dlt = new downloadTask(((JSONObject) (((JSONArray) download.get("files")).get(0))).get("path").toString(), Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), String.valueOf(download.get("status")), String.valueOf(download.get("gid")));
+                                String tempDownloadName = download.getJSONArray("files").getJSONObject(0).get("path").toString();
+                                if (tempDownloadName.equals("")) {
+                                    tempDownloadName = download.getJSONArray("files").getJSONObject(0).getJSONArray("uris").getJSONObject(0).get("uri").toString();
+                                }
+                                downloadTask dlt = new downloadTask(tempDownloadName, Integer.valueOf(download.get("completedLength").toString()), Integer.valueOf(download.get("totalLength").toString()), String.valueOf(download.get("status")), String.valueOf(download.get("gid")));
                                 if (downloadTaskArrayList.contains(dlt)) {
                                     downloadTaskArrayList.update(dlt);
                                 } else {

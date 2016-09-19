@@ -46,4 +46,5 @@
     <string name="refresh">refresh</string>
     <string name="start_or_pause_download">Start or Pause Download</string>
     <string name="light">Light</string>
+    <string name="backedup_files">Backedup files</string>
 </resources>

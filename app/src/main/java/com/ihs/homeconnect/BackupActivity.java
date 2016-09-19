@@ -11,9 +11,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,7 +101,36 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
                 }
             });
         }
-        readFilesOnServer();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_backup, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.refresh) {
+            readFilesOnServer();
+        }
+        if (id == R.id.miBackup) {
+            setContentView(R.layout.activity_backup_web);
+            WebView wvBackup = (WebView) findViewById(R.id.wvBackup);
+            if (wvBackup != null) {
+                wvBackup.setWebViewClient(new WebViewClient());
+                wvBackup.getSettings().setDomStorageEnabled(true);
+                wvBackup.getSettings().setJavaScriptEnabled(true);
+                wvBackup.loadUrl("http://127.0.0.1:9080/owncloud");
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void auto_backup(ArrayList<Object> remoteList) {
@@ -133,10 +166,8 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             progressDialog = new ProgressDialog(BackupActivity.this);
             progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressDialog.setIndeterminate(false);
-            progressDialog.setMax(100);
+            progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Backing up");
-            progressDialog.setProgress(0);
             progressDialog.show();
             uploadFilesToServer();
 
@@ -153,8 +184,6 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         String filepath = upJb.getPath();
         String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
-        progressDialog.setMessage(remotePath);
-        progressDialog.setProgress(0);
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
         uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
@@ -192,13 +221,14 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     }
 
     @Override
-    public void onTransferProgress(final long progressRate, final long totalTransferredSoFar, final long totalToTransfer, String fileName) {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.setProgress((int) (totalTransferredSoFar * 100 / totalToTransfer));
-            }
-        });
+    public void onTransferProgress(final long progressRate, final long totalTransferredSoFar, final long totalToTransfer, final String fileName) {
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                progressDialog.setMax((int) totalToTransfer);
+//                progressDialog.setProgress((int) totalToTransfer);
+//            }
+//        });
     }
 
     class uploadJob {
