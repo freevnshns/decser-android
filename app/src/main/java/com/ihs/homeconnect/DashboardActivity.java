@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -88,7 +89,7 @@ public class DashboardActivity extends AppCompatActivity {
         private ArrayList<String> mServiceNameList = new ArrayList<>();
         private ArrayList<Drawable> mServiceIconList = new ArrayList<>();
 
-        public servicesAdapter() {
+        servicesAdapter() {
             for (services aService : services.values()) {
                 mServiceNameList.add(aService.name);
                 try {
@@ -117,7 +118,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                         @Override
                         public int getOpacity() {
-                            return 0;
+                            return PixelFormat.TRANSPARENT;
                         }
                     });
                 }
@@ -143,11 +144,11 @@ public class DashboardActivity extends AppCompatActivity {
             return mServiceNameList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
             private TextView tvServiceName;
             private ImageView ivServiceIcon;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 this.tvServiceName = (TextView) view.findViewById(R.id.tvServiceName);
                 this.ivServiceIcon = (ImageView) view.findViewById(R.id.ivServiceIcon);
@@ -229,6 +230,18 @@ public class DashboardActivity extends AppCompatActivity {
                                     }
                                 }
                                 intent = new Intent(DashboardActivity.this, PowerActivity.class);
+                                startActivity(intent);
+                                break;
+                            case print:
+                                try {
+                                    session.setPortForwardingL(services.print.lport, "127.0.0.1", services.print.port);
+                                } catch (JSchException e) {
+                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
+                                        e.printStackTrace();
+                                        break;
+                                    }
+                                }
+                                intent = new Intent(DashboardActivity.this, PrintActivity.class);
                                 startActivity(intent);
                                 break;
                             default:

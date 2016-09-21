@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ public class ListFileActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
-        Toast.makeText(this, R.string.select_key, Toast.LENGTH_LONG).show();
         path = Environment.getExternalStorageDirectory().getPath();
         if (getIntent().hasExtra("path")) {
             path = getIntent().getStringExtra("path");

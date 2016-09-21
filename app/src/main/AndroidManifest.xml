@@ -91,7 +91,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
-        <activity android:name=".PowerActivity"></activity>
+        <activity android:name=".PowerActivity" />
+        <activity android:name=".PrintActivity"></activity>
     </application>
 
 </manifest>

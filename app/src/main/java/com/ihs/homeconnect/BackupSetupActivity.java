@@ -33,7 +33,7 @@ public class BackupSetupActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(BackupSetupActivity.this, "This path gets a backup already", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BackupSetupActivity.this, "This path gets an auto backup already", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

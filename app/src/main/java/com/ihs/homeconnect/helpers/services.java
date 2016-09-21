@@ -6,6 +6,7 @@ public enum services {
     homebase(80, "Dashboard", "ic_hb"),
     vs(80, "WebCam", "ic_vs"),
     xmpp(5222, "Messaging", "ic_messaging"),
+    print(631, "Printing", "ic_print"),
     power(80, "Power Button", "ic_power");
     public final int port;
     public final String name;
