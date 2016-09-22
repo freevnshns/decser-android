@@ -102,19 +102,19 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.ViewHolder> {
-        private String[] mContactNameList;
-        private String[] mContactHostnameList;
-        private Context mContext;
+        String[] mContactNameList;
+        String[] mContactHostnameList;
+        Context mContext;
 
 
-        public ContactListAdapter(Context mContext) {
+        ContactListAdapter(Context mContext) {
             this.mContext = mContext;
             dbHandler dbInstance = new dbHandler(mContext, null);
             this.mContactNameList = dbInstance.getContactNameList();
             this.mContactHostnameList = dbInstance.getHostnameArray();
         }
 
-        private void updateAdapter() {
+        void updateAdapter() {
             dbHandler dbInstance = new dbHandler(mContext, null);
             this.mContactNameList = dbInstance.getContactNameList();
             this.mContactHostnameList = dbInstance.getHostnameArray();
@@ -139,11 +139,11 @@ public class HomeActivity extends AppCompatActivity {
             return mContactNameList.length;
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-            public TextView tvContactName;
-            public TextView tvContactHostname;
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+            TextView tvContactName;
+            TextView tvContactHostname;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 this.tvContactName = (TextView) view.findViewById(R.id.tvContactName);
                 this.tvContactHostname = (TextView) view.findViewById(R.id.tvContactHostname);

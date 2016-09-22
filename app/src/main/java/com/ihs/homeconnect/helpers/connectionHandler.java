@@ -18,10 +18,9 @@ import java.util.Properties;
 
 public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
-    public static String hostName;
-    public static String userName;
-    public static String keyName;
     public static Session session;
+    private static String hostName;
+    private static String userName;
     private ProgressDialog progressDialog;
     private Context mContext;
 
@@ -33,6 +32,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
         userName = username;
         JSch jsch = new JSch();
         session = jsch.getSession(userName, hostName, 3933);
+        String keyName;
         if (userName.equals("user"))
             keyName = "self.ppk";
         else {
@@ -100,7 +100,7 @@ public class connectionHandler extends AsyncTask<Void, Void, Session> {
 
     }
 
-    public static class MyUserInfo implements UserInfo {
+    private static class MyUserInfo implements UserInfo {
         @Override
         public String getPassphrase() {
             return "";
