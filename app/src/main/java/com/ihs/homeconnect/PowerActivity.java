@@ -23,8 +23,27 @@ public class PowerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_power);
-        SwitchCompat scLight = (SwitchCompat) findViewById(R.id.scLight);
+        final SwitchCompat scLight = (SwitchCompat) findViewById(R.id.scLight);
         assert scLight != null;
+        RequestQueue requestQueue = Volley.newRequestQueue(PowerActivity.this);
+        String url = "http://127.0.0.1:" + String.valueOf(services.power.lport) + "/powerControlget";
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    scLight.setChecked((boolean) (new JSONObject(response).get("state")));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(request);
+
         scLight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -39,9 +58,7 @@ public class PowerActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            if ((boolean) (new JSONObject(response).get("success"))) {
-                                Toast.makeText(PowerActivity.this, "Done", Toast.LENGTH_SHORT).show();
-                            } else {
+                            if (!(boolean) (new JSONObject(response).get("state"))) {
                                 Toast.makeText(PowerActivity.this, "Failed Sorry :(", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {

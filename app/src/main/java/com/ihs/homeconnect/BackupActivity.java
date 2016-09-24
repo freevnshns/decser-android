@@ -165,7 +165,6 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         if (!uploadJobs.isEmpty()) {
             progressDialog = new ProgressDialog(BackupActivity.this);
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setIndeterminate(true);
             progressDialog.setTitle("Backing up");
             progressDialog.show();
@@ -184,6 +183,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         String filepath = upJb.getPath();
         String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
+        progressDialog.setMessage(remotePath);
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
         uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
