@@ -12,61 +12,61 @@ import java.util.ArrayList;
 
 
 public class dbHandler extends SQLiteOpenHelper {
-    public static final int DATABASE_VERSION = 21;
-    public static final String DATABASE_NAME = "homeConnect.db";
+    private static final int DATABASE_VERSION = 22;
+    private static final String DATABASE_NAME = "homeConnect.db";
 
     //    Table UserData
-    public static final String TABLE_USERDATA = "userdata";
+    private static final String TABLE_USERDATA = "userdata";
 
-    public static final String COLUMN_USER_EMAIL = "email";
-    public static final String COLUMN_USER_EMAIL_TYPE = "TEXT PRIMARY KEY";
+    private static final String COLUMN_USER_EMAIL = "email";
+    private static final String COLUMN_USER_EMAIL_TYPE = "TEXT PRIMARY KEY";
 
-    public static final String COLUMN_USER_HOST_NAME = "hostname";
-    public static final String COLUMN_USER_HOST_NAME_TYPE = "TEXT";
+    private static final String COLUMN_USER_HOST_NAME = "hostname";
+    private static final String COLUMN_USER_HOST_NAME_TYPE = "TEXT";
 
-    public static final String COLUMN_REGISTERED = "registered";
-    public static final String COLUMN_REGISTERED_TYPE = "INTEGER";
+    private static final String COLUMN_REGISTERED = "registered";
+    private static final String COLUMN_REGISTERED_TYPE = "INTEGER";
 
-    public static final String COLUMN_PASSWORD = "password";
-    public static final String COLUMN_PASSWORD_TYPE = "TEXT";
+    private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_PASSWORD_TYPE = "TEXT";
 
 
     //    TABLE contacts
-    public static final String TABLE_CONTACTS = "contacts";
+    private static final String TABLE_CONTACTS = "contacts";
 
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
 
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_NAME_TYPE = "TEXT";
+    private static final String COLUMN_NAME = "name";
+    private static final String COLUMN_NAME_TYPE = "TEXT";
 
-    public static final String COLUMN_HOST_NAME = "hostname";
-    public static final String COLUMN_HOST_NAME_TYPE = "TEXT";
+    private static final String COLUMN_HOST_NAME = "hostname";
+    private static final String COLUMN_HOST_NAME_TYPE = "TEXT";
 
-    public static final String COLUMN_ACCESS = "access";
-    public static final String COLUMN_ACCESS_TYPE = "TEXT";
+    private static final String COLUMN_ACCESS = "access";
+    private static final String COLUMN_ACCESS_TYPE = "TEXT";
 
 //    Table xmpp messages
 
-    public static final String TABLE_XMPP_MESSAGES = "xmpp_messages";
+    private static final String TABLE_XMPP_MESSAGES = "xmpp_messages";
 
-    public static final String COLUMN_MID = "mid";
-    public static final String COLUMN_MID_TYPE = "INTEGER PRIMARY KEY";
+    private static final String COLUMN_MID = "mid";
+    private static final String COLUMN_MID_TYPE = "INTEGER PRIMARY KEY";
 
-    public static final String COLUMN_MESSAGE_BODY = "body";
-    public static final String COLUMN_MESSAGE_BODY_TYPE = "TEXT";
+    private static final String COLUMN_MESSAGE_BODY = "body";
+    private static final String COLUMN_MESSAGE_BODY_TYPE = "TEXT";
 
-    public static final String COLUMN_SENDER_ID = "sender";
-    public static final String COLUMN_SENDER_ID_TYPE = "TEXT";
+    private static final String COLUMN_SENDER_ID = "sender";
+    private static final String COLUMN_SENDER_ID_TYPE = "TEXT";
 
     //    Table BackupEntity
-    public static final String TABLE_BACKUP = "backup";
+    private static final String TABLE_BACKUP = "backup";
 
-    public static final String COLUMN_BACKUP_PATH = "bkp_path";
-    public static final String COLUMN_BACKUP_PATH_TYPE = "TEXT PRIMARY KEY";
+    private static final String COLUMN_BACKUP_PATH = "bkp_path";
+    private static final String COLUMN_BACKUP_PATH_TYPE = "TEXT PRIMARY KEY";
 
-    public static final String COLUMN_AUTO_BACKUP = "auto_bkp";
-    public static final String COLUMN_AUTO_BACKUP_TYPE = "INTEGER";
+    private static final String COLUMN_AUTO_BACKUP = "auto_bkp";
+    private static final String COLUMN_AUTO_BACKUP_TYPE = "INTEGER";
 
 
     public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
@@ -381,5 +381,15 @@ public class dbHandler extends SQLiteOpenHelper {
             e.printStackTrace();
         }
         return paths;
+    }
+
+    public void deleteBackupPath(String path) {
+        SQLiteDatabase db = getWritableDatabase();
+        try {
+            db.delete(TABLE_BACKUP, COLUMN_BACKUP_PATH + " == '" + path + "'", null);
+            db.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -37,7 +37,7 @@
             android:label="@string/title_activity_peer_connect" />
         <activity
             android:name=".ListFileActivity"
-            android:label="@string/select_key" />
+            android:label="@string/file_explorer" />
         <activity
             android:name=".DownloadManagerActivity"
             android:label="Download Manager"
@@ -81,7 +81,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
-        <activity android:name=".BackupSetupActivity" />
         <activity
             android:name=".WebDashboardActivity"
             android:label="@string/title_activity_web_dashboard"
@@ -92,7 +91,7 @@
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
         <activity android:name=".PowerActivity" />
-        <activity android:name=".PrintActivity"></activity>
+        <activity android:name=".PrintActivity" />
     </application>
 
 </manifest>

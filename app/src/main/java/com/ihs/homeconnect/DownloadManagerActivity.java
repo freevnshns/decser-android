@@ -1,13 +1,8 @@
 package com.ihs.homeconnect;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +34,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.ihs.homeconnect.helpers.services;
+import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +66,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new panelSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
         }
         FloatingActionButton fabAddNewUri = (FloatingActionButton) findViewById(R.id.fabAddDownloadUri);
         assert fabAddNewUri != null;
@@ -122,48 +118,10 @@ public class DownloadManagerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class panelSpaceDecorationHelper extends RecyclerView.ItemDecoration {
-        private Drawable mDivider;
-
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        public panelSpaceDecorationHelper(Context mContext) {
-            mDivider = mContext.getDrawable(R.drawable.line_divider);
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            super.getItemOffsets(outRect, view, parent, state);
-
-            if (parent.getChildAdapterPosition(view) == 0) {
-                return;
-            }
-            outRect.top = mDivider.getIntrinsicHeight();
-        }
-
-        @Override
-        public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
-            int dividerLeft = parent.getPaddingLeft();
-            int dividerRight = parent.getWidth() - parent.getPaddingRight();
-
-            int childCount = parent.getChildCount();
-            for (int i = 0; i < childCount - 1; i++) {
-                View child = parent.getChildAt(i);
-
-                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-
-                int dividerTop = child.getBottom() + params.bottomMargin;
-                int dividerBottom = dividerTop + mDivider.getIntrinsicHeight();
-
-                mDivider.setBounds(dividerLeft, dividerTop, dividerRight, dividerBottom);
-                mDivider.draw(canvas);
-            }
-        }
-    }
-
     private class DownloadsAdapter extends RecyclerView.Adapter<DownloadsAdapter.ViewHolder> {
-        public dtArrayList downloadTaskArrayList = new dtArrayList();
+        dtArrayList downloadTaskArrayList = new dtArrayList();
 
-        public DownloadsAdapter() {
+        DownloadsAdapter() {
             rpcMethods("aria2.tellActive");
             rpcMethods("aria2.tellWaiting", "-1", "2");
         }
@@ -266,7 +224,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
             return downloadTaskArrayList.size();
         }
 
-        public class dtArrayList extends ArrayList<downloadTask> {
+        class dtArrayList extends ArrayList<downloadTask> {
             @Override
             public boolean contains(Object o) {
                 boolean flag = false;
@@ -280,7 +238,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
                 return flag;
             }
 
-            public void update(downloadTask dtn) {
+            void update(downloadTask dtn) {
                 for (downloadTask dt :
                         this) {
                     if (dtn.getdGid().equals(dt.getdGid())) {
@@ -294,12 +252,12 @@ public class DownloadManagerActivity extends AppCompatActivity {
             }
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        class ViewHolder extends RecyclerView.ViewHolder {
             private TextView tvDownloadName;
             private ProgressBar pbDownloadCompletion;
             private ImageButton ibPlayPause;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 this.tvDownloadName = (TextView) view.findViewById(R.id.tvDownloadName);
                 this.pbDownloadCompletion = (ProgressBar) view.findViewById(R.id.pbDownloadCompletion);
@@ -330,7 +288,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         private int dTotal;
 
 
-        public downloadTask(String dName, int dCompleted, int dTotal, String dStatus, String dGid) {
+        downloadTask(String dName, int dCompleted, int dTotal, String dStatus, String dGid) {
             this.dName = dName;
             this.dCompleted = dCompleted;
             this.dTotal = dTotal;
@@ -338,35 +296,35 @@ public class DownloadManagerActivity extends AppCompatActivity {
             this.dGid = dGid;
         }
 
-        public String getdName() {
+        String getdName() {
             return dName;
         }
 
-        public int getdCompleted() {
+        int getdCompleted() {
             return dCompleted;
         }
 
-        public void setdCompleted(int dCompleted) {
+        void setdCompleted(int dCompleted) {
             this.dCompleted = dCompleted;
         }
 
-        public int getdTotal() {
+        int getdTotal() {
             return dTotal;
         }
 
-        public void setdTotal(int dTotal) {
+        void setdTotal(int dTotal) {
             this.dTotal = dTotal;
         }
 
-        public String getdStatus() {
+        String getdStatus() {
             return dStatus;
         }
 
-        public void setdStatus(String dStatus) {
+        void setdStatus(String dStatus) {
             this.dStatus = dStatus;
         }
 
-        public String getdGid() {
+        String getdGid() {
             return dGid;
         }
     }

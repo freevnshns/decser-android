@@ -2,6 +2,7 @@ package com.ihs.homeconnect;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,10 +45,21 @@ import java.util.HashSet;
 public class BackupActivity extends AppCompatActivity implements OnRemoteOperationListener, OnDatatransferProgressListener {
 
     final static ArrayList<uploadJob> uploadJobs = new ArrayList<>();
+    RecyclerView mRecyclerView;
+    fileViewAdapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
     private OwnCloudClient mClient;
     private Handler mHandler;
     private dbHandler dbHandler;
     private ProgressDialog progressDialog;
+    private int REQUEST_KEY_PATH = 1;
+
+    public BackupActivity() {
+        super();
+        mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
+        String user_email = dbHandler.getUserEmail();
+        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword()));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +69,6 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
 
         mHandler = new Handler();
         setContentView(R.layout.activity_backup);
-
-        mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
-        String user_email = dbHandler.getUserEmail();
-
-        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword()));
-
-        RecyclerView mRecyclerView;
-        RecyclerView.Adapter mAdapter;
-        RecyclerView.LayoutManager mLayoutManager;
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvBackedUpFiles);
         mLayoutManager = new LinearLayoutManager(this);
@@ -96,10 +99,24 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             floatingActionUploadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(BackupActivity.this, BackupSetupActivity.class);
-                    startActivity(intent);
+                    Intent intent = new Intent(BackupActivity.this, ListFileActivity.class);
+                    startActivityForResult(intent, REQUEST_KEY_PATH);
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_KEY_PATH && resultCode == RESULT_OK) {
+            dbHandler dbHandler = new dbHandler(this, null);
+            try {
+                dbHandler.insertBackupPaths(data.getStringExtra("filepath"), 1);
+                mAdapter.inflateFileList();
+            } catch (SQLiteConstraintException e) {
+                Toast.makeText(this, "This path gets an auto backup already", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -146,18 +163,20 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         }
         for (String path : auto_bkp_paths) {
             File dir = new File(path);
-            File[] list = dir.listFiles();
-            String local_path;
-            for (File aList : list) {
-                local_path = aList.getAbsolutePath();
-                local_path = local_path.substring(local_path.lastIndexOf(FileUtils.PATH_SEPARATOR) + 1);
-                if (!bkd_paths.contains(local_path)) {
-                    String mime;
-                    String ext = MimeTypeMap.getFileExtensionFromUrl(aList.getAbsolutePath());
-                    if (ext != null && !ext.equals("")) {
-                        mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-                        String remoteBackUpFolderPath = FileUtils.PATH_SEPARATOR + "auto_bkp" + FileUtils.PATH_SEPARATOR;
-                        uploadJobs.add(new uploadJob(aList.getAbsolutePath(), remoteBackUpFolderPath + local_path, mime));
+            if (dir.isDirectory()) {
+                File[] list = dir.listFiles();
+                String local_path;
+                for (File aList : list) {
+                    local_path = aList.getAbsolutePath();
+                    local_path = local_path.substring(local_path.lastIndexOf(FileUtils.PATH_SEPARATOR) + 1);
+                    if (!bkd_paths.contains(local_path)) {
+                        String mime;
+                        String ext = MimeTypeMap.getFileExtensionFromUrl(aList.getAbsolutePath());
+                        if (ext != null && !ext.equals("")) {
+                            mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                            String remoteBackUpFolderPath = FileUtils.PATH_SEPARATOR + "auto_bkp" + FileUtils.PATH_SEPARATOR;
+                            uploadJobs.add(new uploadJob(aList.getAbsolutePath(), remoteBackUpFolderPath + local_path, mime));
+                        }
                     }
                 }
             }
@@ -236,7 +255,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         String remotePath;
         String mime;
 
-        public uploadJob(String path, String remotePath, String mime) {
+        uploadJob(String path, String remotePath, String mime) {
             this.path = path;
             this.remotePath = remotePath;
             this.mime = mime;
@@ -250,7 +269,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             return remotePath;
         }
 
-        public String getMime() {
+        String getMime() {
             return mime;
         }
     }
@@ -258,10 +277,15 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     private class fileViewAdapter extends RecyclerView.Adapter<fileViewAdapter.ViewHolder> {
         private ArrayList<String> fileList;
 
-        public fileViewAdapter() {
+        fileViewAdapter() {
             super();
+            inflateFileList();
+        }
+
+        void inflateFileList() {
             fileList = new ArrayList<>();
             fileList = dbHandler.getBackupPaths(1);
+            notifyDataSetChanged();
         }
 
         @Override
@@ -280,12 +304,19 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
             return fileList.size();
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView tvDirPath;
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView tvDirPath;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
                 this.tvDirPath = (TextView) view.findViewById(R.id.tvFileNameOrPath);
+                view.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                dbHandler dbHandler = new dbHandler(BackupActivity.this, null);
+                dbHandler.deleteBackupPath(this.tvDirPath.getText().toString());
             }
         }
     }
