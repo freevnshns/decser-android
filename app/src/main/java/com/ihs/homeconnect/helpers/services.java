@@ -7,7 +7,8 @@ public enum services {
     vs(80, "WebCam", "ic_vs"),
     xmpp(5222, "Messaging", "ic_messaging"),
     print(631, "Printing", "ic_print"),
-    power(80, "Power Button", "ic_power");
+    power(80, "Power Button", "ic_power"),
+    sftp(22, "Download files", "ic_download");
     public final int port;
     public final String name;
     public final int lport;

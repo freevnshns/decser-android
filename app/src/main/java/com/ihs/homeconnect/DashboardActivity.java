@@ -244,6 +244,11 @@ public class DashboardActivity extends AppCompatActivity {
                                 intent = new Intent(DashboardActivity.this, PrintActivity.class);
                                 startActivity(intent);
                                 break;
+                            case sftp:
+                                DownloadMediaActivity.session = session;
+                                intent = new Intent(DashboardActivity.this, DownloadMediaActivity.class);
+                                startActivity(intent);
+                                break;
                             default:
                                 break;
                         }
