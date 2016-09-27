@@ -183,18 +183,6 @@ public class DashboardActivity extends AppCompatActivity {
                                 startActivity(intent);
 
                                 break;
-                            case homebase:
-                                try {
-                                    session.setPortForwardingL(services.homebase.lport, "127.0.0.1", services.homebase.port);
-                                } catch (JSchException e) {
-                                    if (!e.getMessage().startsWith("PortForwardingL:")) {
-                                        e.printStackTrace();
-                                        break;
-                                    }
-                                }
-                                intent = new Intent(DashboardActivity.this, WebDashboardActivity.class);
-                                startActivity(intent);
-                                break;
                             case vs:
                                 try {
                                     session.setPortForwardingL(services.vs.lport, "127.0.0.1", services.vs.port);

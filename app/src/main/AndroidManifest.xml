@@ -48,7 +48,6 @@
         </activity>
         <activity
             android:name=".XmppActivity"
-            android:label="@string/title_activity_xmpp"
             android:parentActivityName=".DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
