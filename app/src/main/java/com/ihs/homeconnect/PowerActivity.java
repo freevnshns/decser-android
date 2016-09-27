@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -31,7 +30,10 @@ public class PowerActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 try {
-                    scLight.setChecked((boolean) (new JSONObject(response).get("state")));
+                    if ((int) (new JSONObject(response).get("state")) == 1)
+                        scLight.setChecked(true);
+                    else
+                        scLight.setChecked(false);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -57,13 +59,7 @@ public class PowerActivity extends AppCompatActivity {
                 StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try {
-                            if (!(boolean) (new JSONObject(response).get("state"))) {
-                                Toast.makeText(PowerActivity.this, "Failed Sorry :(", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
                     }
                 }, new Response.ErrorListener() {
                     @Override
