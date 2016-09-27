@@ -54,18 +54,14 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     private ProgressDialog progressDialog;
     private int REQUEST_KEY_PATH = 1;
 
-    public BackupActivity() {
-        super();
-        mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
-        String user_email = dbHandler.getUserEmail();
-        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword()));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         dbHandler = new dbHandler(this, null);
+
+        mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
+        String user_email = dbHandler.getUserEmail();
+        mClient.setCredentials(OwnCloudCredentialsFactory.newBasicCredentials(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword()));
 
         mHandler = new Handler();
         setContentView(R.layout.activity_backup);
@@ -184,8 +180,10 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         if (!uploadJobs.isEmpty()) {
             progressDialog = new ProgressDialog(BackupActivity.this);
             progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setIndeterminate(true);
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             progressDialog.setTitle("Backing up");
+            progressDialog.setMax(100);
             progressDialog.show();
             uploadFilesToServer();
 
@@ -203,6 +201,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         String remotePath = upJb.getRemotePath();
         String mime = upJb.getMime();
         progressDialog.setMessage(remotePath);
+        progressDialog.setProgress(0);
         UploadRemoteFileOperation uploadOperation = new UploadRemoteFileOperation(filepath, remotePath, mime);
         uploadOperation.addDatatransferProgressListener(this);
         uploadOperation.execute(mClient, this, mHandler);
@@ -241,13 +240,12 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
 
     @Override
     public void onTransferProgress(final long progressRate, final long totalTransferredSoFar, final long totalToTransfer, final String fileName) {
-//        mHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                progressDialog.setMax((int) totalToTransfer);
-//                progressDialog.setProgress((int) totalToTransfer);
-//            }
-//        });
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.setProgress((int) ((float) totalTransferredSoFar / (float) totalToTransfer) * 100);
+            }
+        });
     }
 
     class uploadJob {
