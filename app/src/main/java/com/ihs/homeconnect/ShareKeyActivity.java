@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ihs.homeconnect.helpers.keyExchangeHandler;
-import com.ihs.homeconnect.helpers.services;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -21,7 +20,7 @@ public class ShareKeyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_key);
         try {
-            session.setPortForwardingL(services.homebase.port + 9000, "127.0.0.1", services.homebase.port);
+            session.setPortForwardingL(9080, "127.0.0.1", 80);
         } catch (JSchException e) {
             e.printStackTrace();
         }

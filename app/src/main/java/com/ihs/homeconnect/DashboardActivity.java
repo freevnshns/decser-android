@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -192,8 +191,7 @@ public class DashboardActivity extends AppCompatActivity {
                                         break;
                                     }
                                 }
-                                Intent i = new Intent(Intent.ACTION_VIEW);
-                                i.setData(Uri.parse("http://127.0.0.1:" + String.valueOf(services.vs.lport) + "/videocam"));
+                                Intent i = new Intent(DashboardActivity.this, VideoCamActivity.class);
                                 startActivity(i);
                                 break;
                             case xmpp:

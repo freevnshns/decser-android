@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 24
@@ -29,4 +30,5 @@ dependencies {
     compile 'eu.the4thfloor.volley:com.android.volley:2015.05.28'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.jcraft:jsch:0.1.54'
+    compile 'com.github.niqdev:mjpeg-view:0.3.6'
 }
