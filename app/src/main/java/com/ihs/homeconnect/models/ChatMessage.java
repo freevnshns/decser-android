@@ -13,15 +13,21 @@ public class ChatMessage {
     private String body;
     @DatabaseField
     private boolean new_flag;
+    @DatabaseField
+    private boolean self_flag;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(int id, String sender, String body, boolean new_flag) {
-        this.id = id;
+    public ChatMessage(String sender, String body, boolean new_flag, boolean self_flag) {
         this.sender = sender;
         this.body = body;
         this.new_flag = new_flag;
+        this.self_flag = self_flag;
+    }
+
+    public boolean isSelf_flag() {
+        return self_flag;
     }
 
     public int getId() {

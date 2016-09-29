@@ -11,11 +11,11 @@ import com.j256.ormlite.table.TableUtils;
 import java.sql.SQLException;
 
 
-public class ormHelper extends OrmLiteSqliteOpenHelper {
+public class OrmHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 2;
     private static final String DATABASE_NAME = "homeConnectv2.db";
 
-    public ormHelper(Context context) {
+    public OrmHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

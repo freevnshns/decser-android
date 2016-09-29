@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class ListFileActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
     }
 

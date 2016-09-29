@@ -19,9 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ihs.homeconnect.helpers.DbHandler;
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 import com.ihs.homeconnect.helpers.connectionHandler;
-import com.ihs.homeconnect.helpers.dbHandler;
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 import com.jcraft.jsch.JSchException;
 
 public class HomeActivity extends AppCompatActivity {
@@ -34,7 +34,7 @@ public class HomeActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_home);
 
-        dbHandler dbInstance = new dbHandler(this, null);
+        DbHandler dbInstance = new DbHandler(this, null);
         if (dbInstance.getUserRegistration() == 0) {
             Intent intent = new Intent(this, RegistrationActivity.class);
             startActivity(intent);
@@ -65,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
             mRecyclerView.setVisibility(View.VISIBLE);
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
         FloatingActionButton floatingActionUploadButton = (FloatingActionButton) findViewById(R.id.fabAddContact);
         assert floatingActionUploadButton != null;
@@ -109,13 +109,13 @@ public class HomeActivity extends AppCompatActivity {
 
         ContactListAdapter(Context mContext) {
             this.mContext = mContext;
-            dbHandler dbInstance = new dbHandler(mContext, null);
+            DbHandler dbInstance = new DbHandler(mContext, null);
             this.mContactNameList = dbInstance.getContactNameList();
             this.mContactHostnameList = dbInstance.getHostnameArray();
         }
 
         void updateAdapter() {
-            dbHandler dbInstance = new dbHandler(mContext, null);
+            DbHandler dbInstance = new DbHandler(mContext, null);
             this.mContactNameList = dbInstance.getContactNameList();
             this.mContactHostnameList = dbInstance.getHostnameArray();
         }
@@ -155,7 +155,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
                 try {
-                    String access_lvl = new dbHandler(mContext, null).getAccessType(tempContactHostname);
+                    String access_lvl = new DbHandler(mContext, null).getAccessType(tempContactHostname);
                     connectionHandler connectionHandler = new connectionHandler(tempContactHostname, access_lvl,
                             mContext);
                     connectionHandler.execute();
@@ -168,7 +168,7 @@ public class HomeActivity extends AppCompatActivity {
             public boolean onLongClick(View v) {
                 final String tempContactHostname = v.getTag(R.id.TAG_CONTACT_HOSTNAME).toString();
                 final int tempContactPosition = (int) v.getTag(R.id.TAG_CONTACT_POSITION);
-                final dbHandler dbInstance = new dbHandler(mContext, null);
+                final DbHandler dbInstance = new DbHandler(mContext, null);
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle("Delete Contact").setMessage("Are you sure you want to delete this contact ?");
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {

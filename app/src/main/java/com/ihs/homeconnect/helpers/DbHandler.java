@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
 
-public class dbHandler extends SQLiteOpenHelper {
+public class DbHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 22;
     private static final String DATABASE_NAME = "homeConnect.db";
 
@@ -69,7 +69,7 @@ public class dbHandler extends SQLiteOpenHelper {
     private static final String COLUMN_AUTO_BACKUP_TYPE = "INTEGER";
 
 
-    public dbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
+    public DbHandler(Context context, SQLiteDatabase.CursorFactory factory) {
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
     }
 

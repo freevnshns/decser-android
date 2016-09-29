@@ -18,7 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.ihs.homeconnect.helpers.dbHandler;
+import com.ihs.homeconnect.helpers.DbHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,7 +75,7 @@ public class RegistrationActivity extends AppCompatActivity {
                             System.out.print(response.toString());
                             try {
                                 if (response.getBoolean("registration")) {
-                                    dbHandler dbInstance = new dbHandler(RegistrationActivity.this, null);
+                                    DbHandler dbInstance = new DbHandler(RegistrationActivity.this, null);
                                     if (dbInstance.insertUserDetails(postRequest.getString("username"), postRequest.getString("user_hostname"), 1, etRegPass.getText().toString())) {
                                         progressDialog.dismiss();
                                         Toast.makeText(RegistrationActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();

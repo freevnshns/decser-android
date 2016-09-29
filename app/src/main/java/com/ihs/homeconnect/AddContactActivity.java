@@ -11,7 +11,7 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.ihs.homeconnect.helpers.dbHandler;
+import com.ihs.homeconnect.helpers.DbHandler;
 import com.ihs.homeconnect.helpers.loggingHandler;
 
 import java.io.File;
@@ -92,8 +92,8 @@ public class AddContactActivity extends AppCompatActivity {
                                     in.close();
                                     out.flush();
                                     out.close();
-                                    final dbHandler dbInstance;
-                                    dbInstance = new dbHandler(context, null);
+                                    final DbHandler dbInstance;
+                                    dbInstance = new DbHandler(context, null);
                                     dbInstance.addContact(etPeerName.getText().toString(), etHostname.getText().toString(), access_lvl);
                                     Toast.makeText(context, "Successfully Imported", Toast.LENGTH_SHORT).show();
                                     importKeyPath = null;

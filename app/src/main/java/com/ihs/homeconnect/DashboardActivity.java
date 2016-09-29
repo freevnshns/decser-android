@@ -8,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +20,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
+import com.ihs.homeconnect.helpers.XmppHandler;
 import com.ihs.homeconnect.helpers.services;
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
-import com.ihs.homeconnect.helpers.xmppHandler;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -51,7 +52,7 @@ public class DashboardActivity extends AppCompatActivity {
         mAdapter = new servicesAdapter();
         mRecyclerView.setAdapter(mAdapter);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
     }
 
@@ -101,7 +102,7 @@ public class DashboardActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     mServiceIconList.add(new Drawable() {
                         @Override
-                        public void draw(Canvas canvas) {
+                        public void draw(@NonNull Canvas canvas) {
 
                         }
 
@@ -203,7 +204,7 @@ public class DashboardActivity extends AppCompatActivity {
                                         break;
                                     }
                                 }
-                                xmppHandler xmppHandler = new xmppHandler(DashboardActivity.this);
+                                XmppHandler xmppHandler = new XmppHandler(DashboardActivity.this);
                                 xmppHandler.execute();
                                 break;
                             case power:

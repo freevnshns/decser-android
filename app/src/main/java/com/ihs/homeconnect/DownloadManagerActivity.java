@@ -33,8 +33,8 @@ import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 import com.ihs.homeconnect.helpers.services;
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +66,7 @@ public class DownloadManagerActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
         FloatingActionButton fabAddNewUri = (FloatingActionButton) findViewById(R.id.fabAddDownloadUri);
         assert fabAddNewUri != null;

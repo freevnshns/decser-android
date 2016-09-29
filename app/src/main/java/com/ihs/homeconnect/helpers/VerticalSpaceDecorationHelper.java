@@ -11,11 +11,11 @@ import android.view.View;
 
 import com.ihs.homeconnect.R;
 
-public class verticalSpaceDecorationHelper extends RecyclerView.ItemDecoration {
+public class VerticalSpaceDecorationHelper extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public verticalSpaceDecorationHelper(Context mContext) {
+    public VerticalSpaceDecorationHelper(Context mContext) {
         mDivider = mContext.getDrawable(R.drawable.line_divider);
     }
 

@@ -11,17 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.ihs.homeconnect.helpers.dbHandler;
+import com.ihs.homeconnect.helpers.OrmHelper;
+import com.ihs.homeconnect.models.ChatMessage;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
 
 public class XmppChatActivity extends AppCompatActivity {
     public static Chat chat;
+    OrmHelper ormHelper = OpenHelperManager.getHelper(this, OrmHelper.class);
     private String chatParticipant;
 
     @Override
@@ -84,24 +89,27 @@ public class XmppChatActivity extends AppCompatActivity {
     }
 
     private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
-        ArrayList<chatMessage> chatEntries;
-        private dbHandler dbHandler = new dbHandler(XmppChatActivity.this, null);
+        List<ChatMessage> chatEntries;
+        Dao<ChatMessage, Integer> chatMessages;
 
         xmppChatAdapter(String participant) {
-            chatEntries = new ArrayList<>();
-            ArrayList<String> offline_chats = dbHandler.getMessages(participant);
-            while (!offline_chats.isEmpty()) {
-                chatEntries.add(new chatMessage(offline_chats.remove(0), false));
+            try {
+                chatMessages = ormHelper.getDao(ChatMessage.class);
+                chatEntries = chatMessages.queryForEq("sender", participant);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
         void messageUpdate(String messageString, boolean chatMe) {
             if (!messageString.equals("")) {
-                chatEntries.add(new chatMessage(messageString, chatMe));
-                if (chatMe)
-                    dbHandler.addMessage(chatParticipant, messageString);
-                else
-                    dbHandler.addMessage(chatParticipant, messageString);
+                ChatMessage chatMessage = new ChatMessage(chatParticipant, messageString, false, chatMe);
+                chatEntries.add(chatMessage);
+                try {
+                    chatMessages.create(chatMessage);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 notifyDataSetChanged();
             }
         }
@@ -114,26 +122,16 @@ public class XmppChatActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(xmppChatAdapter.ViewHolder holder, int position) {
-            if (chatEntries.get(holder.getAdapterPosition()).messageIsMine) {
-                holder.tvChatMessageLocal.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
+            if (chatEntries.get(holder.getAdapterPosition()).isSelf_flag()) {
+                holder.tvChatMessageLocal.setText(chatEntries.get(holder.getAdapterPosition()).getBody());
             } else {
-                holder.tvChatMessageRemote.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
+                holder.tvChatMessageRemote.setText(chatEntries.get(holder.getAdapterPosition()).getBody());
             }
         }
 
         @Override
         public int getItemCount() {
             return chatEntries.size();
-        }
-
-        private class chatMessage {
-            String chatBody;
-            boolean messageIsMine;
-
-            chatMessage(String chatBody, boolean messageIsMine) {
-                this.chatBody = chatBody;
-                this.messageIsMine = messageIsMine;
-            }
         }
 
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

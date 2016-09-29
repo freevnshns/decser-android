@@ -23,8 +23,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ihs.homeconnect.helpers.dbHandler;
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
+import com.ihs.homeconnect.helpers.DbHandler;
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 import com.owncloud.android.lib.common.OwnCloudClient;
 import com.owncloud.android.lib.common.OwnCloudClientFactory;
 import com.owncloud.android.lib.common.OwnCloudCredentialsFactory;
@@ -50,14 +50,14 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     RecyclerView.LayoutManager mLayoutManager;
     private OwnCloudClient mClient;
     private Handler mHandler;
-    private dbHandler dbHandler;
+    private DbHandler dbHandler;
     private ProgressDialog progressDialog;
     private int REQUEST_KEY_PATH = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHandler = new dbHandler(this, null);
+        dbHandler = new DbHandler(this, null);
 
         mClient = OwnCloudClientFactory.createOwnCloudClient(Uri.parse("http://127.0.0.1:9080/owncloud"), this, true);
         String user_email = dbHandler.getUserEmail();
@@ -77,7 +77,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
         mAdapter = new fileViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
 
         Button bShowBkpFiles = (Button) findViewById(R.id.bShowBkpFiles);
@@ -106,7 +106,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_KEY_PATH && resultCode == RESULT_OK) {
-            dbHandler dbHandler = new dbHandler(this, null);
+            DbHandler dbHandler = new DbHandler(this, null);
             try {
                 dbHandler.insertBackupPaths(data.getStringExtra("filepath"), 1);
                 mAdapter.inflateFileList();
@@ -313,7 +313,7 @@ public class BackupActivity extends AppCompatActivity implements OnRemoteOperati
 
             @Override
             public void onClick(View view) {
-                dbHandler dbHandler = new dbHandler(BackupActivity.this, null);
+                DbHandler dbHandler = new DbHandler(BackupActivity.this, null);
                 dbHandler.deleteBackupPath(this.tvDirPath.getText().toString());
             }
         }

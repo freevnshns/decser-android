@@ -17,7 +17,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 
 public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
-    public ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     private Context mContext;
 
     public keyRequestHandler(Context mContext) {
@@ -51,7 +51,7 @@ public class keyRequestHandler extends AsyncTask<String, Void, Boolean> {
             socket = new Socket(params[0], 42000);
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            dbHandler dbHandler = new dbHandler(mContext, null);
+            DbHandler dbHandler = new DbHandler(mContext, null);
             out.write(dbHandler.getUserEmail());
             out.flush();
             String buffer;

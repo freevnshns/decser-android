@@ -6,7 +6,6 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,23 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ihs.homeconnect.helpers.ormHelper;
-import com.ihs.homeconnect.helpers.verticalSpaceDecorationHelper;
-import com.ihs.homeconnect.models.ChatMessage;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.dao.Dao;
+import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-
-import static com.ihs.homeconnect.XmppService.packetCollector;
 
 public class XmppRosterActivity extends AppCompatActivity {
     XmppService xmppService;
@@ -54,28 +44,7 @@ public class XmppRosterActivity extends AppCompatActivity {
             Roster roster = Roster.getInstanceFor(connection);
             chatManager = ChatManager.getInstanceFor(connection);
 
-            int offline_message_count = packetCollector.getCollectedCount();
-            while (offline_message_count > 0) {
-                Stanza offlineMessage = packetCollector.pollResult();
-                String sender = offlineMessage.getFrom().substring(0, offlineMessage.getFrom().lastIndexOf("/"));
-//            if (!(sender_list.contains(sender))) {
-//                sender_list.add(sender);
-//                roster_sender.add(new XmppRosterActivity.rosterEntry(sender, true));
-//            }
-                ormHelper ormHelper = OpenHelperManager.getHelper(XmppRosterActivity.this, com.ihs.homeconnect.helpers.ormHelper.class);
 
-                try {
-                    Dao<ChatMessage, Integer> chatDao = ormHelper.getDao(ChatMessage.class);
-                    ChatMessage chatMessage = new ChatMessage();
-                    chatMessage.setSender(sender);
-                    chatMessage.setBody(((Message) offlineMessage).getBody());
-                    chatDao.create(chatMessage);
-//            dbInstance.addMessage(sender, ((Message) offlineMessage).getBody());
-                    offline_message_count--;
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             for (RosterEntry entry : roster.getEntries()) {
                 roster_sender.add(new rosterEntry(entry.getUser(), false));
             }
@@ -114,15 +83,8 @@ public class XmppRosterActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-            mRecyclerView.addItemDecoration(new verticalSpaceDecorationHelper(this));
+            mRecyclerView.addItemDecoration(new VerticalSpaceDecorationHelper(this));
         }
-        Handler mHandler = new Handler();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }, 1000);
     }
 
     private class rosterEntry {

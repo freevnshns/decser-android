@@ -10,24 +10,19 @@ import com.ihs.homeconnect.XmppRosterActivity;
 import com.ihs.homeconnect.XmppService;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
-import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.io.IOException;
 
 
-public class xmppHandler extends AsyncTask<Void, Void, AbstractXMPPConnection> {
-    PacketCollector packetCollector;
+public class XmppHandler extends AsyncTask<Void, Void, AbstractXMPPConnection> {
     private ProgressDialog progressDialog;
     private Context mContext;
 
-    public xmppHandler(Context mContext) {
+    public XmppHandler(Context mContext) {
         this.progressDialog = new ProgressDialog(mContext);
         this.mContext = mContext;
     }
@@ -51,11 +46,8 @@ public class xmppHandler extends AsyncTask<Void, Void, AbstractXMPPConnection> {
         builder.setServiceName("sinecos.local");//replace using bottom level domain name and .local
         connection = new XMPPTCPConnection(builder.build());
         try {
-            StanzaFilter filter = new StanzaTypeFilter(Message.class);
-            packetCollector = connection.createPacketCollector(filter);
             connection.connect();
             XmppService.connection = connection;
-            XmppService.packetCollector = packetCollector;
             mContext.startService(new Intent(mContext, XmppService.class));
             return connection;
         } catch (SmackException | IOException | XMPPException e) {
