@@ -8,14 +8,14 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/tvChatMessageLocal"
+        android:id="@+id/tvChatMessageRemote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textAlignment="textStart" />
 
     <TextView
-        android:id="@+id/tvChatMessageRemote"
+        android:id="@+id/tvChatMessageLocal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"

@@ -47,7 +47,7 @@
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
         <activity
-            android:name=".XmppActivity"
+            android:name=".XmppRosterActivity"
             android:parentActivityName=".DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -89,8 +89,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ihs.homeconnect.DashboardActivity" />
         </activity>
-        <activity android:name=".PowerActivity" />
+        <activity android:name=".PowerActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ihs.homeconnect.DashboardActivity" />
+        </activity>
         <activity android:name=".PrintActivity" />
+
+        <service android:name=".XmppService" />
     </application>
 
 </manifest>

@@ -31,4 +31,6 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.jcraft:jsch:0.1.54'
     compile 'com.github.niqdev:mjpeg-view:0.3.6'
+    compile 'com.j256.ormlite:ormlite-android:5.0'
+    compile 'com.j256.ormlite:ormlite-core:5.0'
 }
