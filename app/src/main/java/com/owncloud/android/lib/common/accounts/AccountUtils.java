@@ -383,7 +383,7 @@ public class AccountUtils {
         public static final String KEY_OC_ACCOUNT_VERSION = "oc_account_version";
 
         /**
-         * User's display name
+         * UserModel's display name
          */
         public static final String KEY_DISPLAY_NAME = "oc_display_name";
 

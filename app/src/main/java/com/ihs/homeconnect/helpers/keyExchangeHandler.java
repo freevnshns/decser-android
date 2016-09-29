@@ -25,7 +25,7 @@ public class keyExchangeHandler extends AsyncTask<String, Void, String> {
         super();
         this.mContext = mContext;
         progressDialog = new ProgressDialog(mContext);
-        progressDialog.setTitle("Waiting for the User");
+        progressDialog.setTitle("Waiting for the UserModel");
     }
 
     @Override

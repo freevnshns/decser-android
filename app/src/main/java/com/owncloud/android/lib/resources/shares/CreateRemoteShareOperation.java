@@ -61,7 +61,7 @@ public class CreateRemoteShareOperation extends RemoteOperation {
      *
      * @param remoteFilePath Full path of the file/folder being shared. Mandatory argument
      * @param shareType      0 = user, 1 = group, 3 = Public link. Mandatory argument
-     * @param shareWith      User/group ID with who the file should be shared.  This is mandatory for shareType
+     * @param shareWith      UserModel/group ID with who the file should be shared.  This is mandatory for shareType
      *                       of 0 or 1
      * @param publicUpload   If false (default) public cannot upload to a public shared folder.
      *                       If true public can upload to a shared folder. Only available for public link shares

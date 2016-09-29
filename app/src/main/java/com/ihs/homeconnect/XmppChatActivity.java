@@ -1,3 +1,4 @@
+//Problems : not working when I initiate chat , working otherwise
 package com.ihs.homeconnect;
 
 import android.os.Bundle;
@@ -11,8 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.ihs.homeconnect.Entities.ChatMessageModel;
 import com.ihs.homeconnect.helpers.OrmHelper;
-import com.ihs.homeconnect.models.ChatMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
@@ -22,23 +23,25 @@ import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class XmppChatActivity extends AppCompatActivity {
+
     public static Chat chat;
-    OrmHelper ormHelper = OpenHelperManager.getHelper(this, OrmHelper.class);
-    private String chatParticipant;
+    RecyclerView mRecyclerView;
+    xmppChatAdapter mAdapter;
+    RecyclerView.LayoutManager mLayoutManager;
+    private OrmHelper ormHelper = OpenHelperManager.getHelper(this, OrmHelper.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xmpp_chat);
-        chatParticipant = chat.getParticipant();
+
         final Button bSendChatMessage = (Button) findViewById(R.id.bSendMessage);
         final EditText etChatMessage = (EditText) findViewById(R.id.etChatMessage);
-        final RecyclerView mRecyclerView;
-        final RecyclerView.Adapter mAdapter;
-        RecyclerView.LayoutManager mLayoutManager;
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvChatConsole);
         mLayoutManager = new LinearLayoutManager(this);
@@ -47,21 +50,13 @@ public class XmppChatActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        final xmppChatAdapter chatAdapter = new xmppChatAdapter(chatParticipant);
-        mAdapter = chatAdapter;
+        mAdapter = new xmppChatAdapter();
         mRecyclerView.setAdapter(mAdapter);
-
 
         chat.addMessageListener(new ChatMessageListener() {
             @Override
-            public void processMessage(Chat chat, final Message message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatAdapter.messageUpdate(message.getBody(), false);
-                        mRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount());
-                    }
-                });
+            public void processMessage(Chat chat, Message message) {
+                mAdapter.addMessage(message.getBody(), false);
             }
         });
 
@@ -75,42 +70,52 @@ public class XmppChatActivity extends AppCompatActivity {
                             try {
                                 String message = etChatMessage.getText().toString();
                                 chat.sendMessage(message);
-                                chatAdapter.messageUpdate(message, true);
-                                mRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount());
+                                mAdapter.addMessage(message, true);
                                 etChatMessage.setText("");
                             } catch (SmackException.NotConnectedException e) {
                                 e.printStackTrace();
                             }
                         }
                     });
-
                 }
             });
     }
 
-    private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
-        List<ChatMessage> chatEntries;
-        Dao<ChatMessage, Integer> chatMessages;
+    @Override
+    public void onBackPressed() {
+        chat.close();
+        super.onBackPressed();
+    }
 
-        xmppChatAdapter(String participant) {
+    private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
+        List<ChatMessageModel> chatEntries = new ArrayList<>();
+        Dao<ChatMessageModel, Integer> chatMessages;
+
+        xmppChatAdapter() {
+            updateAdapter();
+        }
+
+        void updateAdapter() {
             try {
-                chatMessages = ormHelper.getDao(ChatMessage.class);
-                chatEntries = chatMessages.queryForEq("sender", participant);
+                chatMessages = ormHelper.getDao(ChatMessageModel.class);
+                chatEntries = chatMessages.queryForEq("sender", chat.getParticipant());
+                notifyDataSetChanged();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        void messageUpdate(String messageString, boolean chatMe) {
+        void addMessage(String messageString, boolean chatMe) {
             if (!messageString.equals("")) {
-                ChatMessage chatMessage = new ChatMessage(chatParticipant, messageString, false, chatMe);
+                ChatMessageModel chatMessage = new ChatMessageModel(chat.getParticipant(), messageString, false, chatMe);
                 chatEntries.add(chatMessage);
                 try {
                     chatMessages.create(chatMessage);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                notifyDataSetChanged();
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+                notifyItemInserted(getItemCount());
             }
         }
 
@@ -124,8 +129,10 @@ public class XmppChatActivity extends AppCompatActivity {
         public void onBindViewHolder(xmppChatAdapter.ViewHolder holder, int position) {
             if (chatEntries.get(holder.getAdapterPosition()).isSelf_flag()) {
                 holder.tvChatMessageLocal.setText(chatEntries.get(holder.getAdapterPosition()).getBody());
+                holder.tvChatMessageRemote.setText("");
             } else {
                 holder.tvChatMessageRemote.setText(chatEntries.get(holder.getAdapterPosition()).getBody());
+                holder.tvChatMessageLocal.setText("");
             }
         }
 

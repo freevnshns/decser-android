@@ -67,10 +67,10 @@
         <activity android:name=".VideoCamActivity" />
         <activity
             android:name=".XmppChatActivity"
-            android:parentActivityName=".DashboardActivity">
+            android:parentActivityName=".XmppRosterActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.ihs.homeconnect.XmppRosterActivity" />
         </activity>
         <activity android:name=".RegistrationActivity" />
         <activity

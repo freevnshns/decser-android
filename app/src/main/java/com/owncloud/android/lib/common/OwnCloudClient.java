@@ -194,7 +194,7 @@ public class OwnCloudClient extends HttpClient {
     @Override
     public int executeMethod(HttpMethod method) throws IOException {
         try {
-            // Update User Agent
+            // Update UserModel Agent
             HttpParams params = method.getParams();
             String userAgent = OwnCloudClientManagerFactory.getUserAgent();
             params.setParameter(HttpMethodParams.USER_AGENT, userAgent);

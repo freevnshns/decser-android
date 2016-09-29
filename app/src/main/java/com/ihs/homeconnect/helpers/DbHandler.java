@@ -59,7 +59,7 @@ public class DbHandler extends SQLiteOpenHelper {
     private static final String COLUMN_SENDER_ID = "sender";
     private static final String COLUMN_SENDER_ID_TYPE = "TEXT";
 
-    //    Table BackupEntity
+    //    Table BackupPathModel
     private static final String TABLE_BACKUP = "backup";
 
     private static final String COLUMN_BACKUP_PATH = "bkp_path";

@@ -6,9 +6,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.ihs.homeconnect.Entities.ChatMessageModel;
+import com.ihs.homeconnect.Entities.RosterModel;
 import com.ihs.homeconnect.helpers.DbHandler;
 import com.ihs.homeconnect.helpers.OrmHelper;
-import com.ihs.homeconnect.models.ChatMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
@@ -20,16 +21,18 @@ import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class XmppService extends Service {
 
     public static AbstractXMPPConnection connection;
+    ArrayList<RosterModel> rosterModels = new ArrayList<>();
     private PacketCollector packetCollector;
-    private OrmHelper ormHelper = OpenHelperManager.getHelper(this, OrmHelper.class);
-
     private IBinder mBinder = new PacketBinder();
 
     @Nullable
@@ -41,14 +44,34 @@ public class XmppService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
+            OrmHelper ormHelper;
+            ormHelper = OpenHelperManager.getHelper(this, OrmHelper.class);
             DbHandler dbHandler = new DbHandler(XmppService.this, null);
 
             StanzaFilter filter = new StanzaTypeFilter(Message.class);
-            packetCollector = connection.createPacketCollector(filter);
-            String user_email = dbHandler.getUserEmail();
-            connection.login(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword());
+            if (connection != null && connection.isConnected()) {
+                packetCollector = connection.createPacketCollector(filter);
+                String user_email = dbHandler.getUserEmail();
+                connection.login(user_email.substring(0, user_email.lastIndexOf("@")), dbHandler.getUserPassword());
 
-            addMessagesToDB();
+                try {
+                    Roster roster = Roster.getInstanceFor(connection);
+                    Dao<ChatMessageModel, Integer> chatDao = ormHelper.getDao(ChatMessageModel.class);
+                    int offline_message_count = packetCollector.getCollectedCount();
+                    while (offline_message_count > 0) {
+                        Stanza offlineMessage = packetCollector.pollResult();
+                        String sender = offlineMessage.getFrom().substring(0, offlineMessage.getFrom().lastIndexOf("/"));
+                        chatDao.create(new ChatMessageModel(sender, ((Message) offlineMessage).getBody(), true, false));
+                        offline_message_count--;
+                    }
+                    for (RosterEntry entry : roster.getEntries()) {
+                        rosterModels.add(new RosterModel(entry.getUser(), entry.getName(), false));
+                    }
+                    packetCollector.cancel();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (SmackException | IOException | XMPPException e) {
             e.printStackTrace();
         }
@@ -57,32 +80,17 @@ public class XmppService extends Service {
 
     @Override
     public void onDestroy() {
-        if (packetCollector.getCollectedCount() != 0) {
-            addMessagesToDB();
-        }
-        packetCollector.cancel();
         connection.disconnect();
         OpenHelperManager.releaseHelper();
         super.onDestroy();
     }
 
-    public void addMessagesToDB() {
-        int offline_message_count = packetCollector.getCollectedCount();
-        try {
-            Dao<ChatMessage, Integer> chatDao = ormHelper.getDao(ChatMessage.class);
-            while (offline_message_count > 0) {
-                Stanza offlineMessage = packetCollector.pollResult();
-                String sender = offlineMessage.getFrom().substring(0, offlineMessage.getFrom().lastIndexOf("/"));
-                chatDao.create(new ChatMessage(sender, ((Message) offlineMessage).getBody(), true, false));
-                offline_message_count--;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public AbstractXMPPConnection getAbstractXMPPConnection() {
         return connection;
+    }
+
+    public ArrayList<RosterModel> getRosterModels() {
+        return rosterModels;
     }
 
     public class PacketBinder extends Binder {

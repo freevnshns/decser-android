@@ -1,10 +1,10 @@
-package com.ihs.homeconnect.models;
+package com.ihs.homeconnect.Entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "chat_messages")
-public class ChatMessage {
+@DatabaseTable(tableName = "xmpp_messages")
+public class ChatMessageModel {
     @DatabaseField(generatedId = true)
     private int id;
     @DatabaseField
@@ -16,10 +16,10 @@ public class ChatMessage {
     @DatabaseField
     private boolean self_flag;
 
-    public ChatMessage() {
+    public ChatMessageModel() {
     }
 
-    public ChatMessage(String sender, String body, boolean new_flag, boolean self_flag) {
+    public ChatMessageModel(String sender, String body, boolean new_flag, boolean self_flag) {
         this.sender = sender;
         this.body = body;
         this.new_flag = new_flag;
