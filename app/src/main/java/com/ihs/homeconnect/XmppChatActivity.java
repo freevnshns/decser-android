@@ -1,6 +1,5 @@
 package com.ihs.homeconnect;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -85,10 +84,10 @@ public class XmppChatActivity extends AppCompatActivity {
     }
 
     private class xmppChatAdapter extends RecyclerView.Adapter<xmppChatAdapter.ViewHolder> {
-        public ArrayList<chatMessage> chatEntries;
+        ArrayList<chatMessage> chatEntries;
         private dbHandler dbHandler = new dbHandler(XmppChatActivity.this, null);
 
-        public xmppChatAdapter(String participant) {
+        xmppChatAdapter(String participant) {
             chatEntries = new ArrayList<>();
             ArrayList<String> offline_chats = dbHandler.getMessages(participant);
             while (!offline_chats.isEmpty()) {
@@ -96,13 +95,13 @@ public class XmppChatActivity extends AppCompatActivity {
             }
         }
 
-        public void messageUpdate(String messageString, boolean chatMe) {
+        void messageUpdate(String messageString, boolean chatMe) {
             if (!messageString.equals("")) {
                 chatEntries.add(new chatMessage(messageString, chatMe));
                 if (chatMe)
-                    dbHandler.addMessage(chatParticipant, "Me : > " + messageString);
+                    dbHandler.addMessage(chatParticipant, messageString);
                 else
-                    dbHandler.addMessage(chatParticipant, " : > " + messageString);
+                    dbHandler.addMessage(chatParticipant, messageString);
                 notifyDataSetChanged();
             }
         }
@@ -116,11 +115,10 @@ public class XmppChatActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(xmppChatAdapter.ViewHolder holder, int position) {
             if (chatEntries.get(holder.getAdapterPosition()).messageIsMine) {
-                holder.tvChatBody.setTextColor(Color.GRAY);
+                holder.tvChatMessageLocal.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
             } else {
-                holder.tvChatBody.setTextColor(Color.BLACK);
+                holder.tvChatMessageRemote.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
             }
-            holder.tvChatBody.setText(chatEntries.get(holder.getAdapterPosition()).chatBody);
         }
 
         @Override
@@ -129,21 +127,23 @@ public class XmppChatActivity extends AppCompatActivity {
         }
 
         private class chatMessage {
-            public String chatBody;
-            public boolean messageIsMine;
+            String chatBody;
+            boolean messageIsMine;
 
-            public chatMessage(String chatBody, boolean messageIsMine) {
+            chatMessage(String chatBody, boolean messageIsMine) {
                 this.chatBody = chatBody;
                 this.messageIsMine = messageIsMine;
             }
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public TextView tvChatBody;
+        class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            TextView tvChatMessageLocal;
+            TextView tvChatMessageRemote;
 
-            public ViewHolder(View view) {
+            ViewHolder(View view) {
                 super(view);
-                this.tvChatBody = (TextView) view.findViewById(R.id.tvChatMessage);
+                this.tvChatMessageLocal = (TextView) view.findViewById(R.id.tvChatMessageLocal);
+                this.tvChatMessageRemote = (TextView) view.findViewById(R.id.tvChatMessageRemote);
                 view.setOnClickListener(this);
             }
 
