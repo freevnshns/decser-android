@@ -1,4 +1,4 @@
-package com.ihs.homeconnect.Entities;
+package com.ihs.homeconnect.entities;
 
 public class UserModel {
     private String user_domain;

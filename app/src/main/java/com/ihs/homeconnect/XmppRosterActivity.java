@@ -15,8 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.ihs.homeconnect.Entities.ChatMessageModel;
-import com.ihs.homeconnect.Entities.RosterModel;
+import com.ihs.homeconnect.entities.ChatMessageModel;
+import com.ihs.homeconnect.entities.RosterModel;
 import com.ihs.homeconnect.helpers.OrmHelper;
 import com.ihs.homeconnect.helpers.VerticalSpaceDecorationHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;

@@ -6,8 +6,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.ihs.homeconnect.Entities.ChatMessageModel;
-import com.ihs.homeconnect.Entities.RosterModel;
+import com.ihs.homeconnect.entities.ChatMessageModel;
+import com.ihs.homeconnect.entities.RosterModel;
 import com.ihs.homeconnect.helpers.DbHandler;
 import com.ihs.homeconnect.helpers.OrmHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;

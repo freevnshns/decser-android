@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.ihs.homeconnect.Entities.ChatMessageModel;
+import com.ihs.homeconnect.entities.ChatMessageModel;
 import com.ihs.homeconnect.helpers.OrmHelper;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;

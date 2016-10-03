@@ -1,4 +1,4 @@
-package com.ihs.homeconnect.Entities;
+package com.ihs.homeconnect.entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

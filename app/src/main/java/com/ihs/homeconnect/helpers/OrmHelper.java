@@ -3,7 +3,7 @@ package com.ihs.homeconnect.helpers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.ihs.homeconnect.Entities.ChatMessageModel;
+import com.ihs.homeconnect.entities.ChatMessageModel;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
