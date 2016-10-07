@@ -22,6 +22,7 @@ public class PowerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_power);
+//        TODO make this modular i.e. fetches list of switches controlled and shows views accordingly
         final SwitchCompat scLight = (SwitchCompat) findViewById(R.id.scLight);
         assert scLight != null;
         RequestQueue requestQueue = Volley.newRequestQueue(PowerActivity.this);
