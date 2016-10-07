@@ -15,3 +15,17 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-keep class com.j256.**
+-keepclassmembers class com.j256.** { *; }
+-keep enum com.j256.**
+-keepclassmembers enum com.j256.** { *; }
+-keep interface com.j256.**
+-keepclassmembers interface com.j256.** { *; }
+-dontwarn javax.**
+-dontwarn org.apache.**
+-dontwarn org.cups4j.**
+-dontwarn org.slf4j.**
+-dontwarn org.ietf.**
+-dontwarn com.jcraft.jzlib.**
+-dontwarn java.lang.invoke.**
+-dontwarn sun.misc.**
