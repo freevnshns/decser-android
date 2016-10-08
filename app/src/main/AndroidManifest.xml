@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ihs.homeconnect">
+    package="com.decser.connect">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        tools:ignore="allowBackup, GoogleAppIndexingWarning">
         <activity
-            android:name=".HomeActivity"
+            android:name="com.decser.connect.HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/splashScreen">
             <intent-filter>
@@ -24,79 +23,79 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DashboardActivity"
+            android:name="com.decser.connect.DashboardActivity"
             android:label="@string/title_activity_dash" />
         <activity
-            android:name=".AddContactActivity"
+            android:name="com.decser.connect.AddContactActivity"
             android:label="@string/title_activity_import_key" />
         <activity
-            android:name=".DownloadMediaActivity"
+            android:name="com.decser.connect.DownloadMediaActivity"
             android:label="@string/title_activity_download_media" />
         <activity
-            android:name=".PeerConnectActivity"
+            android:name="com.decser.connect.PeerConnectActivity"
             android:label="@string/title_activity_peer_connect" />
         <activity
-            android:name=".ListFileActivity"
+            android:name="com.decser.connect.ListFileActivity"
             android:label="@string/file_explorer" />
         <activity
-            android:name=".DownloadManagerActivity"
+            android:name="com.decser.connect.DownloadManagerActivity"
             android:label="Download Manager"
-            android:parentActivityName=".DashboardActivity">
+            android:parentActivityName="com.decser.connect.DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
         <activity
-            android:name=".XmppRosterActivity"
-            android:parentActivityName=".DashboardActivity">
+            android:name="com.decser.connect.XmppRosterActivity"
+            android:parentActivityName="com.decser.connect.DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
         <activity
-            android:name=".ShareKeyActivity"
+            android:name="com.decser.connect.ShareKeyActivity"
             android:label="Share the guest key"
-            android:parentActivityName=".DashboardActivity">
+            android:parentActivityName="com.decser.connect.DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
         <activity
-            android:name=".RequestKeyActivity"
+            android:name="com.decser.connect.RequestKeyActivity"
             android:label="Request key from a friend" />
-        <activity android:name=".VideoCamActivity" />
+        <activity android:name="com.decser.connect.VideoCamActivity" />
         <activity
-            android:name=".XmppChatActivity"
-            android:parentActivityName=".XmppRosterActivity">
+            android:name="com.decser.connect.XmppChatActivity"
+            android:parentActivityName="com.decser.connect.XmppRosterActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.XmppRosterActivity" />
+                android:value="com.decser.connect.XmppRosterActivity" />
         </activity>
-        <activity android:name=".RegistrationActivity" />
+        <activity android:name="com.decser.connect.RegistrationActivity" />
         <activity
-            android:name=".BackupActivity"
-            android:parentActivityName=".DashboardActivity">
+            android:name="com.decser.connect.BackupActivity"
+            android:parentActivityName="com.decser.connect.DashboardActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
         <activity
-            android:name=".WebDashboardActivity"
+            android:name="com.decser.connect.WebDashboardActivity"
             android:label="@string/title_activity_web_dashboard"
-            android:parentActivityName=".DashboardActivity"
+            android:parentActivityName="com.decser.connect.DashboardActivity"
             android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
-        <activity android:name=".PowerActivity">
+        <activity android:name="com.decser.connect.PowerActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.ihs.homeconnect.DashboardActivity" />
+                android:value="com.decser.connect.DashboardActivity" />
         </activity>
-        <activity android:name=".PrintActivity" />
+        <activity android:name="com.decser.connect.PrintActivity" />
 
-        <service android:name=".XmppService" />
+        <service android:name="com.decser.connect.XmppService" />
     </application>
 
 </manifest>
